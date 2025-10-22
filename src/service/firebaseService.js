@@ -1,5 +1,5 @@
-import { ref, push, set, onValue } from "firebase/database";
-import { db } from "../config/configFirebase";
+import { ref, push, set, onValue } from "firebase/database"
+import { db } from "@config/configFirebase"
 
 /**
  *  Thêm 1 địa chỉ mới vào Realtime Database
