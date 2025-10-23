@@ -98,7 +98,6 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
         <Text style={styles.logo}>🎓</Text>
           <Text style={styles.title}>Gia sư quanh ta</Text>
           <Text style={styles.subtitle}>Tìm gia sư gần bạn</Text>
-          {!useFirebase && <Text style={{ fontSize: 12, color: "#ef4444", marginTop: 5 }}>📱 Chế độ offline</Text>}
         </View>
 
         <View style={styles.form}>

@@ -9,10 +9,10 @@ class OtpService {
   async sendOtp(otpCode, userId) {
     try {
       const data = {
-        otp: otpCode,
+        otp: otpCode, 
         userId,
-        verified: false,
-        createdAt: Date.now(),
+        verified: false, // OTP chưa được xác nhận
+        createdAt: Date.now(), // Thời điểm tạo OTP
       };
       const otpId = await FirebaseService.create(this.basePath, data);
       return otpId;

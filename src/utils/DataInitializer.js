@@ -53,7 +53,7 @@ const initialUsers = [
     email: "admin2@example.com",
     status: "active",
   },
-  // Worker users
+  // tutor users
   {
     phone: "0444444444",
     password: "123456",

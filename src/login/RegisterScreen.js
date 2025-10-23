@@ -176,29 +176,45 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
           </View>
 
           <View style={styles.form}>
-            {/* ====== Chọn loại tài khoản ====== */}
-            <View style={styles.roleContainer}>
-              <Text style={styles.roleLabel}>Loại tài khoản</Text>
-              <View style={styles.roleButtons}>
-                <TouchableOpacity
-                  style={[styles.roleButton, formData.role === "customer" && styles.activeRoleButton]}
-                  onPress={() => updateFormData("role", "customer")}
-                >
-                  <Text style={[styles.roleButtonText, formData.role === "customer" && styles.activeRoleButtonText]}>
-                    👤 Khách hàng
-                  </Text>
-                </TouchableOpacity>
+  {/* ====== Chọn loại tài khoản ====== */}
+  <View style={styles.roleContainer}>
+    <Text style={styles.roleLabel}>Loại tài khoản</Text>
+    <View style={styles.roleButtons}>
+      <TouchableOpacity
+        style={[
+          styles.roleButton,
+          formData.role === "customer" && styles.activeRoleButton
+        ]}
+        onPress={() => updateFormData("role", "customer")}
+      >
+        <Text
+          style={[
+            styles.roleButtonText,
+            formData.role === "customer" && styles.activeRoleButtonText
+          ]}
+        >
+          👤 Khách hàng
+        </Text>
+      </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.roleButton, formData.role === "tutor" && styles.activeRoleButton]}
-                  onPress={() => updateFormData("role", "tutor")}
-                >
-                  <Text style={[styles.roleButtonText, formData.role === "tutor" && styles.activeRoleButtonText]}>
-                    🎓 Gia sư
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+      <TouchableOpacity
+        style={[
+          styles.roleButton,
+          formData.role === "tutor" && styles.activeRoleButton
+        ]}
+        onPress={() => updateFormData("role", "tutor")}
+      >
+        <Text
+          style={[
+            styles.roleButtonText,
+            formData.role === "tutor" && styles.activeRoleButtonText
+          ]}
+        >
+          🎓 Gia sư
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
 
             {/* ====== Thông tin cơ bản ====== */}
             <TextInput
