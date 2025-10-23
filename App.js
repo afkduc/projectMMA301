@@ -1,36 +1,65 @@
 import React, { useState } from "react";
 // login - register - forgotPassword
-import LoginScreen from "@login/LoginScreen"
+import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 
+// Customer screens
+import HomeScreen from "./src/screens/customer/HomeScreen";
+
 export default function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false); // không còn loading khởi tạo Firebase
-  const [currentScreen, setCurrentScreen] = useState("login"); //  Quản lý màn hình
+  const [currentScreen, setCurrentScreen] = useState("login");
+  const [selectedService, setSelectedService] = useState(null);
 
-  //  Callback: khi đăng nhập thành công
+  // --- Xử lý login ---
   const handleLogin = (role, userData) => {
     console.log("Đăng nhập thành công:", role, userData);
     setUser(userData);
+    if (role === "customer") {
+      setCurrentScreen("home");
+    }
   };
 
-  //  Chuyển sang màn đăng ký
+  // --- Chuyển sang register ---
   const handleRegisterPress = () => {
     setCurrentScreen("register");
   };
 
-  // Chuyển sang màn quên mật khẩu
+  // --- Quên mật khẩu ---
   const handleForgotPasswordPress = () => {
     setCurrentScreen("forgotPassword");
   };
 
-  //  Quay lại màn login từ register hoặc forgot password
+  // --- Quay lại login ---
   const handleBackToLogin = () => {
     setCurrentScreen("login");
   };
 
-  //  Nếu chưa đăng nhập → hiển thị login/register/forgotPassword
+  // --- Khi người dùng bấm chọn 1 dịch vụ ---
+  const handleServicePress = (service) => {
+    console.log("Người dùng chọn dịch vụ:", service);
+    setSelectedService(service);
+    // ở đây bạn có thể chuyển sang WorkerListScreen hoặc hiển thị chi tiết service
+  };
+
+  // --- Khi người dùng bấm tab trong HomeScreen ---
+  const handleTabPress = (tab) => {
+    console.log("Người dùng chọn tab:", tab);
+    if (tab === "profile") {
+      // sau này bạn có thể mở ProfileScreen
+    } else if (tab === "home") {
+      setCurrentScreen("home");
+    }
+  };
+
+  // --- Khi đăng xuất ---
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentScreen("login");
+  };
+
+  // =================== RENDER ===================
   if (!user) {
     switch (currentScreen) {
       case "login":
@@ -44,15 +73,13 @@ export default function App() {
       case "register":
         return (
           <RegisterScreen
-            onRegister={() => setCurrentScreen("login")} // Sau khi đăng ký xong quay về login
-            onBackToLogin={handleBackToLogin} // Nút quay lại login
+            onRegister={() => setCurrentScreen("login")}
+            onBackToLogin={handleBackToLogin}
           />
         );
       case "forgotPassword":
         return (
-          <ForgotPasswordScreen
-            onBackToLogin={handleBackToLogin} // Nút quay lại login
-          />
+          <ForgotPasswordScreen onBackToLogin={handleBackToLogin} />
         );
       default:
         return (
@@ -65,19 +92,23 @@ export default function App() {
     }
   }
 
-  //  Sau khi đăng nhập thành công → hiển thị giao diện chính
+  // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
+  if (currentScreen === "home") {
+    return (
+      <HomeScreen
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  // Dự phòng (nếu cần)
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-        Xin chào, {user.name || "Người dùng"} 👋
-      </Text>
-      <Text style={{ fontSize: 16, marginTop: 10 }}>Vai trò: {user.role}</Text>
+    <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
+      <Text>Vai trò: {user.role}</Text>
     </SafeAreaView>
   );
 }
