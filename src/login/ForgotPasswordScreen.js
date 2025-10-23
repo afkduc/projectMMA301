@@ -21,6 +21,7 @@ import { sendSms } from "@utils/smsService";
 const ForgotPasswordScreen = ({ onBackToLogin }) => {
   const [step, setStep] = useState(1); // 1: input phonenumber, 2: OTP, 3: new password
   const [otp, setOtp] = useState('');
+  const [phone, setPhone] = useState(''); 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -65,10 +66,14 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
         setError('Số điện thoại không tồn tại trong hệ thống');
         return;
       }
-
+ //  Tạo mã OTP ngẫu nhiên 6 chữ số
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    //  Gọi OtpService để gửi và lưu OTP
       await OtpService.sendOtp(otpCode, user.id);
+       // Gửi OTP thật đến người dùng qua SMS
       await sendSms(getInternationalPhone(phone), `Mã OTP của bạn là: ${otpCode}`);
+      // Lưu userId, set bước tiếp theo, hiển thị thông báo
       setUserId(user.id);
       setCountdown(60);
       setStep(2);
