@@ -53,7 +53,13 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
         // 
         try {
           user = await UserService.authenticateUser(phone, password)
-          await AsyncStorage.setItem("currentUserId", user.id)
+
+          if (user?.id) {
+            await AsyncStorage.setItem("currentUserId", user.id)
+          } else {
+            await AsyncStorage.removeItem("currentUserId")
+          }
+
         } catch (error) {
           console.error("Firebase authentication error:", error)
           user = users.find((u) => u.phone === phone && u.password === password)
@@ -95,7 +101,7 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
-        <Text style={styles.logo}>🎓</Text>
+          <Text style={styles.logo}>🎓</Text>
           <Text style={styles.title}>Gia sư quanh ta</Text>
           <Text style={styles.subtitle}>Tìm gia sư gần bạn</Text>
         </View>

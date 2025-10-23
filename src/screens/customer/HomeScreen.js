@@ -10,7 +10,7 @@ import {
   TextInput,
 } from 'react-native';
 import { styles } from '../../style/styles';
-import UserService from "@service/UserService"
+import ServiceService from "@service/serviceService";
 import { services as mockServices } from "@data/mockData";
 import { CustomerBottomNav } from '../../components/BottomNavigation';
 
