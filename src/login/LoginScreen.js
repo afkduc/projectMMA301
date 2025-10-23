@@ -50,6 +50,7 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
       let user = null
 
       if (useFirebase) {
+        // 
         try {
           user = await UserService.authenticateUser(phone, password)
           await AsyncStorage.setItem("currentUserId", user.id)
@@ -58,6 +59,7 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
           user = users.find((u) => u.phone === phone && u.password === password)
         }
       } else {
+        // sử dụng data fake
         user = users.find((u) => u.phone === phone && u.password === password)
       }
 
@@ -93,9 +95,9 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.logo}>🔧</Text>
-          <Text style={styles.title}>Thợ Gần Tôi</Text>
-          <Text style={styles.subtitle}>Tìm thợ sửa chữa gần bạn</Text>
+        <Text style={styles.logo}>🎓</Text>
+          <Text style={styles.title}>Gia sư quanh ta</Text>
+          <Text style={styles.subtitle}>Tìm gia sư gần bạn</Text>
           {!useFirebase && <Text style={{ fontSize: 12, color: "#ef4444", marginTop: 5 }}>📱 Chế độ offline</Text>}
         </View>
 
