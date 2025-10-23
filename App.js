@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { SafeAreaView, Text, ActivityIndicator } from "react-native"
 // login - register - forgotPassword
 import LoginScreen from "@login/LoginScreen"
 import RegisterScreen from "@login/RegisterScreen";

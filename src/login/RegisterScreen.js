@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import React, { useState } from "react"
 import {
   View,
   Text,
@@ -9,48 +9,46 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native"
+import DropDownPicker from "react-native-dropdown-picker"
 import { styles } from "@style/styles"
 import UserService from "@service/UserService"
 import tutorService from "@service/tutorService"
-import ServiceService from "@service/serviceService";
 
 const RegisterScreen = ({ onRegister, onBackToLogin }) => {
-  // Khởi tạo state formData để lưu dữ liệu nhập từ người dùng
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "customer", 
-    serviceId: [],   // Danh sách chuyên môn (nếu là gia sư)
+    role: "customer",
+    serviceId: [],
     experience: "",
     certificate: "",
     address: "",
+    customSubject: "",
   })
 
-  const [services, setServices] = useState([]) // Lưu danh sách dịch vụ/chuyên môn
-  const [loading, setLoading] = useState(false) // Hiển thị loading khi đăng ký
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
 
-  // Lấy danh sách dịch vụ từ server khi component load lần đầu
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const allServices = await ServiceService.getActiveServices()
-        setServices(allServices)
-      } catch (error) {
-        console.error("Error fetching services:", error)
-      }
-    }
-    fetchServices()
-  }, [])
+  // Danh sách môn học tĩnh (không cần lấy từ Firebase)
+  const subjectItems = [
+    { label: "Toán học", value: "toan" },
+    { label: "Tiếng Anh", value: "tieng_anh" },
+    { label: "Vật lý", value: "vat_ly" },
+    { label: "Hóa học", value: "hoa_hoc" },
+    { label: "Sinh học", value: "sinh_hoc" },
+    { label: "Tin học", value: "tin_hoc" },
+    { label: "Ngữ văn", value: "ngu_van" },
+    { label: "Lịch sử", value: "lich_su" },
+    { label: "Địa lý", value: "dia_ly" },
+  ]
 
-  // Cập nhật dữ liệu form khi người dùng nhập
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Hàm kiểm tra dữ liệu nhập
   const validateForm = () => {
     const { name, phone, email, password, confirmPassword, role, serviceId, experience } = formData
 
@@ -59,14 +57,12 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       return false
     }
 
-    // Kiểm tra định dạng số điện thoại
     const phoneRegex = /^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/
     if (!phoneRegex.test(phone)) {
       Alert.alert("Lỗi", "Số điện thoại không hợp lệ")
       return false
     }
 
-    // Kiểm tra định dạng email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       Alert.alert("Lỗi", "Email không hợp lệ")
@@ -83,83 +79,80 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       return false
     }
 
-    // Nếu là gia sư, cần chọn chuyên môn và nhập kinh nghiệm
     if (role === "tutor" && (!serviceId.length || !experience.trim())) {
-      Alert.alert("Lỗi", "Vui lòng chọn ít nhất một chuyên môn và nhập kinh nghiệm")
+      Alert.alert("Lỗi", "Vui lòng chọn ít nhất một môn học và nhập kinh nghiệm")
       return false
     }
 
     return true
   }
 
-  // Hàm xử lý đăng ký
   const handleRegister = async () => {
     if (!validateForm()) return
 
     try {
       setLoading(true)
 
-      // Kiểm tra số điện thoại đã tồn tại chưa
       const phoneExists = await UserService.phoneExists(formData.phone)
       if (phoneExists) {
         Alert.alert("Lỗi", "Số điện thoại đã được sử dụng")
         return
       }
 
-      // Kiểm tra email đã tồn tại chưa
       const emailExists = await UserService.emailExists(formData.email)
       if (emailExists) {
         Alert.alert("Lỗi", "Email đã được sử dụng")
         return
       }
 
-      // Tạo dữ liệu user
       const userData = {
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
         password: formData.password,
         role: formData.role,
-        status: formData.role === "tutor" ? "pending" : "active", // Gia sư cần admin duyệt
+        status: formData.role === "tutor" ? "pending" : "active",
         joinDate: new Date().toISOString().split("T")[0],
         address: formData.address || "Hà Nội",
-        avatar: formData.role === "tutor" ? "👨‍🔧" : "👤",
+        avatar: formData.role === "tutor" ? "👨‍🏫" : "👤",
       }
 
       const userId = await UserService.createUser(userData)
 
-      // Nếu là gia sư, tạo thêm thông tin chuyên môn
       if (formData.role === "tutor") {
-        const selectedServiceNames = services
-          .filter((s) => formData.serviceId.includes(s.id))
-          .map((s) => s.name)
+        const selectedSubjects = subjectItems
+          .filter((s) => formData.serviceId.includes(s.value))
+          .map((s) => s.label)
           .join(", ")
+
+        const specialty = formData.customSubject
+          ? `${selectedSubjects}, ${formData.customSubject}`
+          : selectedSubjects
 
         const tutorData = {
           userId,
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
-          specialty: selectedServiceNames || "Không rõ",
+          specialty,
           serviceId: formData.serviceId,
           experience: formData.experience,
           certificate: formData.certificate,
           address: formData.address || "Hà Nội",
-          status: "false", // chờ duyệt
+          status: "false",
           rating: 0,
           completedOrders: 0,
           price: "Thỏa thuận",
-          avatar: "👨‍🔧",
+          avatar: "👨‍🏫",
           reviews: 0,
         }
 
         await tutorService.createTutor(tutorData)
       }
 
-      // Thông báo đăng ký thành công
       Alert.alert(
         "Đăng ký thành công!",
-        formData.role === "rutor"
+        formData.role === "tutor"
           ? "Tài khoản gia sư đã được tạo và đang chờ phê duyệt từ admin."
           : "Tài khoản đã được tạo thành công. Bạn có thể đăng nhập ngay.",
         [{ text: "OK", onPress: onRegister }]
@@ -170,15 +163,6 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
     } finally {
       setLoading(false)
     }
-  }
-
-  // Chọn/bỏ chọn chuyên môn
-  const toggleService = (serviceId) => {
-    const isSelected = formData.serviceId.includes(serviceId)
-    const updatedServiceIds = isSelected
-      ? formData.serviceId.filter((id) => id !== serviceId)
-      : [...formData.serviceId, serviceId]
-    updateFormData("serviceId", updatedServiceIds)
   }
 
   return (
@@ -192,7 +176,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
           </View>
 
           <View style={styles.form}>
-            {/* Chọn loại tài khoản: khách hàng hoặc gia sư */}
+            {/* ====== Chọn loại tài khoản ====== */}
             <View style={styles.roleContainer}>
               <Text style={styles.roleLabel}>Loại tài khoản</Text>
               <View style={styles.roleButtons}>
@@ -204,18 +188,19 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                     👤 Khách hàng
                   </Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={[styles.roleButton, formData.role === "tutor" && styles.activeRoleButton]}
                   onPress={() => updateFormData("role", "tutor")}
                 >
                   <Text style={[styles.roleButtonText, formData.role === "tutor" && styles.activeRoleButtonText]}>
-                  🎓 Gia sư
+                    🎓 Gia sư
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            {/* Input thông tin cá nhân */}
+            {/* ====== Thông tin cơ bản ====== */}
             <TextInput
               style={styles.input}
               placeholder="Họ và tên"
@@ -258,44 +243,47 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
             />
             <TextInput
               style={styles.input}
-              placeholder="Khu vực (VD: Hà Đông , Hà Nội)"
+              placeholder="Khu vực (VD: Hà Đông, Hà Nội)"
               value={formData.address}
               onChangeText={(value) => updateFormData("address", value)}
               editable={!loading}
             />
 
-            {/* Nếu chọn gia sư, hiển thị thêm thông tin chuyên môn */}
+            {/* ====== Phần thông tin gia sư ====== */}
             {formData.role === "tutor" && (
               <View style={styles.tutorFieldsContainer}>
                 <Text style={styles.tutorFieldsTitle}>Thông tin gia sư</Text>
 
-                {/* Chọn chuyên môn */}
-                <View style={styles.multiSelectContainer}>
-                  <Text style={styles.multiSelectLabel}>Chọn chuyên môn</Text>
-                  {services.map((service) => {
-                    const isSelected = formData.serviceId.includes(service.id)
-                    return (
-                      <TouchableOpacity
-                        key={service.id}
-                        style={[
-                          styles.serviceItem,
-                          isSelected && styles.serviceItemSelected,
-                        ]}
-                        onPress={() => toggleService(service.id)}
-                        disabled={loading}
-                      >
-                        <Text style={isSelected ? styles.serviceTextSelected : styles.serviceText}>
-                          {isSelected ? "✅ " : "☑️ "} {service.name}
-                        </Text>
-                      </TouchableOpacity>
-                    )
-                  })}
-                </View>
+                <Text style={styles.multiSelectLabel}>Chọn môn giảng dạy</Text>
+                <DropDownPicker
+                  open={open}
+                  value={formData.serviceId}
+                  items={subjectItems}
+                  setOpen={setOpen}
+                  setValue={(callback) => {
+                    const selected = callback(formData.serviceId)
+                    updateFormData("serviceId", selected)
+                  }}
+                  multiple={true}
+                  searchable={true}
+                  placeholder="Chọn một hoặc nhiều môn học..."
+                  mode="BADGE"
+                  badgeDotColors={["#007AFF", "#FF9500", "#4CD964"]}
+                  style={{ marginTop: 10, borderColor: "#ccc", borderRadius: 8, zIndex: 1000 }}
+                  dropDownContainerStyle={{ borderColor: "#ccc" }}
+                />
 
-                {/* Nhập kinh nghiệm và chứng chỉ */}
                 <TextInput
                   style={styles.input}
-                  placeholder="Kinh nghiệm (VD: 5 năm kinh nghiệm)"
+                  placeholder="Hoặc nhập môn học khác (tùy chọn)"
+                  value={formData.customSubject}
+                  onChangeText={(value) => updateFormData("customSubject", value)}
+                  editable={!loading}
+                />
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Kinh nghiệm (VD: 3 năm dạy học)"
                   value={formData.experience}
                   onChangeText={(value) => updateFormData("experience", value)}
                   editable={!loading}
@@ -307,17 +295,10 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                   onChangeText={(value) => updateFormData("certificate", value)}
                   editable={!loading}
                 />
-
-                {/* Lưu ý cho gia sư */}
-                <View style={styles.tutorNote}>
-                  <Text style={styles.tutorNoteText}>
-                    📝 Lưu ý: Tài khoản gia sư sẽ được admin xem xét và phê duyệt trước khi có thể sử dụng.
-                  </Text>
-                </View>
               </View>
             )}
 
-            {/* Nút đăng ký */}
+            {/* ====== Nút Đăng ký ====== */}
             <TouchableOpacity
               style={[styles.loginButton, loading && { opacity: 0.7 }]}
               onPress={handleRegister}
@@ -326,7 +307,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
               {loading ? <ActivityIndicator color="white" /> : <Text style={styles.loginButtonText}>Đăng ký</Text>}
             </TouchableOpacity>
 
-            {/* Chuyển sang màn hình đăng nhập */}
+            {/* ====== Quay lại đăng nhập ====== */}
             <TouchableOpacity style={styles.registerButton} onPress={onBackToLogin}>
               <Text style={styles.registerButtonText}>← Đã có tài khoản? Đăng nhập</Text>
             </TouchableOpacity>
