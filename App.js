@@ -1,72 +1,72 @@
-import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, ActivityIndicator } from "react-native"
+import React, { useState } from "react";
+import { SafeAreaView, Text, ActivityIndicator } from "react-native"
+// login - register - forgotPassword
 import LoginScreen from "@login/LoginScreen"
-import { addAddress, listenAddresses } from "@service/firebaseService"
-
+import RegisterScreen from "@login/RegisterScreen";
+import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // không còn loading khởi tạo Firebase
+  const [currentScreen, setCurrentScreen] = useState("login"); //  Quản lý màn hình
 
-  // ✅ Khởi tạo Firebase hoặc các dữ liệu test
-  useEffect(() => {
-    const init = async () => {
-      try {
-        listenAddresses(); // Lắng nghe Realtime DB
-        await addAddress({
-          address: "123 Nguyễn Văn Cừ, Quận 5",
-          phone: "0909999999",
-          title: "Nhà test từ React Native",
-          isDefault: false,
-          userId: "3",
-        });
-      } catch (error) {
-        console.error("Lỗi khi khởi tạo:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    init();
-  }, []);
-
-  // ✅ Callback: khi đăng nhập thành công
+  //  Callback: khi đăng nhập thành công
   const handleLogin = (role, userData) => {
     console.log("Đăng nhập thành công:", role, userData);
     setUser(userData);
   };
 
-  const handleRegister = () => {
-    console.log("👉 Chuyển sang màn đăng ký...");
+  //  Chuyển sang màn đăng ký
+  const handleRegisterPress = () => {
+    setCurrentScreen("register");
   };
 
-  const handleForgotPassword = () => {
-    console.log("🔑 Chuyển sang màn quên mật khẩu...");
+  // Chuyển sang màn quên mật khẩu
+  const handleForgotPasswordPress = () => {
+    setCurrentScreen("forgotPassword");
   };
 
-  // ✅ Hiển thị loading khởi tạo ban đầu
-  if (loading) {
-    return (
-      <SafeAreaView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      >
-        <ActivityIndicator size="large" color="#2563eb" />
-        <Text style={{ marginTop: 10, fontSize: 16 }}>Đang khởi tạo...</Text>
-      </SafeAreaView>
-    );
-  }
+  //  Quay lại màn login từ register hoặc forgot password
+  const handleBackToLogin = () => {
+    setCurrentScreen("login");
+  };
 
-  // ✅ Nếu chưa đăng nhập → hiển thị LoginScreen
+  //  Nếu chưa đăng nhập → hiển thị login/register/forgotPassword
   if (!user) {
-    return (
-      <LoginScreen
-        onLogin={handleLogin}
-        onRegister={handleRegister}
-        onForgotPassword={handleForgotPassword}
-      />
-    );
+    switch (currentScreen) {
+      case "login":
+        return (
+          <LoginScreen
+            onLogin={handleLogin}
+            onRegister={handleRegisterPress}
+            onForgotPassword={handleForgotPasswordPress}
+          />
+        );
+      case "register":
+        return (
+          <RegisterScreen
+            onRegister={() => setCurrentScreen("login")} // Sau khi đăng ký xong quay về login
+            onBackToLogin={handleBackToLogin} // Nút quay lại login
+          />
+        );
+      case "forgotPassword":
+        return (
+          <ForgotPasswordScreen
+            onBackToLogin={handleBackToLogin} // Nút quay lại login
+          />
+        );
+      default:
+        return (
+          <LoginScreen
+            onLogin={handleLogin}
+            onRegister={handleRegisterPress}
+            onForgotPassword={handleForgotPasswordPress}
+          />
+        );
+    }
   }
 
-  // ✅ Sau khi đăng nhập thành công → hiển thị giao diện chính
+  //  Sau khi đăng nhập thành công → hiển thị giao diện chính
   return (
     <SafeAreaView
       style={{
