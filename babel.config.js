@@ -11,6 +11,7 @@ module.exports = function (api) {
               '@src': './src',
               '@config': './src/config',
               '@data': './src/data',
+              '@screens': './screens',
               '@login': './src/login',
               '@service': './src/service',
               '@style': './src/style',
