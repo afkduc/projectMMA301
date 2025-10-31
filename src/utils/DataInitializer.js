@@ -261,3 +261,4 @@ class DataInitializer {
 }
 
 export default new DataInitializer();
+export { initialServices, initialUsers };
