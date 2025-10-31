@@ -146,31 +146,41 @@ class FirebaseService {
     }
   }
 
-  // Truy vấn theo field = value
-  async queryByField(path, field, value) {
-    if (value === undefined || value === null || value === "") {
-      console.warn(`⚠️ Invalid query value for field ${field}:`, value);
+  // Truy vấn an toàn, luôn trả về mảng []
+async queryByField(path, field, value) {
+  try {
+    if (!value && value !== 0) {
+      console.warn(`⚠️ queryByField: invalid value for field "${field}" ->`, value);
       return [];
     }
 
-    try {
-      const dataRef = ref(database, path);
-      const queryRef = query(dataRef, orderByChild(field), equalTo(value));
-      const snapshot = await get(queryRef);
+    const dataRef = ref(database, path);
+    const queryRef = query(dataRef, orderByChild(field), equalTo(value));
+    const snapshot = await get(queryRef);
 
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        return Object.values(data).map((item) => ({
-          ...item,
-          id: item.id ?? null,
-        }));
-      }
-      return [];
-    } catch (error) {
-      console.error("❌ Error querying data:", error);
+    if (!snapshot.exists()) {
+      console.log(`ℹ️ queryByField: no data found at ${path} where ${field}=${value}`);
       return [];
     }
+
+    const rawData = snapshot.val();
+    if (!rawData || typeof rawData !== "object") {
+      console.warn("⚠️ queryByField: unexpected data format", rawData);
+      return [];
+    }
+
+    const list = Object.values(rawData).map((item) => ({
+      ...item,
+      id: item.id ?? null,
+    }));
+
+    return Array.isArray(list) ? list : [];
+  } catch (error) {
+    console.error("❌ Error querying data:", error);
+    return [];
   }
+}
+
 
   // Kiểm tra kết nối Firebase
   async checkConnection(timeoutMs = 3000) {

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect  } from "react";
 // login - register - forgotPassword
 import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
+import { seedUsers } from "@service/initUsers";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -11,6 +12,12 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
+
+  // login initUser
+  useEffect(() => {
+    seedUsers(); // chạy 1 lần khi app start
+  }, []);
+
 
   // --- Xử lý login ---
   const handleLogin = (role, userData) => {
