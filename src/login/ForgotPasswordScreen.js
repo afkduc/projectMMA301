@@ -16,12 +16,12 @@ import {
 } from 'react-native';
 import UserService from "@service/UserService"
 import OtpService from "@service/otpService";
-import { sendSms } from "@utils/smsService"; 
+import { sendSms } from "@utils/smsService";
 
 const ForgotPasswordScreen = ({ onBackToLogin }) => {
   const [step, setStep] = useState(1); // 1: input phonenumber, 2: OTP, 3: new password
   const [otp, setOtp] = useState('');
-  const [phone, setPhone] = useState(''); 
+  const [phone, setPhone] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -66,12 +66,12 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
         setError('Số điện thoại không tồn tại trong hệ thống');
         return;
       }
- //  Tạo mã OTP ngẫu nhiên 6 chữ số
+      //  Tạo mã OTP ngẫu nhiên 6 chữ số
       const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    //  Gọi OtpService để gửi và lưu OTP
+      //  Gọi OtpService để gửi và lưu OTP
       await OtpService.sendOtp(otpCode, user.id);
-       // Gửi OTP thật đến người dùng qua SMS
+      // Gửi OTP thật đến người dùng qua SMS
       await sendSms(getInternationalPhone(phone), `Mã OTP của bạn là: ${otpCode}`);
       // Lưu userId, set bước tiếp theo, hiển thị thông báo
       setUserId(user.id);
@@ -209,36 +209,37 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
           </>
         );
 
-      case 3:
-        return (
-          <>
-            <Text style={styles.label}>Mật khẩu mới</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-              placeholder="Nhập mật khẩu mới"
-            />
-            <Text style={styles.label}>Xác nhận mật khẩu</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Xác nhận lại mật khẩu"
-            />
-            {error ? <Text style={styles.error}>{error}</Text> : null}
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleResetPassword}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>Đặt lại mật khẩu</Text>
-            </TouchableOpacity>
-          </>
-        );
-
+        case 3:
+          return (
+            <View key="step3">     {/* ✅ Thêm key cho cả block */}
+              <Text style={styles.label}>Mật khẩu mới</Text>
+              <TextInput
+                key="newPasswordInput"
+                style={styles.input}
+                secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
+                placeholder="Nhập mật khẩu mới"
+              />
+              <Text style={styles.label}>Xác nhận mật khẩu</Text>
+              <TextInput
+                style={styles.input}
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Xác nhận lại mật khẩu"
+              />
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleResetPassword}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>Đặt lại mật khẩu</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        
       default:
         return null;
     }
@@ -249,8 +250,14 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.wrapper}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets={true}
+        >
+
           <Text style={styles.title}>Quên mật khẩu</Text>
           {renderStepContent()}
           <TouchableOpacity onPress={onBackToLogin} style={{ marginTop: 20 }}>
