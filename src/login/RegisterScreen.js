@@ -8,8 +8,9 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
+  Modal,
+  FlatList,
 } from "react-native"
-import DropDownPicker from "react-native-dropdown-picker"
 import { styles } from "@style/styles"
 import UserService from "@service/UserService"
 import tutorService from "@service/tutorService"
@@ -30,19 +31,61 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
   })
 
   const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false)
 
-  // Danh sách môn học tĩnh (không cần lấy từ Firebase)
+  // Modal hiển thị khu vực & môn học
+  const [modalAreaVisible, setModalAreaVisible] = useState(false)
+  const [modalSubjectVisible, setModalSubjectVisible] = useState(false)
+
+  // Tìm kiếm trong modal
+  const [searchArea, setSearchArea] = useState("")
+  const [searchSubject, setSearchSubject] = useState("")
+
+  // Danh sách môn học
   const subjectItems = [
-    { label: "Toán học", value: "toan" },
-    { label: "Tiếng Anh", value: "tieng_anh" },
-    { label: "Vật lý", value: "vat_ly" },
-    { label: "Hóa học", value: "hoa_hoc" },
-    { label: "Sinh học", value: "sinh_hoc" },
-    { label: "Tin học", value: "tin_hoc" },
-    { label: "Ngữ văn", value: "ngu_van" },
-    { label: "Lịch sử", value: "lich_su" },
-    { label: "Địa lý", value: "dia_ly" },
+    "Toán học",
+    "Tiếng Anh",
+    "Vật lý",
+    "Hóa học",
+    "Sinh học",
+    "Tin học",
+    "Ngữ văn",
+    "Lịch sử",
+    "Địa lý",
+  ]
+
+  // Danh sách khu vực Hà Nội
+  const areaItems = [
+    "Ba Đình",
+    "Hoàn Kiếm",
+    "Đống Đa",
+    "Hai Bà Trưng",
+    "Cầu Giấy",
+    "Thanh Xuân",
+    "Hoàng Mai",
+    "Long Biên",
+    "Tây Hồ",
+    "Nam Từ Liêm",
+    "Bắc Từ Liêm",
+    "Hà Đông",
+    "Thanh Trì",
+    "Gia Lâm",
+    "Đông Anh",
+    "Sóc Sơn",
+    "Hoài Đức",
+    "Đan Phượng",
+    "Thường Tín",
+    "Phú Xuyên",
+    "Ứng Hòa",
+    "Mỹ Đức",
+    "Phúc Thọ",
+    "Ba Vì",
+    "Chương Mỹ",
+    "Thanh Oai",
+    "Quốc Oai",
+    "Thạch Thất",
+    "Mê Linh",
+    "Sơn Tây (thị xã)",
+    "Khác (ngoài Hà Nội)",
   ]
 
   const updateFormData = (field, value) => {
@@ -120,21 +163,12 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       const userId = await UserService.createUser(userData)
 
       if (formData.role === "tutor") {
-        const selectedSubjects = subjectItems
-          .filter((s) => formData.serviceId.includes(s.value))
-          .map((s) => s.label)
-          .join(", ")
-
-        const specialty = formData.customSubject
-          ? `${selectedSubjects}, ${formData.customSubject}`
-          : selectedSubjects
-
         const tutorData = {
           userId,
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
-          specialty,
+          specialty: formData.serviceId.join(", "),
           serviceId: formData.serviceId,
           experience: formData.experience,
           certificate: formData.certificate,
@@ -153,8 +187,8 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       Alert.alert(
         "Đăng ký thành công!",
         formData.role === "tutor"
-          ? "Tài khoản gia sư đã được tạo và đang chờ phê duyệt từ admin."
-          : "Tài khoản đã được tạo thành công. Bạn có thể đăng nhập ngay.",
+          ? "Tài khoản gia sư đang chờ phê duyệt."
+          : "Tài khoản đã được tạo. Bạn có thể đăng nhập ngay.",
         [{ text: "OK", onPress: onRegister }]
       )
     } catch (error) {
@@ -164,6 +198,14 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       setLoading(false)
     }
   }
+
+  // Lọc danh sách tìm kiếm
+  const filteredAreas = areaItems.filter((a) =>
+    a.toLowerCase().includes(searchArea.toLowerCase())
+  )
+  const filteredSubjects = subjectItems.filter((s) =>
+    s.toLowerCase().includes(searchSubject.toLowerCase())
+  )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -176,45 +218,45 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
           </View>
 
           <View style={styles.form}>
-  {/* ====== Chọn loại tài khoản ====== */}
-  <View style={styles.roleContainer}>
-    <Text style={styles.roleLabel}>Loại tài khoản</Text>
-    <View style={styles.roleButtons}>
-      <TouchableOpacity
-        style={[
-          styles.roleButton,
-          formData.role === "customer" && styles.activeRoleButton
-        ]}
-        onPress={() => updateFormData("role", "customer")}
-      >
-        <Text
-          style={[
-            styles.roleButtonText,
-            formData.role === "customer" && styles.activeRoleButtonText
-          ]}
-        >
-          👤 Khách hàng
-        </Text>
-      </TouchableOpacity>
+            {/* ====== Loại tài khoản ====== */}
+            <View style={styles.roleContainer}>
+              <Text style={styles.roleLabel}>Loại tài khoản</Text>
+              <View style={styles.roleButtons}>
+                <TouchableOpacity
+                  style={[
+                    styles.roleButton,
+                    formData.role === "customer" && styles.activeRoleButton,
+                  ]}
+                  onPress={() => updateFormData("role", "customer")}
+                >
+                  <Text
+                    style={[
+                      styles.roleButtonText,
+                      formData.role === "customer" && styles.activeRoleButtonText,
+                    ]}
+                  >
+                    👤 Khách hàng
+                  </Text>
+                </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.roleButton,
-          formData.role === "tutor" && styles.activeRoleButton
-        ]}
-        onPress={() => updateFormData("role", "tutor")}
-      >
-        <Text
-          style={[
-            styles.roleButtonText,
-            formData.role === "tutor" && styles.activeRoleButtonText
-          ]}
-        >
-          🎓 Gia sư
-        </Text>
-      </TouchableOpacity>
-    </View>
-  </View>
+                <TouchableOpacity
+                  style={[
+                    styles.roleButton,
+                    formData.role === "tutor" && styles.activeRoleButton,
+                  ]}
+                  onPress={() => updateFormData("role", "tutor")}
+                >
+                  <Text
+                    style={[
+                      styles.roleButtonText,
+                      formData.role === "tutor" && styles.activeRoleButtonText,
+                    ]}
+                  >
+                    🎓 Gia sư
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
             {/* ====== Thông tin cơ bản ====== */}
             <TextInput
@@ -222,99 +264,198 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
               placeholder="Họ và tên"
               value={formData.name}
               onChangeText={(value) => updateFormData("name", value)}
-              editable={!loading}
             />
             <TextInput
               style={styles.input}
               placeholder="Số điện thoại"
+              keyboardType="phone-pad"
               value={formData.phone}
               onChangeText={(value) => updateFormData("phone", value)}
-              keyboardType="phone-pad"
-              editable={!loading}
             />
             <TextInput
               style={styles.input}
               placeholder="Email"
-              value={formData.email}
-              onChangeText={(value) => updateFormData("email", value)}
               keyboardType="email-address"
               autoCapitalize="none"
-              editable={!loading}
+              value={formData.email}
+              onChangeText={(value) => updateFormData("email", value)}
             />
             <TextInput
               style={styles.input}
               placeholder="Mật khẩu"
+              secureTextEntry
               value={formData.password}
               onChangeText={(value) => updateFormData("password", value)}
-              secureTextEntry
-              editable={!loading}
             />
             <TextInput
               style={styles.input}
               placeholder="Xác nhận mật khẩu"
+              secureTextEntry
               value={formData.confirmPassword}
               onChangeText={(value) => updateFormData("confirmPassword", value)}
-              secureTextEntry
-              editable={!loading}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Khu vực (VD: Hà Đông, Hà Nội)"
-              value={formData.address}
-              onChangeText={(value) => updateFormData("address", value)}
-              editable={!loading}
             />
 
-            {/* ====== Phần thông tin gia sư ====== */}
+            {/* ====== Khu vực ====== */}
+            <TouchableOpacity
+              style={[styles.input, { justifyContent: "center" }]}
+              onPress={() => setModalAreaVisible(true)}
+            >
+              <Text style={{ color: formData.address ? "#000" : "#999" }}>
+                {formData.address || "Chọn khu vực..."}
+              </Text>
+            </TouchableOpacity>
+
+            {/* ====== Modal chọn khu vực ====== */}
+            <Modal
+              visible={modalAreaVisible}
+              animationType="slide"
+              transparent={true}
+              onRequestClose={() => setModalAreaVisible(false)}
+            >
+              <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.3)" }}>
+                <View style={{ backgroundColor: "white", borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "60%" }}>
+                  <Text style={{ fontSize: 18, fontWeight: "600", textAlign: "center", marginVertical: 10 }}>
+                    Chọn khu vực
+                  </Text>
+                  <TextInput
+                    style={{
+                      marginHorizontal: 15,
+                      marginBottom: 10,
+                      borderColor: "#ccc",
+                      borderWidth: 1,
+                      borderRadius: 8,
+                      paddingHorizontal: 10,
+                      height: 40,
+                    }}
+                    placeholder="Tìm khu vực..."
+                    value={searchArea}
+                    onChangeText={setSearchArea}
+                  />
+                  <FlatList
+                    data={filteredAreas}
+                    keyExtractor={(item) => item}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={{ paddingVertical: 12, alignItems: "center", borderBottomColor: "#eee", borderBottomWidth: 1 }}
+                        onPress={() => {
+                          updateFormData("address", item)
+                          setModalAreaVisible(false)
+                        }}
+                      >
+                        <Text style={{ fontSize: 16 }}>{item}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              </View>
+            </Modal>
+
+            {/* ====== Nếu là gia sư ====== */}
             {formData.role === "tutor" && (
               <View style={styles.tutorFieldsContainer}>
                 <Text style={styles.tutorFieldsTitle}>Thông tin gia sư</Text>
 
-                <Text style={styles.multiSelectLabel}>Chọn môn giảng dạy</Text>
-                <DropDownPicker
-                  open={open}
-                  value={formData.serviceId}
-                  items={subjectItems}
-                  setOpen={setOpen}
-                  setValue={(callback) => {
-                    const selected = callback(formData.serviceId)
-                    updateFormData("serviceId", selected)
-                  }}
-                  multiple={true}
-                  searchable={true}
-                  placeholder="Chọn một hoặc nhiều môn học..."
-                  mode="BADGE"
-                  badgeDotColors={["#007AFF", "#FF9500", "#4CD964"]}
-                  style={{ marginTop: 10, borderColor: "#ccc", borderRadius: 8, zIndex: 1000 }}
-                  dropDownContainerStyle={{ borderColor: "#ccc" }}
-                />
+                {/* ====== Môn học ====== */}
+                <TouchableOpacity
+                  style={[styles.input, { justifyContent: "center" }]}
+                  onPress={() => setModalSubjectVisible(true)}
+                >
+                  <Text style={{ color: formData.serviceId.length ? "#000" : "#999" }}>
+                    {formData.serviceId.length
+                      ? `Đã chọn: ${formData.serviceId.join(", ")}`
+                      : "Chọn môn giảng dạy..."}
+                  </Text>
+                </TouchableOpacity>
 
-                <TextInput
-                  style={styles.input}
-                  placeholder="Hoặc nhập môn học khác (tùy chọn)"
-                  value={formData.customSubject}
-                  onChangeText={(value) => updateFormData("customSubject", value)}
-                  editable={!loading}
-                />
+                {/* ====== Modal chọn môn học ====== */}
+                <Modal
+                  visible={modalSubjectVisible}
+                  animationType="slide"
+                  transparent={true}
+                  onRequestClose={() => setModalSubjectVisible(false)}
+                >
+                  <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.3)" }}>
+                    <View style={{ backgroundColor: "white", borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: "65%" }}>
+                      <Text style={{ fontSize: 18, fontWeight: "600", textAlign: "center", marginVertical: 10 }}>
+                        Chọn môn học
+                      </Text>
+                      <TextInput
+                        style={{
+                          marginHorizontal: 15,
+                          marginBottom: 10,
+                          borderColor: "#ccc",
+                          borderWidth: 1,
+                          borderRadius: 8,
+                          paddingHorizontal: 10,
+                          height: 40,
+                        }}
+                        placeholder="Tìm môn học..."
+                        value={searchSubject}
+                        onChangeText={setSearchSubject}
+                      />
+                      <FlatList
+                        data={filteredSubjects}
+                        keyExtractor={(item) => item}
+                        renderItem={({ item }) => {
+                          const selected = formData.serviceId.includes(item)
+                          return (
+                            <TouchableOpacity
+                              style={{
+                                paddingVertical: 12,
+                                alignItems: "center",
+                                borderBottomColor: "#eee",
+                                borderBottomWidth: 1,
+                                backgroundColor: selected ? "#E0F7FA" : "white",
+                              }}
+                              onPress={() => {
+                                let newSelection
+                                if (selected) {
+                                  newSelection = formData.serviceId.filter((s) => s !== item)
+                                } else {
+                                  newSelection = [...formData.serviceId, item]
+                                }
+                                updateFormData("serviceId", newSelection)
+                              }}
+                            >
+                              <Text style={{ fontSize: 16 }}>
+                                {selected ? "✅ " : ""}{item}
+                              </Text>
+                            </TouchableOpacity>
+                          )
+                        }}
+                      />
+                      <TouchableOpacity
+                        style={{
+                          backgroundColor: "#007AFF",
+                          margin: 15,
+                          borderRadius: 10,
+                          paddingVertical: 12,
+                          alignItems: "center",
+                        }}
+                        onPress={() => setModalSubjectVisible(false)}
+                      >
+                        <Text style={{ color: "white", fontWeight: "600" }}>Xong</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
 
                 <TextInput
                   style={styles.input}
                   placeholder="Kinh nghiệm (VD: 3 năm dạy học)"
                   value={formData.experience}
                   onChangeText={(value) => updateFormData("experience", value)}
-                  editable={!loading}
                 />
                 <TextInput
                   style={styles.input}
                   placeholder="Chứng chỉ (tùy chọn)"
                   value={formData.certificate}
                   onChangeText={(value) => updateFormData("certificate", value)}
-                  editable={!loading}
                 />
               </View>
             )}
 
-            {/* ====== Nút Đăng ký ====== */}
+            {/* ====== Đăng ký ====== */}
             <TouchableOpacity
               style={[styles.loginButton, loading && { opacity: 0.7 }]}
               onPress={handleRegister}
@@ -323,7 +464,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
               {loading ? <ActivityIndicator color="white" /> : <Text style={styles.loginButtonText}>Đăng ký</Text>}
             </TouchableOpacity>
 
-            {/* ====== Quay lại đăng nhập ====== */}
+            {/* ====== Quay lại ====== */}
             <TouchableOpacity style={styles.registerButton} onPress={onBackToLogin}>
               <Text style={styles.registerButtonText}>← Đã có tài khoản? Đăng nhập</Text>
             </TouchableOpacity>
