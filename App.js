@@ -7,6 +7,9 @@ import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
 
+// Admin screens
+import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
@@ -18,6 +21,9 @@ export default function App() {
     setUser(userData);
     if (role === "customer") {
       setCurrentScreen("home");
+    }
+    if (role === "admin") {
+      setCurrentScreen("adminDashboard");
     }
   };
 
@@ -103,6 +109,18 @@ export default function App() {
       />
     );
   }
+
+  if (currentScreen === "adminDashboard") {
+    return (
+      <AdminDashboardScreen 
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
 
   // Dự phòng (nếu cần)
   return (
