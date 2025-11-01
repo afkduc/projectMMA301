@@ -1291,7 +1291,7 @@ export const styles = StyleSheet.create({
 
   // Thêm styles cho admin screens
   adminHeader: {
-    backgroundColor: '#7c3aed',
+    backgroundColor: '#3a393bff',
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -1315,7 +1315,7 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
-    width: '48%',
+    width: '31%',
     borderWidth: 1,
     borderColor: '#e5e7eb',
     shadowColor: '#000',
