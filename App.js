@@ -22,6 +22,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
 
 
@@ -153,54 +154,6 @@ export default function App() {
       );
     }
 
-  // 🔹 Nếu user đã đăng nhập
-  
-  // Customer screens
-  if (user.role === "customer") {
-    if (currentScreen === "home") {
-      return (
-        <HomeScreen
-          onServicePress={handleServicePress}
-          onTabPress={handleTabPress}
-          currentUser={user}
-          onLogout={handleLogout}
-        />
-      );
-    }
-  }
-
-  // Tutor screens
-  if (user.role === "tutor") {
-    if (currentScreen === "tutorDashboard") {
-      return (
-        <TutorDashboardScreen
-          onTabPress={handleTabPress}
-          onOrderPress={handleOrderPress}
-        />
-      );
-    }
-    
-    if (currentScreen === "tutorOrders") {
-      return (
-        <TutorOrdersScreen
-          onTabPress={handleTabPress}
-          onOrderPress={handleOrderPress}
-        />
-      );
-    }
-    
-    if (currentScreen === "tutorProfile") {
-      return (
-        <TutorProfileScreen
-          currentUser={user}
-          onTabPress={handleTabPress}
-          onLogout={handleLogout}
-          onMenuPress={handleMenuPress}
-        />
-      );
-    }
-    
-
   // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
   if (currentScreen === "home") {
     return (
@@ -220,4 +173,5 @@ export default function App() {
       <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
       <Text>Vai trò: {user.role}</Text>
     </SafeAreaView>
-  );}}
+  );
+}
