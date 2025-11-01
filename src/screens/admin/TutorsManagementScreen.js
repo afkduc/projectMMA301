@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { styles } from "../../style/styles";
 import { AdminBottomNav } from "../../components/BottomNavigation";
-import tutorService from "../../service/tutorService";
+import TutorService from "../../service/tutorService";
 
 const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     const [tutorList, setTutorList] = useState([]);
@@ -26,7 +26,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     const fetchTutors = async () => {
         setLoading(true);
         try {
-            const tutors = (await tutorService.getAllTutors()) || [];
+            const tutors = (await TutorService.getAllTutors()) || [];
 
             const normalizedTutors = tutors.map((t) => ({
                 ...t,
@@ -63,7 +63,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
             {
                 text: "Duyệt",
                 onPress: async () => {
-                    await tutorService.updateTutor(tutorId, { status: "active" });
+                    await TutorService.updateTutor(tutorId, { status: "active" });
                     fetchTutors();
                     Alert.alert("Thành công", "Đã duyệt hồ sơ.");
                 },
@@ -82,7 +82,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
             {
                 text: "Xác nhận",
                 onPress: async () => {
-                    await tutorService.updateTutor(tutorId, { status: newStatus });
+                    await TutorService.updateTutor(tutorId, { status: newStatus });
                     fetchTutors();
                     Alert.alert("Thành công", `Đã ${action} tài khoản.`);
                 },
@@ -93,7 +93,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     const handleViewDetails = (tutor) => {
         Alert.alert(
             "Chi tiết gia sư",
-            `Tên: ${tutor.name}\nChuyên môn: ${tutor.specialty}\nĐánh giá: ${tutor.rating}/5\nĐơn hoàn thành: ${tutor.completedOrders}\nChứng chỉ: ${tutor.certificate}\nKhu vực: ${tutor.area}`
+            `Tên: ${tutor.name}\nChuyên môn: ${tutor.specialty}\nĐánh giá: ${tutor.rating}/5\nĐơn hoàn thành: ${tutor.completedOrders}\nChứng chỉ: ${tutor.experience}`
         );
     };
 
@@ -152,15 +152,14 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
                             <Text style={{ fontWeight: "bold" }}>SĐT:</Text> {item.phone || "N/A"}
                         </Text>
                         <Text style={styles.userPhone}>
-                            <Text style={{ fontWeight: "bold" }}>Môn học:</Text> {item.specialty || "N/A"}
+                            <Text style={{ fontWeight: "bold" }}>Email:</Text> {item.email || "N/A"}
+                        </Text>
+                        <Text style={styles.userPhone}>
+                            <Text style={{ fontWeight: "bold" }}>Chuyên môn:</Text> {item.specialty || "N/A"}
                         </Text>
                         <Text style={styles.userPhone}>
                             <Text style={{ fontWeight: "bold" }}>Đánh giá:</Text> {item.rating}/5 ({item.completedOrders} đơn)
                         </Text>
-                        <Text style={styles.userPhone}>
-                            <Text style={{ fontWeight: "bold" }}>Địa chỉ:</Text> {item.area || "N/A"}
-                        </Text>
-
                     </View>
                 </View>
 

@@ -31,7 +31,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
         const matchesSearch =
             customer.name?.toLowerCase().includes(searchText.toLowerCase()) ||
             customer.phone?.includes(searchText) ||
-            customer.area?.toLowerCase().includes(searchText.toLowerCase());
+            customer.address?.toLowerCase().includes(searchText.toLowerCase());
 
         const matchesStatus =
             filterStatus === "all" || customer.status === filterStatus;
@@ -119,7 +119,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
 
                     <Text style={styles.userPhone}>
                         <Text style={{ fontWeight: 'bold' }}>Địa chỉ: </Text>
-                        {item.area || 'N/A'}
+                        {item.address || 'N/A'}
                     </Text>
 
                     <Text style={styles.userPhone}>
