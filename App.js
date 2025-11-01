@@ -120,6 +120,7 @@ const handleBack = () => {
   const backScreen = backNavigation[currentScreen];
   if (backScreen) {
     setCurrentScreen(backScreen);
+  } else {
     // Fallback theo vai trò
     if (user?.role === 'customer') {
       setCurrentScreen('home');
@@ -127,6 +128,10 @@ const handleBack = () => {
       setCurrentScreen('tutorDashboard');
     } else if (user?.role === 'admin') {
       setCurrentScreen('adminDashboard');
+    } else {
+      setCurrentScreen('home');
+    }
+  }
 };
 
 
@@ -134,14 +139,12 @@ const handleBack = () => {
   const handleOrderPress = (order) => {
     console.log("Tutor chọn đơn hàng:", order);
     setSelectedOrder(order);
-    // Có thể chuyển sang màn chi tiết đơn hàng
-    setCurrentScreen("tutorOrderDetail");
+    setCurrentScreen("tutorOrderDetail"); // ✅ ADDED
   };
 
   // --- Khi tutor bấm menu item trong profile ---
   const handleMenuPress = (action) => {
     console.log("Menu action:", action);
-    // Chuyển đến màn hình tương ứng
     if (action) {
       setCurrentScreen(action);
     }
