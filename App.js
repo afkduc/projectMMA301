@@ -4,6 +4,8 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
+// AI ask 
+import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -98,6 +100,15 @@ export default function App() {
         );
     }
   }
+    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+    if (currentScreen === "ai") {
+      return (
+        <AiAdvisorScreen
+          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
+          currentUser={user}
+        />
+      );
+    }
 
   // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
   if (currentScreen === "home") {
@@ -107,6 +118,7 @@ export default function App() {
         onTabPress={handleTabPress}
         currentUser={user}
         onLogout={handleLogout}
+        onOpenAI={() => setCurrentScreen("ai")} // 🧠 Khi nhấn robot → mở màn hình AI
       />
     );
   }
