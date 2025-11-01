@@ -20,6 +20,14 @@ export async function seedUsers() {
         role: "customer",
         email: "customer@test.com",
       },
+      {
+        name: "tutor",
+        phone: "0911111112",
+        password: "123456",
+        role: "tutor",
+        email: "customer@test.com",
+      },
+      
     ];
 
     for (const user of usersToCreate) {

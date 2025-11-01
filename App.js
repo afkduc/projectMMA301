@@ -6,6 +6,8 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
+// AI ask 
+import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -19,7 +21,11 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
+
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
+
 
   // login initUser
   useEffect(() => {
@@ -139,67 +145,27 @@ export default function App() {
         );
     }
   }
-
-  // 🔹 Nếu user đã đăng nhập
-  
-  // Customer screens
-  if (user.role === "customer") {
-    if (currentScreen === "home") {
+    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+    if (currentScreen === "ai") {
       return (
-        <HomeScreen
-          onServicePress={handleServicePress}
-          onTabPress={handleTabPress}
+        <AiAdvisorScreen
+          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
           currentUser={user}
-          onLogout={handleLogout}
         />
       );
     }
-  }
 
-  // Tutor screens
-  if (user.role === "tutor") {
-    if (currentScreen === "tutorDashboard") {
-      return (
-        <TutorDashboardScreen
-          onTabPress={handleTabPress}
-          onOrderPress={handleOrderPress}
-        />
-      );
-    }
-    
-    if (currentScreen === "tutorOrders") {
-      return (
-        <TutorOrdersScreen
-          onTabPress={handleTabPress}
-          onOrderPress={handleOrderPress}
-        />
-      );
-    }
-    
-    if (currentScreen === "tutorProfile") {
-      return (
-        <TutorProfileScreen
-          currentUser={user}
-          onTabPress={handleTabPress}
-          onLogout={handleLogout}
-          onMenuPress={handleMenuPress}
-        />
-      );
-    }
-    
-    // Thêm các màn hình tutor khác ở đây khi cần
-    // if (currentScreen === "tutorOrderDetail") {
-    //   return (
-    //     <TutorOrderDetailScreen
-    //       order={selectedOrder}
-    //       onTabPress={handleTabPress}
-    //       onBack={() => setCurrentScreen("tutorOrders")}
-    //     />
-    //   );
-    // }
-    // if (currentScreen === "tutorProfile") {
-    //   return <TutorProfileScreen ... />;
-    // }
+  // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
+  if (currentScreen === "home") {
+    return (
+      <HomeScreen
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        onOpenAI={() => setCurrentScreen("ai")} // 🧠 Khi nhấn robot → mở màn hình AI
+      />
+    );
   }
 
   // Dự phòng (nếu cần)
