@@ -16,15 +16,25 @@ import HomeScreen from "./src/screens/customer/HomeScreen";
 import TutorDashboardScreen from "./src/screens/tutor/TutorDashboardScreen";
 import TutorOrdersScreen from "./src/screens/tutor/TutorOrdersScreen";
 import TutorProfileScreen from "./src/screens/tutor/TutorProfileScreen";
+import TutorOrderDetailScreen from "./src/screens/tutor/TutorOrderDetailScreen";
+import TutorAreaScreen from "./src/screens/tutor/TutorAreaScreen";
+import TutorSkillsScreen from "./src/screens/tutor/TutorSkillsScreen";
+import TutorInfoScreen from "./src/screens/tutor/TutorInfoScreen";
+import TutorScheduleScreen from "./src/screens/tutor/TutorScheduleScreen";
+import TutorIncomeScreen from "./src/screens/tutor/TutorIncomeScreen";
+import TutorReviewsScreen from "./src/screens/tutor/TutorReviewsScreen";
+import TutorEditProfileScreen from "./src/screens/tutor/TutorEditProfileScreen";
+import TutorSupportScreen from "./src/screens/tutor/TutorSupportScreen";
+import TutorSettingsScreen from "./src/screens/tutor/TutorSettingsScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [selectedOrder, setSelectedOrder] = useState(null);
   const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
-
+  // Cập nhật state để thêm currentUser
+  const [currentUser, setCurrentUser] = useState(null);
 
   // login initUser
   useEffect(() => {
@@ -38,8 +48,10 @@ export default function App() {
     if (role === "customer") {
       setCurrentScreen("home");
     } else if (role === "tutor") {
-      setCurrentScreen("tutorDashboard");
-    }
+      setCurrentScreen("tutorDashboard"); // ✅ ADDED: vào dashboard tutor sau login
+    } else if (userType === 'admin') {
+    setCurrentScreen('adminDashboard');
+  }
   };
 
   // --- Chuyển sang register ---
@@ -67,7 +79,6 @@ export default function App() {
   // --- Khi người dùng bấm tab ---
   const handleTabPress = (tab) => {
     console.log("Người dùng chọn tab:", tab);
-    
     // Customer tabs
     if (user?.role === "customer") {
       if (tab === "profile") {
@@ -80,14 +91,44 @@ export default function App() {
     // Tutor tabs
     if (user?.role === "tutor") {
       if (tab === "dashboard") {
-        setCurrentScreen("tutorDashboard");
+        setCurrentScreen("tutorDashboard"); // ✅ ADDED
       } else if (tab === "orders") {
-        setCurrentScreen("tutorOrders");
+        setCurrentScreen("tutorOrders");    // ✅ ADDED
       } else if (tab === "tutorProfile") {
-        setCurrentScreen("tutorProfile");
+        setCurrentScreen("tutorProfile");   // ✅ ADDED
       }
     }
   };
+
+
+  // --- Back navigation mapping ---
+const handleBack = () => {
+  const backNavigation = {
+    // Tutor 
+    tutorOrderDetail: 'tutorOrders',
+    tutorInfo: 'tutorProfile',
+    tutorArea: 'tutorProfile',
+    tutorSkills: 'tutorProfile',
+    tutorSchedule: 'tutorProfile',
+    tutorIncome: 'tutorProfile',
+    tutorReviews: 'tutorProfile',
+    tutorEditProfile: 'tutorProfile',
+    tutorSupport: 'tutorProfile',
+    tutorSettings: 'tutorProfile',
+  };
+
+  const backScreen = backNavigation[currentScreen];
+  if (backScreen) {
+    setCurrentScreen(backScreen);
+    // Fallback theo vai trò
+    if (user?.role === 'customer') {
+      setCurrentScreen('home');
+    } else if (user?.role === 'tutor') {
+      setCurrentScreen('tutorDashboard');
+    } else if (user?.role === 'admin') {
+      setCurrentScreen('adminDashboard');
+};
+
 
   // --- Khi tutor bấm vào order ---
   const handleOrderPress = (order) => {
@@ -154,7 +195,6 @@ export default function App() {
       );
     }
 
-  // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
   if (currentScreen === "home") {
     return (
       <HomeScreen
@@ -162,7 +202,133 @@ export default function App() {
         onTabPress={handleTabPress}
         currentUser={user}
         onLogout={handleLogout}
-        onOpenAI={() => setCurrentScreen("ai")} // 🧠 Khi nhấn robot → mở màn hình AI
+        onOpenAI={() => setCurrentScreen("ai")}
+      />
+    );
+  }
+
+  // tutor screens
+  if (currentScreen === "tutorDashboard") {
+    return (
+      <TutorDashboardScreen
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}           // ✅ ADDED: truyền currentUser nếu cần hiển thị tên/role
+      />
+    );
+  }
+
+  if (currentScreen === "tutorOrders") {
+    return (
+      <TutorOrdersScreen
+        onOrderPress={handleOrderPress} // ✅ ADDED: bấm 1 order → sang detail
+        onTabPress={handleTabPress}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorOrderDetail") {
+    // Nếu bạn đã có component thật, dùng nó thay cho Placeholder bên dưới
+    return (
+      <TutorOrderDetailScreen
+        order={selectedOrder}
+        onTabPress={handleTabPress}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorProfile") {
+    return (
+      <TutorProfileScreen
+        onTabPress={handleTabPress}
+        onLogout={handleLogout}
+        currentUser={currentUser}
+        onMenuPress={handleMenuPress}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorArea") {
+    return (
+      <TutorAreaScreen
+        onTabPress={handleTabPress}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorSkills") {
+    return (
+      <TutorSkillsScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorInfo") {
+    return (
+      <TutorInfoScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+        currentUser={user}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorSchedule") {
+    return (
+      <TutorScheduleScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorIncome") {
+    return (
+      <TutorIncomeScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+        currentUser={user}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorReviews") {
+    return (
+      <TutorReviewsScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+        currentUser={user}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorEditProfile") {
+    return (
+      <TutorEditProfileScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorSupport") {
+    return (
+      <TutorSupportScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorSettings") {
+    return (
+      <TutorSettingsScreen
+        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
+        onBack={handleBack}
       />
     );
   }
@@ -172,6 +338,7 @@ export default function App() {
     <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
       <Text>Vai trò: {user.role}</Text>
+      <Text style={{ marginTop: 12 }}>Màn "{currentScreen}" chưa có UI tương ứng.</Text>
     </SafeAreaView>
   );
 }
