@@ -6,6 +6,8 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
+// AI ask 
+import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -20,6 +22,8 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
+
 
   // login initUser
   useEffect(() => {
@@ -139,6 +143,15 @@ export default function App() {
         );
     }
   }
+    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+    if (currentScreen === "ai") {
+      return (
+        <AiAdvisorScreen
+          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
+          currentUser={user}
+        />
+      );
+    }
 
   // 🔹 Nếu user đã đăng nhập
   
@@ -187,19 +200,18 @@ export default function App() {
       );
     }
     
-    // Thêm các màn hình tutor khác ở đây khi cần
-    // if (currentScreen === "tutorOrderDetail") {
-    //   return (
-    //     <TutorOrderDetailScreen
-    //       order={selectedOrder}
-    //       onTabPress={handleTabPress}
-    //       onBack={() => setCurrentScreen("tutorOrders")}
-    //     />
-    //   );
-    // }
-    // if (currentScreen === "tutorProfile") {
-    //   return <TutorProfileScreen ... />;
-    // }
+
+  // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
+  if (currentScreen === "home") {
+    return (
+      <HomeScreen
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        onOpenAI={() => setCurrentScreen("ai")} // 🧠 Khi nhấn robot → mở màn hình AI
+      />
+    );
   }
 
   // Dự phòng (nếu cần)
@@ -208,5 +220,4 @@ export default function App() {
       <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
       <Text>Vai trò: {user.role}</Text>
     </SafeAreaView>
-  );
-}
+  );}}

@@ -39,41 +39,41 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
   const handleLogin = async () => {
     const trimmedPhone = phone.trim()
     const trimmedPassword = password.trim()
-
+  
     if (!trimmedPhone || !trimmedPassword) {
       Alert.alert("Lỗi", "Vui lòng nhập đầy đủ thông tin")
       return
     }
-
+  
     try {
       setLoading(true)
       let user = null
-
+  
       if (useFirebase) {
-        // 
+        // Ưu tiên Firebase
         try {
           user = await UserService.authenticateUser(phone, password)
-
-          if (user?.id) {
-            await AsyncStorage.setItem("currentUserId", user.id)
-          } else {
-            await AsyncStorage.removeItem("currentUserId")
+          if (!user) {
+            console.log("⚠️ Firebase không có user hoặc sai mật khẩu")
           }
-
         } catch (error) {
           console.error("Firebase authentication error:", error)
-          user = users.find((u) => u.phone === phone && u.password === password)
         }
-      } else {
-        // sử dụng data fake
-        user = users.find((u) => u.phone === phone && u.password === password)
       }
-
+  
+      //  Nếu Firebase thất bại → fallback sang mockData
+      if (!user) {
+        user = users.find((u) => u.phone === phone && u.password === password)
+        if (user) console.log("✅ Đăng nhập bằng mockData:", user.phone)
+      }
+  
       if (user) {
         if (user.status === "blocked") {
           Alert.alert("Tài khoản bị khóa", "Vui lòng liên hệ admin.")
           return
         }
+  
+        await AsyncStorage.setItem("currentUserId", user.id ?? "")
         onLogin(user.role, user)
       } else {
         Alert.alert("Lỗi", "Số điện thoại hoặc mật khẩu không đúng")
@@ -85,6 +85,7 @@ const LoginScreen = ({ onLogin, onRegister, onForgotPassword }) => {
       setLoading(false)
     }
   }
+  
 
   if (initializing) {
     return (
