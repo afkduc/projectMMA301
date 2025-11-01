@@ -16,7 +16,7 @@ import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { GEMINI_API_KEY } from '../config/apiKeys';
 
-export default function AiAdvisorScreen({ navigation }) {
+export default function AiAdvisorScreen({ onBack, currentUser }) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
     {
@@ -157,9 +157,9 @@ export default function AiAdvisorScreen({ navigation }) {
               </LinearGradient>
               <Text style={styles.headerTitle}>Trợ lý ảo GiaSư.ai</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="close" size={24} color="#333" />
-            </TouchableOpacity>
+            <TouchableOpacity onPress={onBack}>
+           <Ionicons name="close" size={24} color="#333" />
+           </TouchableOpacity>
           </View>
 
           <View style={styles.welcomeBubble}>

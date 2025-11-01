@@ -14,6 +14,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
+  const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
 
   // login initUser
   useEffect(() => {
