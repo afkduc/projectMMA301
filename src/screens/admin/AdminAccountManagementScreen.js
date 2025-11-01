@@ -42,7 +42,7 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.screenHeader}>
                 <TouchableOpacity onPress={onBack}>
-                    <Text style={styles.backButton}>← Quay lại</Text>
+                    <Text style={[styles.backButton, {fontSize: 25}]}>←</Text>
                 </TouchableOpacity>
                 <Text
                     pointerEvents="none"

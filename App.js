@@ -4,6 +4,8 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
+// import AdminService from "./src/service/AdminService";
+
 // AI ask 
 import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
@@ -13,6 +15,7 @@ import HomeScreen from "./src/screens/customer/HomeScreen";
 // Admin screens
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
+import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -25,6 +28,25 @@ export default function App() {
     seedUsers(); // chạy 1 lần khi app start
   }, []);
 
+  // useEffect(() => {
+  //   const addSampleAdmins = async () => {
+  //     await AdminService.createAdmin({
+  //       name: "Quản trị viên Nguyễn",
+  //       phone: "0123456789",
+  //       email: "admin@example.com",
+  //       password: "123456",
+  //     });
+
+  //     await AdminService.createAdmin({
+  //       name: "Quản trị viên Trần",
+  //       phone: "0987654321",
+  //       email: "admin2@example.com",
+  //       password: "123456",
+  //     });
+  //   };
+
+  //   addSampleAdmins();
+  // }, []);
 
   // --- Xử lý login ---
   const handleLogin = (role, userData) => {
@@ -73,11 +95,11 @@ export default function App() {
       if (tab === "adminDashboard") {
         setCurrentScreen("adminDashboard");
       } else if (tab === "userManagement") {
-        setCurrentScreen("adminDashboard"); // hoặc màn quản lý người dùng riêng
+        setCurrentScreen("adminDashboard");
       } else if (tab === "orderManagement") {
-        setCurrentScreen("adminDashboard"); // hoặc màn quản lý đơn hàng riêng
+        setCurrentScreen("adminDashboard");
       } else if (tab === "adminProfile") {
-        setCurrentScreen("adminAccountManagement");
+        setCurrentScreen("adminDashboard");
       }
     }
   };
@@ -158,6 +180,17 @@ export default function App() {
   if (currentScreen === "adminAccountManagement") {
     return (
       <AdminAccountManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "customerManagement") {
+    return (
+      <CustomerManagementScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}
