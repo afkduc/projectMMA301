@@ -6,6 +6,8 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
+// import AdminService from "./src/service/AdminService";
+
 // AI ask 
 import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
@@ -26,6 +28,11 @@ import TutorReviewsScreen from "./src/screens/tutor/TutorReviewsScreen";
 import TutorEditProfileScreen from "./src/screens/tutor/TutorEditProfileScreen";
 import TutorSupportScreen from "./src/screens/tutor/TutorSupportScreen";
 import TutorSettingsScreen from "./src/screens/tutor/TutorSettingsScreen";
+// Admin screens
+import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
+import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
+import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
+import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen"
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -41,6 +48,26 @@ export default function App() {
     seedUsers(); // chạy 1 lần khi app start
   }, []);
 
+  // useEffect(() => {
+  //   const addSampleAdmins = async () => {
+  //     await AdminService.createAdmin({
+  //       name: "Quản trị viên Nguyễn",
+  //       phone: "0123456789",
+  //       email: "admin@example.com",
+  //       password: "123456",
+  //     });
+
+  //     await AdminService.createAdmin({
+  //       name: "Quản trị viên Trần",
+  //       phone: "0987654321",
+  //       email: "admin2@example.com",
+  //       password: "123456",
+  //     });
+  //   };
+
+  //   addSampleAdmins();
+  // }, []);
+
   // --- Xử lý login ---
   const handleLogin = (role, userData) => {
     console.log("Đăng nhập thành công:", role, userData);
@@ -50,8 +77,12 @@ export default function App() {
     } else if (role === "tutor") {
       setCurrentScreen("tutorDashboard"); // ✅ ADDED: vào dashboard tutor sau login
     } else if (userType === 'admin') {
-    setCurrentScreen('adminDashboard');
-  }
+      setCurrentScreen('adminDashboard');
+    }
+
+    if (role === "admin") {
+      setCurrentScreen("adminDashboard");
+    }
   };
 
   // --- Chuyển sang register ---
@@ -87,7 +118,7 @@ export default function App() {
         setCurrentScreen("home");
       }
     }
-    
+
     // Tutor tabs
     if (user?.role === "tutor") {
       if (tab === "dashboard") {
@@ -102,37 +133,37 @@ export default function App() {
 
 
   // --- Back navigation mapping ---
-const handleBack = () => {
-  const backNavigation = {
-    // Tutor 
-    tutorOrderDetail: 'tutorOrders',
-    tutorInfo: 'tutorProfile',
-    tutorArea: 'tutorProfile',
-    tutorSkills: 'tutorProfile',
-    tutorSchedule: 'tutorProfile',
-    tutorIncome: 'tutorProfile',
-    tutorReviews: 'tutorProfile',
-    tutorEditProfile: 'tutorProfile',
-    tutorSupport: 'tutorProfile',
-    tutorSettings: 'tutorProfile',
-  };
+  const handleBack = () => {
+    const backNavigation = {
+      // Tutor 
+      tutorOrderDetail: 'tutorOrders',
+      tutorInfo: 'tutorProfile',
+      tutorArea: 'tutorProfile',
+      tutorSkills: 'tutorProfile',
+      tutorSchedule: 'tutorProfile',
+      tutorIncome: 'tutorProfile',
+      tutorReviews: 'tutorProfile',
+      tutorEditProfile: 'tutorProfile',
+      tutorSupport: 'tutorProfile',
+      tutorSettings: 'tutorProfile',
+    };
 
-  const backScreen = backNavigation[currentScreen];
-  if (backScreen) {
-    setCurrentScreen(backScreen);
-  } else {
-    // Fallback theo vai trò
-    if (user?.role === 'customer') {
-      setCurrentScreen('home');
-    } else if (user?.role === 'tutor') {
-      setCurrentScreen('tutorDashboard');
-    } else if (user?.role === 'admin') {
-      setCurrentScreen('adminDashboard');
+    const backScreen = backNavigation[currentScreen];
+    if (backScreen) {
+      setCurrentScreen(backScreen);
     } else {
-      setCurrentScreen('home');
+      // Fallback theo vai trò
+      if (user?.role === 'customer') {
+        setCurrentScreen('home');
+      } else if (user?.role === 'tutor') {
+        setCurrentScreen('tutorDashboard');
+      } else if (user?.role === 'admin') {
+        setCurrentScreen('adminDashboard');
+      } else {
+        setCurrentScreen('home');
+      }
     }
-  }
-};
+  };
 
 
   // --- Khi tutor bấm vào order ---
@@ -147,6 +178,18 @@ const handleBack = () => {
     console.log("Menu action:", action);
     if (action) {
       setCurrentScreen(action);
+    }
+
+    if (user?.role === "admin") {
+      if (tab === "adminDashboard") {
+        setCurrentScreen("adminDashboard");
+      } else if (tab === "userManagement") {
+        setCurrentScreen("adminDashboard");
+      } else if (tab === "orderManagement") {
+        setCurrentScreen("adminDashboard");
+      } else if (tab === "adminProfile") {
+        setCurrentScreen("adminDashboard");
+      }
     }
   };
 
@@ -188,15 +231,15 @@ const handleBack = () => {
         );
     }
   }
-    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
-    if (currentScreen === "ai") {
-      return (
-        <AiAdvisorScreen
-          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
-          currentUser={user}
-        />
-      );
-    }
+  // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+  if (currentScreen === "ai") {
+    return (
+      <AiAdvisorScreen
+        onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
+        currentUser={user}
+      />
+    );
+  }
 
   if (currentScreen === "home") {
     return (
@@ -336,6 +379,51 @@ const handleBack = () => {
     );
   }
 
+  if (currentScreen === "adminDashboard") {
+    return (
+      <AdminDashboardScreen
+        onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        onMenuPress={(screen) => setCurrentScreen(screen)}
+      />
+    );
+  }
+
+  if (currentScreen === "adminAccountManagement") {
+    return (
+      <AdminAccountManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "customerManagement") {
+    return (
+      <CustomerManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorManagement") {
+    return (
+      <TutorsManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
   // Dự phòng (nếu cần)
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -344,4 +432,4 @@ const handleBack = () => {
       <Text style={{ marginTop: 12 }}>Màn "{currentScreen}" chưa có UI tương ứng.</Text>
     </SafeAreaView>
   );
-}
+};
