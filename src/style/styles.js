@@ -729,8 +729,8 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Dashboard Styles
-  workerHeader: {
+  // Tutor Dashboard Styles
+  tutorHeader: {
     backgroundColor: 'white',
     padding: 20,
     flexDirection: 'row',
@@ -739,15 +739,15 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
-  workerAvatar: {
+  tutorAvatar: {
     fontSize: 50,
   },
-  workerSpecialty: {
+  tutorSpecialty: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 5,
   },
-  workerRating: {
+  tutorRating: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
@@ -875,7 +875,7 @@ export const styles = StyleSheet.create({
     color: '#2563eb',
   },
 
-  // Worker Orders Styles
+  // Tutor Orders Styles
   ordersList: {
     padding: 15,
     gap: 15,
@@ -1000,7 +1000,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Order Detail Styles
+  // Tutor Order Detail Styles
   orderDetailContent: {
     flex: 1,
     marginBottom: 160,
@@ -1138,8 +1138,8 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Profile Styles
-  workerProfileHeader: {
+  // Tutor Profile Styles
+  tutorProfileHeader: {
     backgroundColor: 'white',
     padding: 20,
     flexDirection: 'row',
@@ -1148,26 +1148,26 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
-  workerProfileInfo: {
+  tutorProfileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
   },
-  workerProfileAvatar: {
+  tutorProfileAvatar: {
     fontSize: 50,
   },
-  workerProfileName: {
+  tutorProfileName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 2,
   },
-  workerProfilePhone: {
+  tutorProfilePhone: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
   },
-  workerProfileSpecialty: {
+  tutorProfileSpecialty: {
     fontSize: 14,
     color: '#2563eb',
   },
@@ -1192,23 +1192,23 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
-  workerStatsContainer: {
+  tutorStatsContainer: {
     backgroundColor: 'white',
     flexDirection: 'row',
     paddingVertical: 20,
     marginTop: 10,
   },
-  workerStatItem: {
+  tutorStatItem: {
     flex: 1,
     alignItems: 'center',
   },
-  workerStatNumber: {
+  tutorStatNumber: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2563eb',
     marginBottom: 2,
   },
-  workerStatLabel: {
+  tutorStatLabel: {
     fontSize: 12,
     color: '#6b7280',
   },
@@ -1422,7 +1422,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#dbeafe',
     color: '#1e40af',
   },
-  workerRole: {
+  tutorRole: {
     backgroundColor: '#d1fae5',
     color: '#065f46',
   },
@@ -1623,7 +1623,7 @@ export const styles = StyleSheet.create({
     color: '#1f2937',
     marginBottom: 2,
   },
-  reviewWorker: {
+  reviewWTutor: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
@@ -1756,7 +1756,7 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 2,
   },
-  transactionWorker: {
+  transactionTutor: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
@@ -1788,7 +1788,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ef4444',
   },
-  transactionWorkerReceived: {
+  transactionTutorReceived: {
     fontSize: 14,
     fontWeight: '600',
     color: '#10b981',
@@ -1875,7 +1875,7 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 5,
   },
-  areaWorkerCount: {
+  areaTutorCount: {
     fontSize: 14,
     color: '#2563eb',
     fontWeight: '600',
@@ -2608,7 +2608,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Schedule styles
+  // Tutor Schedule styles
   scheduleContent: {
     flex: 1,
     marginBottom: 80,
@@ -2989,12 +2989,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#10b981',
   },
-  // Worker Edit Profile styles
-  workerFormSection: {
+  // Tutor Edit Profile styles
+  tutorFormSection: {
     marginBottom: 25,
   },
 
-  workerFormSectionTitle: {
+  tutorFormSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1f2937',
@@ -3053,7 +3053,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Skills Screen styles
+  // Tutor Skills Screen styles
   skillsContent: {
     flex: 1,
   },
