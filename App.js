@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect  } from "react";
 // login - register - forgotPassword
 import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
+import { seedUsers } from "@service/initUsers";
+// AI ask 
+import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -14,6 +17,13 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [currentScreen, setCurrentScreen] = useState("login");
   const [selectedService, setSelectedService] = useState(null);
+  const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
+
+  // login initUser
+  useEffect(() => {
+    seedUsers(); // chạy 1 lần khi app start
+  }, []);
+
 
   // --- Xử lý login ---
   const handleLogin = (role, userData) => {
@@ -97,6 +107,15 @@ export default function App() {
         );
     }
   }
+    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+    if (currentScreen === "ai") {
+      return (
+        <AiAdvisorScreen
+          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
+          currentUser={user}
+        />
+      );
+    }
 
   // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
   if (currentScreen === "home") {
@@ -106,6 +125,7 @@ export default function App() {
         onTabPress={handleTabPress}
         currentUser={user}
         onLogout={handleLogout}
+        onOpenAI={() => setCurrentScreen("ai")} // 🧠 Khi nhấn robot → mở màn hình AI
       />
     );
   }
