@@ -1953,7 +1953,7 @@ export const styles = StyleSheet.create({
   },
   adminAccountRole: {
     fontSize: 14,
-    color: '#7c3aed',
+    color: '#ff0000ff',
     fontWeight: '600',
     marginBottom: 2,
   },

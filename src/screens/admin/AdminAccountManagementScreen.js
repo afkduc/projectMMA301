@@ -30,9 +30,18 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
                 <Text style={styles.adminAccountAvatar}>👨‍💼</Text>
                 <View style={styles.adminAccountInfo}>
                     <Text style={styles.adminAccountName}>{item.name}</Text>
-                    <Text style={styles.adminAccountPhone}>📞 {item.phone}</Text>
-                    <Text style={styles.adminAccountEmail}>✉️ {item.email}</Text>
-                    <Text style={styles.adminAccountRole}>🔑 Admin</Text>
+                    <Text style={styles.adminAccountPhone}>
+                        <Text style={{ fontWeight: 'bold' }}>SDT:: </Text>
+                        {item.phone}
+                    </Text>
+                    <Text style={styles.adminAccountEmail}>
+                        <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+                        {item.email}
+                    </Text>
+                    <Text style={styles.adminAccountRole}>
+                        <Text style={{ fontWeight: 'bold' }}>Role: </Text>
+                        {item.role}
+                    </Text>
                 </View>
             </View>
         </View>
@@ -42,7 +51,7 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.screenHeader}>
                 <TouchableOpacity onPress={onBack}>
-                    <Text style={[styles.backButton, {fontSize: 25}]}>←</Text>
+                    <Text style={[styles.backButton, { fontSize: 25 }]}>←</Text>
                 </TouchableOpacity>
                 <Text
                     pointerEvents="none"

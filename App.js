@@ -16,6 +16,7 @@ import HomeScreen from "./src/screens/customer/HomeScreen";
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
 import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
+import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen"
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -191,6 +192,17 @@ export default function App() {
   if (currentScreen === "customerManagement") {
     return (
       <CustomerManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "tutorManagement") {
+    return (
+      <TutorsManagementScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}

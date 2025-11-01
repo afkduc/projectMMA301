@@ -256,7 +256,7 @@ export const areas = [
 // Menu items cho admin
 export const adminMenuItems = [
   { id: "1", title: "Quản lý khách hàng", icon: "👥", action: "customers", screen: "customerManagement" },
-  { id: "2", title: "Quản lý gia sư", icon: "🧑‍🏫", action: "workers", screen: "tutorManagement" },
+  { id: "2", title: "Quản lý gia sư", icon: "👨‍🏫", action: "workers", screen: "tutorManagement" },
   { id: "3", title: "Quản lý dịch vụ", icon: "📚", action: "services", screen: "serviceManagement" },
   { id: "4", title: "Quản lý đơn hàng", icon: "📋", action: "orders", screen: "orderManagement" },
   { id: "5", title: "Đánh giá & phản hồi", icon: "⭐", action: "reviews", screen: "reviewManagement" },
