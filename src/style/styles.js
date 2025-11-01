@@ -1909,40 +1909,6 @@ export const styles = StyleSheet.create({
   },
 
   // Admin Account Management Styles
-  adminAccountStatsContainer: {
-    flexDirection: 'row',
-    padding: 15,
-    gap: 10,
-  },
-  adminAccountStatCard: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 15,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  adminAccountStatIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  adminAccountStatNumber: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#7c3aed',
-    marginBottom: 4,
-  },
-  adminAccountStatLabel: {
-    fontSize: 12,
-    color: '#6b7280',
-    textAlign: 'center',
-  },
   adminAccountCard: {
     backgroundColor: 'white',
     borderRadius: 15,
@@ -1990,50 +1956,6 @@ export const styles = StyleSheet.create({
     color: '#7c3aed',
     fontWeight: '600',
     marginBottom: 2,
-  },
-  adminAccount2FA: {
-    fontSize: 12,
-    color: '#10b981',
-  },
-  adminAccountActions: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  permissionButton: {
-    flex: 1,
-    backgroundColor: '#3b82f6',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  permissionButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  securityButton: {
-    flex: 1,
-    backgroundColor: '#10b981',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  securityButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  deleteAdminButton: {
-    flex: 1,
-    backgroundColor: '#ef4444',
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  deleteAdminButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
   },
 
   // System Settings Styles

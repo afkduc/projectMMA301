@@ -256,11 +256,11 @@ export const areas = [
 // Menu items cho admin
 export const adminMenuItems = [
   { id: "1", title: "Quản lý khách hàng", icon: "👥", action: "customers", screen: "customerManagement" },
-  { id: "2", title: "Quản lý gia sư", icon: "🧑‍🏫", action: "workers", screen: "workerManagement" },
+  { id: "2", title: "Quản lý gia sư", icon: "🧑‍🏫", action: "workers", screen: "tutorManagement" },
   { id: "3", title: "Quản lý dịch vụ", icon: "📚", action: "services", screen: "serviceManagement" },
   { id: "4", title: "Quản lý đơn hàng", icon: "📋", action: "orders", screen: "orderManagement" },
   { id: "5", title: "Đánh giá & phản hồi", icon: "⭐", action: "reviews", screen: "reviewManagement" },
-  { id: "8", title: "Tài khoản admin", icon: "🧑‍💻", action: "admins", screen: "adminAccountManagement" },
-  { id: "9", title: "Cài đặt hệ thống", icon: "⚙️", action: "settings", screen: "systemSettings" },
-  { id: "10", title: "Nhật ký hệ thống", icon: "📊", action: "logs", screen: "systemLogs" },
+  { id: "6", title: "Tài khoản admin", icon: "🧑‍💻", action: "admins", screen: "adminAccountManagement" },
+  { id: "7", title: "Cài đặt hệ thống", icon: "⚙️", action: "settings", screen: "systemSettings" },
+  { id: "8", title: "Nhật ký hệ thống", icon: "📊", action: "logs", screen: "systemLogs" },
 ]

@@ -1,4 +1,4 @@
-import React, { useState ,useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 // login - register - forgotPassword
 import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
@@ -12,6 +12,7 @@ import HomeScreen from "./src/screens/customer/HomeScreen";
 
 // Admin screens
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
+import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -67,6 +68,18 @@ export default function App() {
     } else if (tab === "home") {
       setCurrentScreen("home");
     }
+
+    if (user?.role === "admin") {
+      if (tab === "adminDashboard") {
+        setCurrentScreen("adminDashboard");
+      } else if (tab === "userManagement") {
+        setCurrentScreen("adminDashboard"); // hoặc màn quản lý người dùng riêng
+      } else if (tab === "orderManagement") {
+        setCurrentScreen("adminDashboard"); // hoặc màn quản lý đơn hàng riêng
+      } else if (tab === "adminProfile") {
+        setCurrentScreen("adminAccountManagement");
+      }
+    }
   };
 
   // --- Khi đăng xuất ---
@@ -107,15 +120,15 @@ export default function App() {
         );
     }
   }
-    // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
-    if (currentScreen === "ai") {
-      return (
-        <AiAdvisorScreen
-          onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
-          currentUser={user}
-        />
-      );
-    }
+  // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
+  if (currentScreen === "ai") {
+    return (
+      <AiAdvisorScreen
+        onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
+        currentUser={user}
+      />
+    );
+  }
 
   // 🔹 Nếu user đã đăng nhập → hiển thị HomeScreen
   if (currentScreen === "home") {
@@ -132,15 +145,26 @@ export default function App() {
 
   if (currentScreen === "adminDashboard") {
     return (
-      <AdminDashboardScreen 
+      <AdminDashboardScreen
         onServicePress={handleServicePress}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        onMenuPress={(screen) => setCurrentScreen(screen)}
+      />
+    );
+  }
+
+  if (currentScreen === "adminAccountManagement") {
+    return (
+      <AdminAccountManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}
         onLogout={handleLogout}
       />
     );
   }
-
 
   // Dự phòng (nếu cần)
   return (
