@@ -121,7 +121,6 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       Alert.alert("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự")
       return false
     }
-
     if (role === "tutor" && (!serviceId.length || !experience.trim())) {
       Alert.alert("Lỗi", "Vui lòng chọn ít nhất một môn học và nhập kinh nghiệm")
       return false
@@ -158,6 +157,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
         joinDate: new Date().toISOString().split("T")[0],
         address: formData.address || "Hà Nội",
         avatar: formData.role === "tutor" ? "👨‍🏫" : "👤",
+        serviceId: formData.role === "tutor" ? formData.serviceId : [],
       }
 
       const userId = await UserService.createUser(userData)
@@ -168,6 +168,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
+          password: formData.password,
           specialty: formData.serviceId.join(", "),
           serviceId: formData.serviceId,
           experience: formData.experience,
@@ -414,6 +415,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                                 } else {
                                   newSelection = [...formData.serviceId, item]
                                 }
+                                updateFormData("serviceId", newSelection)
                                 updateFormData("serviceId", newSelection)
                               }}
                             >

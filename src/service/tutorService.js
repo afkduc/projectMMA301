@@ -65,7 +65,6 @@ async createTutor(tutorData) {
   async getTutorByUserId(userId) {
     try {
       const allTutors = await FirebaseService.readAllWithKeys(this.basePath);
-  
       // 🔎 Tìm user tương ứng trong bảng users
       const users = await FirebaseService.readAllWithKeys("users");
       const currentUser = users.find((u) => String(u.id) === String(userId));
@@ -92,9 +91,7 @@ async createTutor(tutorData) {
       throw error;
     }
   }
-  
-
-  async getAllTutors() {
+async getAllTutors() {
     try {
       const allUsers = await FirebaseService.readAll(this.basePath);
       return allUsers;
@@ -194,10 +191,47 @@ async createTutor(tutorData) {
       throw error;
     }
   }
+
+  async getTutorByService(serviceIds) {
+  try {
+    const allTutors = await this.getAllTutors();
+    const serviceIdArray = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
+
+    // -------------------------
+    // Hàm normalize & splitWords nằm trong scope của hàm
+    const normalize = (str) => {
+      if (!str) return "";
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    };
+
+    const splitWords = (str) => normalize(str).split(/\s+/);
+    // -------------------------
+
+    // Chia query thành từng từ
+    const queryWords = serviceIdArray.flatMap(splitWords);
+
+    return allTutors.filter((tutor) => {
+      if (tutor.status !== "active" || !Array.isArray(tutor.serviceId)) return false;
+
+      // Tất cả từ trong tutor
+      const tutorWords = tutor.serviceId.flatMap(splitWords);
+
+      // Nếu có ít nhất 1 từ trùng → match
+      return tutorWords.some(word => queryWords.includes(word));
+    });
+  } catch (error) {
+    console.error("Error getting tutors by service:", error);
+    throw error;
+  }
+}
   
 
   listenToTutors(callback) {
-    return FirebaseService.listen(this.basePath, (snapshot) => {
+return FirebaseService.listen(this.basePath, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const tutors = Object.entries(data).map(([id, val]) => ({ id, ...val }));
