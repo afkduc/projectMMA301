@@ -346,8 +346,6 @@ export const adminMenuItems = [
   { id: "4", title: "Quản lý buổi học", icon: "📋", action: "sessions", screen: "sessionManagement" },
   { id: "5", title: "Đánh giá & phản hồi", icon: "⭐", action: "reviews", screen: "reviewManagement" },
   { id: "6", title: "Tài khoản admin", icon: "👨‍💼", action: "admins", screen: "adminAccountManagement" },
-  { id: "7", title: "Cài đặt hệ thống", icon: "⚙️", action: "settings", screen: "systemSettings" },
-  { id: "8", title: "Nhật ký hệ thống", icon: "📊", action: "logs", screen: "systemLogs" },
 ]
 
 // Đánh giá từ học viên

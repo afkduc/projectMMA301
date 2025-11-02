@@ -18,6 +18,9 @@ import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScre
 import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen";
 import SystemLogsScreen from "./src/screens/admin/SystemLogsScreen";
 import SubjectManagementScreen from "./src/screens/admin/SubjectManagementScreen";
+import SessionsManagementScreen from "./src/screens/admin/SessionsManagementScreen";
+import ReviewManagementScreen from "./src/screens/admin/ReviewManagementScreen";
+import SystemSettingsScreen from "./src/screens/admin/SystemSettingsScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -206,6 +209,39 @@ export default function App() {
   if (currentScreen === "subjectManagement") {
     return (
       <SubjectManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "sessionManagement") {
+    return (
+      <SessionsManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "reviewManagement") {
+    return (
+      <ReviewManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "systemSettings") {
+    return (
+      <SystemSettingsScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}
