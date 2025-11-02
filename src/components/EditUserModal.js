@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native"
-import { styles as globalStyles } from "@styles/styles"
+import { styles as globalStyles } from "@style/styles"
 
 const EditUserModal = ({ visible, user, onClose, onSave }) => {
   const [name, setName] = useState("")
@@ -54,12 +54,6 @@ const EditUserModal = ({ visible, user, onClose, onSave }) => {
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
-          />
-          <TextInput
-            style={modalStyles.input}
-            placeholder="Vai trò (admin, customer, worker)"
-            value={role}
-            onChangeText={setRole}
           />
           <View style={modalStyles.buttonContainer}>
             <TouchableOpacity onPress={onClose} style={modalStyles.cancelButton}>

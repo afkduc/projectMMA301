@@ -18,7 +18,7 @@ export const CustomerBottomNav = ({ onTabPress, activeTab }) => (
   </View>
 )
 
-export const WorkerBottomNav = ({ onTabPress, activeTab }) => (
+export const TutorBottomNav = ({ onTabPress, activeTab }) => (
   <View style={styles.bottomNav}>
     <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("dashboard")}>
       <Text style={styles.navIcon}>🏠</Text>
@@ -28,9 +28,9 @@ export const WorkerBottomNav = ({ onTabPress, activeTab }) => (
       <Text style={styles.navIcon}>📋</Text>
       <Text style={[styles.navText, activeTab === "orders" && styles.activeNavText]}>Đơn hàng</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("workerProfile")}>
+    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("tutorProfile")}>
       <Text style={styles.navIcon}>👤</Text>
-      <Text style={[styles.navText, activeTab === "workerProfile" && styles.activeNavText]}>Cá nhân</Text>
+      <Text style={[styles.navText, activeTab === "tutorProfile" && styles.activeNavText]}>Cá nhân</Text>
     </TouchableOpacity>
   </View>
 )
@@ -46,9 +46,9 @@ export const AdminBottomNav = ({ onTabPress, activeTab }) => (
       <Text style={styles.navIcon}>👥</Text>
       <Text style={[styles.navText, activeTab === "userManagement" && styles.activeNavText]}>Người dùng</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("orderManagement")}>
-      <Text style={styles.navIcon}>📋</Text>
-      <Text style={[styles.navText, activeTab === "orderManagement" && styles.activeNavText]}>Đơn hàng</Text>
+    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("aichat")}>
+      <Text style={styles.navIcon}>🤖</Text>
+      <Text style={[styles.navText, activeTab === "aichat" && styles.activeNavText]}>AI Chat</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("adminProfile")}>
       <Text style={styles.navIcon}>👤</Text>

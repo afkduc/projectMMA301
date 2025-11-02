@@ -24,6 +24,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
     confirmPassword: "",
     role: "customer",
     serviceId: [],
+    serviceId: [],
     experience: "",
     certificate: "",
     address: "",
@@ -94,6 +95,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
 
   const validateForm = () => {
     const { name, phone, email, password, confirmPassword, role, serviceId, experience } = formData
+    const { name, phone, email, password, confirmPassword, role, serviceId, experience } = formData
 
     if (!name.trim() || !phone.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin")
@@ -122,6 +124,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       return false
     }
 
+    if (role === "tutor" && (!serviceId.length || !experience.trim())) {
     if (role === "tutor" && (!serviceId.length || !experience.trim())) {
       Alert.alert("Lỗi", "Vui lòng chọn ít nhất một môn học và nhập kinh nghiệm")
       return false
@@ -365,6 +368,9 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                   <Text style={{ color: formData.serviceId.length ? "#000" : "#999" }}>
                     {formData.serviceId.length
                       ? `Đã chọn: ${formData.serviceId.join(", ")}`
+                  <Text style={{ color: formData.serviceId.length ? "#000" : "#999" }}>
+                    {formData.serviceId.length
+                      ? `Đã chọn: ${formData.serviceId.join(", ")}`
                       : "Chọn môn giảng dạy..."}
                   </Text>
                 </TouchableOpacity>
@@ -400,6 +406,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                         keyExtractor={(item) => item}
                         renderItem={({ item }) => {
                           const selected = formData.serviceId.includes(item)
+                          const selected = formData.serviceId.includes(item)
                           return (
                             <TouchableOpacity
                               style={{
@@ -413,9 +420,12 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                                 let newSelection
                                 if (selected) {
                                   newSelection = formData.serviceId.filter((s) => s !== item)
+                                  newSelection = formData.serviceId.filter((s) => s !== item)
                                 } else {
                                   newSelection = [...formData.serviceId, item]
+                                  newSelection = [...formData.serviceId, item]
                                 }
+                                updateFormData("serviceId", newSelection)
                                 updateFormData("serviceId", newSelection)
                               }}
                             >
