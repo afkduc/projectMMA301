@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { View, Text, TouchableOpacity, SafeAreaView, ScrollView, Alert, Switch, ActivityIndicator } from "react-native"
 import { styles } from "../../style/styles"
-import { workerMenuItems as tutorMenuItems } from "../../data/mockData"
+import { tutorMenuItems } from "../../data/mockData"
 import { TutorBottomNav } from "../../components/BottomNavigation"
 import TutorService from "../../service/tutorService"
 import ServiceService from "../../service/serviceService"
