@@ -81,8 +81,8 @@ export default function App() {
         setCurrentScreen("adminDashboard");
       } else if (tab === "userManagement") {
         setCurrentScreen("userManagement");
-      } else if (tab === "orderManagement") {
-        setCurrentScreen("adminDashboard");
+      } else if (tab === "sessionManagement") {
+        setCurrentScreen("sessionManagement");
       } else if (tab === "adminProfile") {
         setCurrentScreen("adminProfile");
       }
