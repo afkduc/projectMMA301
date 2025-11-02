@@ -23,7 +23,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
     password: "",
     confirmPassword: "",
     role: "customer",
-    subjects: [],
+    serviceId: [],
     experience: "",
     certificate: "",
     address: "",
@@ -93,7 +93,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
   }
 
   const validateForm = () => {
-    const { name, phone, email, password, confirmPassword, role, subjects, experience } = formData
+    const { name, phone, email, password, confirmPassword, role, serviceId, experience } = formData
 
     if (!name.trim() || !phone.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin")
@@ -122,7 +122,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
       return false
     }
 
-    if (role === "tutor" && (!subjects.length || !experience.trim())) {
+    if (role === "tutor" && (!serviceId.length || !experience.trim())) {
       Alert.alert("Lỗi", "Vui lòng chọn ít nhất một môn học và nhập kinh nghiệm")
       return false
     }
@@ -168,9 +168,8 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
           name: formData.name,
           phone: formData.phone,
           email: formData.email,
-          password: formData.password,
-          specialty: formData.subjects.join(", "),
-          subjects: formData.subjects,
+          specialty: formData.serviceId.join(", "),
+          serviceId: formData.serviceId,
           experience: formData.experience,
           certificate: formData.certificate,
           address: formData.address || "Hà Nội",
@@ -361,9 +360,9 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                   style={[styles.input, { justifyContent: "center" }]}
                   onPress={() => setModalSubjectVisible(true)}
                 >
-                  <Text style={{ color: formData.subjects.length ? "#000" : "#999" }}>
-                    {formData.subjects.length
-                      ? `Đã chọn: ${formData.subjects.join(", ")}`
+                  <Text style={{ color: formData.serviceId.length ? "#000" : "#999" }}>
+                    {formData.serviceId.length
+                      ? `Đã chọn: ${formData.serviceId.join(", ")}`
                       : "Chọn môn giảng dạy..."}
                   </Text>
                 </TouchableOpacity>
@@ -398,7 +397,7 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                         data={filteredSubjects}
                         keyExtractor={(item) => item}
                         renderItem={({ item }) => {
-                          const selected = formData.subjects.includes(item)
+                          const selected = formData.serviceId.includes(item)
                           return (
                             <TouchableOpacity
                               style={{
@@ -411,11 +410,11 @@ const RegisterScreen = ({ onRegister, onBackToLogin }) => {
                               onPress={() => {
                                 let newSelection
                                 if (selected) {
-                                  newSelection = formData.subjects.filter((s) => s !== item)
+                                  newSelection = formData.serviceId.filter((s) => s !== item)
                                 } else {
-                                  newSelection = [...formData.subjects, item]
+                                  newSelection = [...formData.serviceId, item]
                                 }
-                                updateFormData("subjects", newSelection)
+                                updateFormData("serviceId", newSelection)
                               }}
                             >
                               <Text style={{ fontSize: 16 }}>
