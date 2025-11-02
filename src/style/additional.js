@@ -1,1988 +1,918 @@
-import { StyleSheet, Dimensions } from "react-native"
+import { StyleSheet, Dimensions, Platform } from "react-native";
 
-const { width, height } = Dimensions.get("window")
+const { width } = Dimensions.get("window");
+
+/* Light design tokens */
+const COLOR = {
+  bg: "#f7f9fc",           // nền app sáng dịu
+  surface: "#ffffff",      // nền thẻ
+  line: "#e8edf3",         // viền nhạt
+  text: "#0f172a",         // chữ chính (slate-900)
+  textDim: "#667085",      // chữ phụ
+  primary: "#2563eb",      // xanh chủ đạo
+  primarySoft: "#eff6ff",  // xanh rất nhạt
+  success: "#10b981",
+  warning: "#f59e0b",
+  danger: "#ef4444",
+};
+
+const RADIUS = { sm: 8, md: 12, lg: 16, xl: 20, full: 999 };
+const SPACE = { xs: 6, sm: 10, md: 14, lg: 18, xl: 22, xxl: 28 };
+
+const SHADOW = Platform.select({
+  ios: {
+    shadowColor: "#0f172a",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+  },
+  android: { elevation: 3 },
+});
 
 export const styles = StyleSheet.create({
-  // Base styles
-  container: {
-    flex: 1,
-    backgroundColor: "#f8fafc",
-  },
+  /* Base styles */
+  container: { flex: 1, backgroundColor: COLOR.bg },
 
-  // Screen header
+  /* Header */
   screenHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: "#ffffff",
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.md,
+    backgroundColor: COLOR.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    borderBottomColor: COLOR.line,
   },
+  screenTitle: { fontSize: 18, fontWeight: "700", color: COLOR.text, letterSpacing: 0.2 },
+  backButton: { fontSize: 16, color: COLOR.primary, fontWeight: "600" },
+  editButton: { fontSize: 16, color: COLOR.primary, fontWeight: "700" },
+  saveButton: { fontSize: 16, color: COLOR.success, fontWeight: "700" },
+  resetButton: { fontSize: 14, color: COLOR.danger, fontWeight: "600" },
+  headerRight: { alignItems: "flex-end" },
+  reviewCount: { fontSize: 12, color: COLOR.textDim },
 
-  screenTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1f2937",
-  },
-
-  backButton: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-
-  editButton: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  saveButton: {
-    fontSize: 16,
-    color: "#10b981",
-    fontWeight: "600",
-  },
-
-  resetButton: {
-    fontSize: 14,
-    color: "#ef4444",
-    fontWeight: "500",
-  },
-
-  headerRight: {
-    alignItems: "flex-end",
-  },
-
-  reviewCount: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
-
-  // Tutor Info Screen
-  tutorInfoContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  /* Tutor Info */
+  tutorInfoContent: { flex: 1, marginBottom: 80 },
   tutorInfoAvatar: {
-    backgroundColor: "#ffffff",
+    backgroundColor: COLOR.surface,
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: SPACE.xxl,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: COLOR.line,
   },
-
-  avatarIcon: {
-    fontSize: 80,
-    marginBottom: 15,
-  },
-
-  tutorInfoName: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#1f2937",
-    marginBottom: 8,
-  },
-
-  tutorInfoSpecialty: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "500",
-    marginBottom: 12,
-  },
-
-  tutorInfoRating: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-
-  ratingStars: {
-    fontSize: 16,
-  },
-
-  ratingText: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
+  avatarIcon: { fontSize: 82, marginBottom: SPACE.sm },
+  tutorInfoName: { fontSize: 24, fontWeight: "800", color: COLOR.text, marginBottom: 6 },
+  tutorInfoSpecialty: { fontSize: 15, color: COLOR.primary, fontWeight: "700", marginBottom: SPACE.sm },
+  tutorInfoRating: { flexDirection: "row", alignItems: "center", gap: 8 },
+  ratingStars: { fontSize: 16, color: COLOR.warning },
+  ratingText: { fontSize: 13, color: COLOR.textDim },
 
   infoSection: {
-    backgroundColor: "#ffffff",
-    marginTop: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    backgroundColor: COLOR.surface,
+    marginTop: SPACE.sm,
+    marginHorizontal: 15,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
+    ...SHADOW,
   },
-
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 20,
-    paddingBottom: 10,
+    fontWeight: "800",
+    color: COLOR.text,
+    marginBottom: SPACE.md,
+    paddingBottom: SPACE.sm,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: COLOR.line,
   },
-
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingVertical: 12,
+    paddingVertical: SPACE.sm,
     borderBottomWidth: 1,
-    borderBottomColor: "#f9fafb",
+    borderBottomColor: "#f2f4f7",
   },
-
-  infoLabel: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-    flex: 1,
-  },
-
-  infoValue: {
-    fontSize: 14,
-    color: "#1f2937",
-    flex: 2,
-    textAlign: "right",
-  },
-
+  infoLabel: { fontSize: 14, color: COLOR.textDim, fontWeight: "600", flex: 1 },
+  infoValue: { fontSize: 14, color: COLOR.text, flex: 2, textAlign: "right" },
   infoInput: {
     fontSize: 14,
-    color: "#1f2937",
+    color: COLOR.text,
     flex: 2,
     textAlign: "right",
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "#ffffff",
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACE.sm,
+    paddingVertical: 8,
+    backgroundColor: "#fafafa",
   },
+  infoTextArea: { height: 72, textAlignVertical: "top", textAlign: "left" },
 
-  infoTextArea: {
-    height: 60,
-    textAlignVertical: "top",
-    textAlign: "left",
-  },
-
-  workingAreasContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-
+  workingAreasContainer: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   areaTag: {
-    backgroundColor: "#eff6ff",
+    backgroundColor: COLOR.primarySoft,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: RADIUS.full,
     borderWidth: 1,
-    borderColor: "#3b82f6",
+    borderColor: "#c7d2fe",
   },
+  areaTagText: { fontSize: 12, color: COLOR.primary, fontWeight: "700" },
 
-  areaTagText: {
-    fontSize: 12,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-
-  statsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-
+  statsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   statCard: {
     flex: 1,
     minWidth: "45%",
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: COLOR.surface,
+    padding: SPACE.md,
+    borderRadius: RADIUS.lg,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  statNumber: { fontSize: 20, fontWeight: "900", color: COLOR.primary, marginBottom: 4 },
+  statLabel: { fontSize: 12, color: COLOR.textDim, textAlign: "center" },
 
-  statNumber: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#3b82f6",
-    marginBottom: 4,
-  },
-
-  statLabel: {
-    fontSize: 12,
-    color: "#6b7280",
-    textAlign: "center",
-  },
-
-  editActions: {
-    flexDirection: "row",
-    gap: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-
+  editActions: { flexDirection: "row", gap: SPACE.md, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.lg },
   cancelEditButton: {
     flex: 1,
     backgroundColor: "#f3f4f6",
     paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-
-  cancelEditButtonText: {
-    fontSize: 16,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  saveEditButton: {
-    flex: 1,
-    backgroundColor: "#3b82f6",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-
-  saveEditButtonText: {
-    fontSize: 16,
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-
-  // Tutor Area Screen
-  areaContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
-  areaStatsSection: {
-    backgroundColor: "#ffffff",
-    margin: 20,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  areaStatsGrid: {
-    flexDirection: "row",
-    gap: 15,
-  },
-
-  areaStatCard: {
-    flex: 1,
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  cancelEditButtonText: { fontSize: 16, color: COLOR.textDim, fontWeight: "600" },
+  saveEditButton: {
+    flex: 1,
+    backgroundColor: COLOR.primary,
+    paddingVertical: 12,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+  },
+  saveEditButtonText: { fontSize: 16, color: "#ffffff", fontWeight: "800" },
 
-  areaStatNumber: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#3b82f6",
-    marginBottom: 4,
+  /* Tutor Area */
+  areaContent: { flex: 1, marginBottom: 80 },
+  areaStatsSection: {
+    backgroundColor: COLOR.surface,
+    margin: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
+    ...SHADOW,
   },
-
-  areaStatLabel: {
-    fontSize: 12,
-    color: "#6b7280",
-    textAlign: "center",
+  areaStatsGrid: { flexDirection: "row", gap: SPACE.md },
+  areaStatCard: {
+    flex: 1,
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
+  areaStatNumber: { fontSize: 18, fontWeight: "900", color: COLOR.primary, marginBottom: 4 },
+  areaStatLabel: { fontSize: 12, color: COLOR.textDim, textAlign: "center" },
 
   areaSection: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
-    marginBottom: 15,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: COLOR.surface,
+    marginHorizontal: SPACE.lg,
+    marginBottom: SPACE.md,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
+  sectionSubtitle: { fontSize: 14, color: COLOR.textDim, marginBottom: SPACE.md, lineHeight: 20 },
 
-  sectionSubtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginBottom: 15,
-    lineHeight: 20,
-  },
-
-  radiusSelector: {
-    gap: 15,
-  },
-
-  radiusLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-  },
-
-  radiusButtons: {
-    flexDirection: "row",
-    gap: 10,
-  },
-
+  radiusSelector: { gap: SPACE.md },
+  radiusLabel: { fontSize: 16, fontWeight: "800", color: COLOR.text },
+  radiusButtons: { flexDirection: "row", gap: 10 },
   radiusButton: {
     flex: 1,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 8,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
     alignItems: "center",
+    backgroundColor: "#f9fafb",
   },
+  selectedRadiusButton: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  radiusButtonText: { fontSize: 14, color: COLOR.textDim, fontWeight: "600" },
+  selectedRadiusButtonText: { color: COLOR.primary, fontWeight: "800" },
 
-  selectedRadiusButton: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  radiusButtonText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  selectedRadiusButtonText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  areasGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-
+  areasGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   areaCard: {
     width: "48%",
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: COLOR.surface,
+    padding: SPACE.md,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  selectedAreaCard: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  disabledAreaCard: { opacity: 0.55 },
 
-  selectedAreaCard: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
+  areaCardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
+  areaCardName: { fontSize: 16, fontWeight: "800", color: COLOR.text },
+  selectedAreaCardName: { color: COLOR.primary },
+  areaCardCheck: { fontSize: 16, color: COLOR.primary, fontWeight: "900" },
+  areaCardDistrict: { fontSize: 12, color: COLOR.textDim, marginBottom: 4 },
+  selectedAreaCardDistrict: { color: "#1d4ed8" },
+  areaCardDistance: { fontSize: 12, color: "#94a3b8" },
+  selectedAreaCardDistance: { color: "#1d4ed8" },
+  areaCardDisabled: { fontSize: 11, color: COLOR.danger, fontWeight: "700", marginTop: 6 },
 
-  disabledAreaCard: {
-    opacity: 0.5,
-    backgroundColor: "#f3f4f6",
-  },
-
-  areaCardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-
-  areaCardName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-  },
-
-  selectedAreaCardName: {
-    color: "#3b82f6",
-  },
-
-  areaCardCheck: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "700",
-  },
-
-  areaCardDistrict: {
-    fontSize: 12,
-    color: "#6b7280",
-    marginBottom: 4,
-  },
-
-  selectedAreaCardDistrict: {
-    color: "#1e40af",
-  },
-
-  areaCardDistance: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
-
-  selectedAreaCardDistance: {
-    color: "#1e40af",
-  },
-
-  areaCardDisabled: {
-    fontSize: 10,
-    color: "#ef4444",
-    fontWeight: "500",
-    marginTop: 4,
-  },
-
-  quickAreaActions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-
+  quickAreaActions: { flexDirection: "row", gap: SPACE.md },
   quickAreaButton: {
     flex: 1,
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
-
-  quickAreaButtonIcon: {
-    fontSize: 20,
-    marginBottom: 8,
-  },
-
-  quickAreaButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  quickAreaButtonSubtext: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
+  quickAreaButtonIcon: { fontSize: 22, marginBottom: 8, color: COLOR.text },
+  quickAreaButtonText: { fontSize: 14, fontWeight: "800", color: COLOR.text, marginBottom: 4 },
+  quickAreaButtonSubtext: { fontSize: 12, color: COLOR.textDim },
 
   areaTips: {
-    backgroundColor: "#fef3c7",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#fff7ed",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: "#f59e0b",
+    borderColor: "#fed7aa",
   },
+  areaTipsTitle: { fontSize: 16, fontWeight: "800", color: "#b45309", marginBottom: 6 },
+  areaTipsText: { fontSize: 14, color: "#b45309", lineHeight: 20, opacity: 0.9 },
 
-  areaTipsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#92400e",
-    marginBottom: 8,
-  },
-
-  areaTipsText: {
-    fontSize: 14,
-    color: "#b45309",
-    lineHeight: 20,
-  },
-
-  // Tutor Reviews Screen
-  reviewsContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  /* Reviews */
+  reviewsContent: { flex: 1, marginBottom: 80 },
   overallRatingSection: {
-    backgroundColor: "#ffffff",
-    margin: 20,
-    borderRadius: 12,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: COLOR.surface,
+    margin: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
+    ...SHADOW,
   },
+  overallRatingCard: { flexDirection: "row", gap: 20 },
+  overallRatingLeft: { alignItems: "center", flex: 1 },
+  overallRatingNumber: { fontSize: 48, fontWeight: "900", color: COLOR.warning, marginBottom: 6, letterSpacing: 0.3 },
+  overallRatingStars: { fontSize: 20, marginBottom: 6, color: COLOR.warning },
+  overallRatingText: { fontSize: 14, color: COLOR.textDim },
+  overallRatingRight: { flex: 2, gap: 6 },
 
-  overallRatingCard: {
-    flexDirection: "row",
-    gap: 20,
-  },
-
-  overallRatingLeft: {
-    alignItems: "center",
-    flex: 1,
-  },
-
-  overallRatingNumber: {
-    fontSize: 48,
-    fontWeight: "700",
-    color: "#f59e0b",
-    marginBottom: 8,
-  },
-
-  overallRatingStars: {
-    fontSize: 20,
-    marginBottom: 8,
-  },
-
-  overallRatingText: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
-
-  overallRatingRight: {
-    flex: 2,
-    gap: 4,
-  },
-
-  ratingDistributionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-
-  ratingDistributionStars: {
-    fontSize: 12,
-    width: 30,
-  },
-
+  ratingDistributionRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  ratingDistributionStars: { fontSize: 12, width: 34, color: COLOR.text },
   ratingDistributionBar: {
     flex: 1,
-    height: 8,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 4,
+    height: 10,
+    backgroundColor: "#eef2f7",
+    borderRadius: 6,
     overflow: "hidden",
   },
-
-  ratingDistributionFill: {
-    height: "100%",
-    backgroundColor: "#f59e0b",
-  },
-
-  ratingDistributionCount: {
-    fontSize: 12,
-    color: "#6b7280",
-    width: 20,
-    textAlign: "right",
-  },
+  ratingDistributionFill: { height: "100%", backgroundColor: COLOR.warning },
+  ratingDistributionCount: { fontSize: 12, color: COLOR.textDim, width: 22, textAlign: "right" },
 
   reviewFilterTabs: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    backgroundColor: "transparent",
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.md,
     gap: 10,
   },
-
   reviewFilterTab: {
     flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    alignItems: "center",
-    backgroundColor: "#f3f4f6",
-  },
-
-  activeReviewFilterTab: {
-    backgroundColor: "#3b82f6",
-  },
-
-  reviewFilterTabText: {
-    fontSize: 12,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  activeReviewFilterTabText: {
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-
-  reviewsList: {
-    paddingHorizontal: 20,
     paddingVertical: 10,
-    gap: 15,
-  },
-
-  reviewCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-
-  reviewHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-  },
-
-  reviewCustomerInfo: {
-    flexDirection: "row",
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.full,
     alignItems: "center",
-    flex: 1,
-  },
-
-  reviewCustomerAvatar: {
-    fontSize: 32,
-    marginRight: 12,
-  },
-
-  reviewCustomerDetails: {
-    flex: 1,
-  },
-
-  reviewCustomerName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-
-  reviewDate: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
-
-  reviewMenuButton: {
-    padding: 4,
-  },
-
-  reviewMenuIcon: {
-    fontSize: 16,
-    color: "#6b7280",
-  },
-
-  reviewRating: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-
-  reviewStars: {
-    fontSize: 16,
-  },
-
-  reviewService: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginLeft: 8,
-  },
-
-  reviewComment: {
-    fontSize: 14,
-    color: "#374151",
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-
-  reviewImages: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 12,
-  },
-
-  reviewImagePlaceholder: {
-    width: 60,
-    height: 60,
     backgroundColor: "#f3f4f6",
-    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLOR.line,
+  },
+  activeReviewFilterTab: { backgroundColor: COLOR.primarySoft, borderColor: COLOR.primary },
+  reviewFilterTabText: { fontSize: 12, color: COLOR.textDim, fontWeight: "700" },
+  activeReviewFilterTabText: { color: COLOR.primary, fontWeight: "900" },
+
+  reviewsList: { paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md, gap: SPACE.md },
+  reviewCard: {
+    backgroundColor: COLOR.surface,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
+    ...SHADOW,
+  },
+  reviewHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 },
+  reviewCustomerInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
+  reviewCustomerAvatar: { fontSize: 32, marginRight: 12 },
+  reviewCustomerDetails: { flex: 1 },
+  reviewCustomerName: { fontSize: 16, fontWeight: "800", color: COLOR.text, marginBottom: 2 },
+  reviewDate: { fontSize: 12, color: COLOR.textDim },
+  reviewMenuButton: { padding: 6 },
+  reviewMenuIcon: { fontSize: 18, color: COLOR.textDim },
+
+  reviewRating: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  reviewStars: { fontSize: 16, color: COLOR.warning },
+  reviewService: { fontSize: 14, color: COLOR.textDim, marginLeft: 8 },
+
+  reviewComment: { fontSize: 14, color: COLOR.text, lineHeight: 20, marginBottom: 12 },
+
+  reviewImages: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  reviewImagePlaceholder: {
+    width: 64,
+    height: 64,
+    backgroundColor: "#f3f4f6",
+    borderRadius: RADIUS.md,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  reviewImageIcon: { fontSize: 24, color: COLOR.textDim },
 
-  reviewImageIcon: {
-    fontSize: 24,
-  },
-
-  reviewFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  reviewMeta: {
-    flex: 1,
-  },
-
-  reviewOrderId: {
-    fontSize: 12,
-    color: "#6b7280",
-    marginBottom: 2,
-  },
-
-  reviewHelpful: {
-    fontSize: 12,
-    color: "#9ca3af",
-  },
+  reviewFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  reviewMeta: { flex: 1 },
+  reviewOrderId: { fontSize: 12, color: COLOR.textDim, marginBottom: 2 },
+  reviewHelpful: { fontSize: 12, color: COLOR.textDim },
 
   replyButton: {
-    backgroundColor: "#eff6ff",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+    backgroundColor: COLOR.primarySoft,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: RADIUS.full,
     borderWidth: 1,
-    borderColor: "#3b82f6",
+    borderColor: COLOR.primary,
   },
+  replyButtonText: { fontSize: 12, color: COLOR.primary, fontWeight: "800" },
 
-  replyButtonText: {
-    fontSize: 12,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-
-  reviewTipsSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-  },
-
+  reviewTipsSection: { paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md },
   reviewTips: {
-    backgroundColor: "#f0f9ff",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#eff6ff",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: "#0ea5e9",
+    borderColor: "#c7d2fe",
   },
+  reviewTipsTitle: { fontSize: 16, fontWeight: "800", color: "#1d4ed8", marginBottom: 6 },
+  reviewTipsText: { fontSize: 14, color: "#334155", lineHeight: 20 },
 
-  reviewTipsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0c4a6e",
-    marginBottom: 8,
-  },
-
-  reviewTipsText: {
-    fontSize: 14,
-    color: "#075985",
-    lineHeight: 20,
-  },
-
-  // Tutor Support Screen
+  /* Support */
   supportTabContainer: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    backgroundColor: COLOR.surface,
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLOR.line,
   },
+  supportTab: { flex: 1, paddingVertical: SPACE.md, alignItems: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
+  activeSupportTab: { borderBottomColor: COLOR.primary },
+  supportTabText: { fontSize: 14, color: COLOR.textDim, fontWeight: "700" },
+  activeSupportTabText: { color: COLOR.primary, fontWeight: "900" },
 
-  supportTab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-  },
-
-  activeSupportTab: {
-    borderBottomColor: "#3b82f6",
-  },
-
-  supportTabText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  activeSupportTabText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  supportContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  supportContent: { flex: 1, marginBottom: 80 },
   quickSupportSection: {
-    backgroundColor: "#ffffff",
-    margin: 20,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: COLOR.surface,
+    margin: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
-
-  quickSupportButtons: {
-    flexDirection: "row",
-    gap: 15,
-  },
-
+  quickSupportButtons: { flexDirection: "row", gap: SPACE.md },
   quickSupportButton: {
     flex: 1,
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
-
-  quickSupportIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-
-  quickSupportText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  quickSupportSubtext: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
+  quickSupportIcon: { fontSize: 24, marginBottom: 8, color: COLOR.text },
+  quickSupportText: { fontSize: 14, fontWeight: "800", color: COLOR.text, marginBottom: 2 },
+  quickSupportSubtext: { fontSize: 12, color: COLOR.textDim },
 
   faqSection: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: COLOR.surface,
+    marginHorizontal: SPACE.lg,
+    marginBottom: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
-
-  faqContainer: {
-    gap: 10,
-  },
-
+  faqContainer: { gap: SPACE.sm },
   faqItem: {
     borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
     overflow: "hidden",
+    backgroundColor: "#f9fafb",
   },
-
   faqQuestion: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
-    backgroundColor: "#f8fafc",
+    padding: SPACE.md,
   },
-
-  faqQuestionText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-    flex: 1,
-  },
-
-  faqArrow: {
-    fontSize: 18,
-    color: "#6b7280",
-    fontWeight: "600",
-  },
-
+  faqQuestionText: { fontSize: 14, fontWeight: "800", color: COLOR.text, flex: 1 },
+  faqArrow: { fontSize: 18, color: COLOR.textDim, fontWeight: "900" },
   faqAnswer: {
-    padding: 15,
+    padding: SPACE.md,
     backgroundColor: "#ffffff",
     borderTopWidth: 1,
-    borderTopColor: "#f3f4f6",
+    borderTopColor: COLOR.line,
   },
-
-  faqAnswerText: {
-    fontSize: 14,
-    color: "#374151",
-    lineHeight: 20,
-  },
+  faqAnswerText: { fontSize: 14, color: COLOR.text, lineHeight: 20 },
 
   supportCategoriesSection: {
-    backgroundColor: "#ffffff",
-    margin: 20,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: COLOR.surface,
+    margin: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
-
-  supportCategoriesGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-
+  supportCategoriesGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   supportCategoryCard: {
     width: "48%",
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
-
-  selectedSupportCategory: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  supportCategoryIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-
-  supportCategoryTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-    textAlign: "center",
-  },
-
-  supportCategoryDescription: {
-    fontSize: 12,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 16,
-  },
+  selectedSupportCategory: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  supportCategoryIcon: { fontSize: 32, marginBottom: 8, color: COLOR.text },
+  supportCategoryTitle: { fontSize: 14, fontWeight: "800", color: COLOR.text, marginBottom: 4, textAlign: "center" },
+  supportCategoryDescription: { fontSize: 12, color: COLOR.textDim, textAlign: "center", lineHeight: 16 },
 
   contactFormSection: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: COLOR.surface,
+    marginHorizontal: SPACE.lg,
+    marginBottom: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
-
-  contactForm: {
-    gap: 20,
-  },
-
-  formGroup: {
-    gap: 8,
-  },
-
-  formLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-  },
-
+  contactForm: { gap: SPACE.lg },
+  formGroup: { gap: 8 },
+  formLabel: { fontSize: 14, fontWeight: "800", color: COLOR.text },
   contactInput: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACE.md,
+    paddingVertical: 12,
     fontSize: 14,
-    color: "#1f2937",
+    color: COLOR.text,
     backgroundColor: "#ffffff",
   },
+  contactTextArea: { height: 110, textAlignVertical: "top" },
 
-  contactTextArea: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-
-  prioritySelector: {
-    flexDirection: "row",
-    gap: 10,
-  },
-
+  prioritySelector: { flexDirection: "row", gap: 10 },
   priorityButton: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderRadius: 6,
+    borderRadius: RADIUS.md,
     alignItems: "center",
+    backgroundColor: "#f9fafb",
+    borderColor: COLOR.line,
   },
-
-  selectedPriorityButton: {
-    backgroundColor: "#fef3c7",
-  },
-
-  priorityButtonText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
+  selectedPriorityButton: { backgroundColor: "#fff7ed", borderColor: "#fed7aa" },
+  priorityButtonText: { fontSize: 12, fontWeight: "800", color: COLOR.text },
 
   submitContactButton: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: COLOR.primary,
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: RADIUS.md,
     alignItems: "center",
   },
+  submitContactButtonText: { fontSize: 16, color: "#ffffff", fontWeight: "900" },
 
-  submitContactButtonText: {
-    fontSize: 16,
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-
-  supportTipsSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-
+  supportTipsSection: { paddingHorizontal: SPACE.lg, paddingBottom: SPACE.lg },
   supportTips: {
-    backgroundColor: "#f0f9ff",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#eff6ff",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: "#0ea5e9",
+    borderColor: "#c7d2fe",
   },
+  supportTipsTitle: { fontSize: 16, fontWeight: "900", color: "#1d4ed8", marginBottom: 6 },
+  supportTipsText: { fontSize: 14, color: "#334155", lineHeight: 20 },
 
-  supportTipsTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0c4a6e",
-    marginBottom: 8,
-  },
-
-  supportTipsText: {
-    fontSize: 14,
-    color: "#075985",
-    lineHeight: 20,
-  },
-
-  // Settings Screen
-  settingsContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  /* Settings */
+  settingsContent: { flex: 1, marginBottom: 80 },
   settingsSection: {
-    backgroundColor: "#ffffff",
-    marginTop: 10,
-    paddingVertical: 20,
+    backgroundColor: COLOR.surface,
+    marginTop: SPACE.sm,
+    paddingVertical: SPACE.lg,
+    borderTopWidth: 1,
+    borderTopColor: COLOR.line,
+    borderBottomWidth: 1,
+    borderBottomColor: COLOR.line,
   },
-
   settingsSectionTitle: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    paddingHorizontal: 20,
-    marginBottom: 15,
+    fontWeight: "900",
+    color: COLOR.text,
+    paddingHorizontal: SPACE.lg,
+    marginBottom: SPACE.md,
   },
-
-  settingsGroup: {
-    paddingHorizontal: 20,
-  },
-
+  settingsGroup: { paddingHorizontal: SPACE.lg },
   settingItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: SPACE.md,
     borderBottomWidth: 1,
-    borderBottomColor: "#f9fafb",
+    borderBottomColor: "#f2f4f7",
   },
+  settingInfo: { flex: 1 },
+  settingTitle: { fontSize: 16, color: COLOR.text, fontWeight: "800", marginBottom: 2 },
+  settingSubtitle: { fontSize: 12, color: COLOR.textDim, lineHeight: 16 },
+  settingValue: { fontSize: 14, color: COLOR.primary, fontWeight: "800" },
 
-  settingInfo: {
-    flex: 1,
-  },
-
-  settingTitle: {
-    fontSize: 16,
-    color: "#1f2937",
-    fontWeight: "500",
-    marginBottom: 2,
-  },
-
-  settingSubtitle: {
-    fontSize: 12,
-    color: "#6b7280",
-    lineHeight: 16,
-  },
-
-  settingValue: {
-    fontSize: 14,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-
-  workingModeSelector: {
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-
+  workingModeSelector: { paddingHorizontal: SPACE.lg, gap: 10 },
   workingModeOption: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    padding: SPACE.md,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
-    backgroundColor: "#f8fafc",
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#f9fafb",
   },
+  selectedWorkingMode: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  workingModeInfo: { flex: 1 },
+  workingModeLabel: { fontSize: 14, fontWeight: "900", color: COLOR.text, marginBottom: 2 },
+  selectedWorkingModeLabel: { color: COLOR.primary },
+  workingModeDesc: { fontSize: 12, color: COLOR.textDim },
+  workingModeCheck: { fontSize: 16, color: COLOR.primary, fontWeight: "900" },
 
-  selectedWorkingMode: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  workingModeInfo: {
-    flex: 1,
-  },
-
-  workingModeLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-
-  selectedWorkingModeLabel: {
-    color: "#3b82f6",
-  },
-
-  workingModeDesc: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
-
-  workingModeCheck: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "700",
-  },
-
-  orderLimitSelector: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 8,
-  },
-
+  orderLimitSelector: { flexDirection: "row", paddingHorizontal: SPACE.lg, gap: 8 },
   orderLimitButton: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 6,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
     alignItems: "center",
+    backgroundColor: "#f9fafb",
   },
-
-  selectedOrderLimit: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  orderLimitText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  selectedOrderLimitText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
+  selectedOrderLimit: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  orderLimitText: { fontSize: 14, color: COLOR.textDim, fontWeight: "800" },
+  selectedOrderLimitText: { color: COLOR.primary },
 
   settingActionItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: SPACE.md + 2,
+    paddingHorizontal: SPACE.lg,
     borderBottomWidth: 1,
-    borderBottomColor: "#f9fafb",
+    borderBottomColor: "#f2f4f7",
   },
+  settingActionText: { fontSize: 16, color: COLOR.text, fontWeight: "800" },
+  dangerText: { color: COLOR.danger },
+  settingActionArrow: { fontSize: 18, color: COLOR.textDim },
 
-  settingActionText: {
-    fontSize: 16,
-    color: "#1f2937",
-    fontWeight: "500",
-  },
-
-  dangerText: {
-    color: "#ef4444",
-  },
-
-  settingActionArrow: {
-    fontSize: 18,
-    color: "#9ca3af",
-  },
-
-  appInfoContainer: {
-    paddingHorizontal: 20,
-  },
-
+  appInfoContainer: { paddingHorizontal: SPACE.lg },
   appInfoItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: SPACE.md,
     borderBottomWidth: 1,
-    borderBottomColor: "#f9fafb",
+    borderBottomColor: "#f2f4f7",
   },
+  appInfoLabel: { fontSize: 14, color: COLOR.textDim },
+  appInfoValue: { fontSize: 14, color: COLOR.text, fontWeight: "800" },
+  appInfoAction: { fontSize: 14, color: COLOR.primary, fontWeight: "800" },
 
-  appInfoLabel: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
-
-  appInfoValue: {
-    fontSize: 14,
-    color: "#1f2937",
-    fontWeight: "500",
-  },
-
-  appInfoAction: {
-    fontSize: 14,
-    color: "#3b82f6",
-    fontWeight: "500",
-  },
-
-  // Personal Info Screen
-  personalInfoContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  /* Personal Info */
+  personalInfoContent: { flex: 1, marginBottom: 80 },
   personalInfoAvatar: {
-    backgroundColor: "#ffffff",
+    backgroundColor: COLOR.surface,
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: SPACE.xxl,
     borderBottomWidth: 1,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: COLOR.line,
   },
-
-  personalInfoName: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#1f2937",
-    marginBottom: 12,
-  },
-
-  membershipBadge: {
-    backgroundColor: "#fbbf24",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-
-  membershipText: {
-    fontSize: 12,
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-
-  memberSinceText: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
+  personalInfoName: { fontSize: 24, fontWeight: "900", color: COLOR.text, marginBottom: SPACE.sm },
+  membershipBadge: { backgroundColor: "#fde68a", paddingHorizontal: 12, paddingVertical: 4, borderRadius: RADIUS.full, marginBottom: 8 },
+  membershipText: { fontSize: 12, color: "#1f2937", fontWeight: "900" },
+  memberSinceText: { fontSize: 14, color: COLOR.textDim },
 
   personalInfoSection: {
-    backgroundColor: "#ffffff",
-    marginTop: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    backgroundColor: COLOR.surface,
+    marginTop: SPACE.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
-
   personalInfoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingVertical: 12,
+    paddingVertical: SPACE.sm,
     borderBottomWidth: 1,
-    borderBottomColor: "#f9fafb",
+    borderBottomColor: "#f2f4f7",
   },
-
-  personalInfoLabel: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-    flex: 1,
-  },
-
-  personalInfoValue: {
-    fontSize: 14,
-    color: "#1f2937",
-    flex: 2,
-    textAlign: "right",
-  },
-
+  personalInfoLabel: { fontSize: 14, color: COLOR.textDim, fontWeight: "800", flex: 1 },
+  personalInfoValue: { fontSize: 14, color: COLOR.text, flex: 2, textAlign: "right" },
   personalInfoInput: {
     fontSize: 14,
-    color: "#1f2937",
+    color: COLOR.text,
     flex: 2,
     textAlign: "right",
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "#ffffff",
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACE.sm,
+    paddingVertical: 8,
+    backgroundColor: "#fafafa",
   },
+  personalInfoTextArea: { height: 72, textAlignVertical: "top", textAlign: "left" },
 
-  personalInfoTextArea: {
-    height: 60,
-    textAlignVertical: "top",
-    textAlign: "left",
-  },
-
-  genderSelector: {
-    flexDirection: "row",
-    flex: 2,
-    justifyContent: "flex-end",
-    gap: 8,
-  },
-
+  genderSelector: { flexDirection: "row", flex: 2, justifyContent: "flex-end", gap: 8 },
   genderOption: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 16,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.full,
+    backgroundColor: "#f9fafb",
   },
+  selectedGenderOption: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  genderOptionText: { fontSize: 12, color: COLOR.textDim, fontWeight: "800" },
+  selectedGenderOptionText: { color: COLOR.primary },
 
-  selectedGenderOption: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  genderOptionText: {
-    fontSize: 12,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  selectedGenderOptionText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  accountStatsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-
+  accountStatsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   accountStatCard: {
     flex: 1,
     minWidth: "45%",
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 12,
+    backgroundColor: COLOR.surface,
+    padding: SPACE.md,
+    borderRadius: RADIUS.lg,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  accountStatNumber: { fontSize: 20, fontWeight: "900", color: COLOR.primary, marginBottom: 4 },
+  accountStatLabel: { fontSize: 12, color: COLOR.textDim, textAlign: "center" },
 
-  accountStatNumber: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#3b82f6",
-    marginBottom: 4,
-  },
-
-  accountStatLabel: {
-    fontSize: 12,
-    color: "#6b7280",
-    textAlign: "center",
-  },
-
-  servicePreferences: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-
+  servicePreferences: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   preferenceTag: {
     backgroundColor: "#ecfdf5",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: RADIUS.full,
     borderWidth: 1,
-    borderColor: "#10b981",
+    borderColor: "#bbf7d0",
   },
+  preferenceTagText: { fontSize: 12, color: COLOR.success, fontWeight: "900" },
 
-  preferenceTagText: {
-    fontSize: 12,
-    color: "#10b981",
-    fontWeight: "500",
-  },
-
-  // Customer Settings Screen
-  timePreferenceSelector: {
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-
+  /* Customer Settings */
+  timePreferenceSelector: { paddingHorizontal: SPACE.lg, gap: 10 },
   timePreferenceOption: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    padding: SPACE.md,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
-    backgroundColor: "#f8fafc",
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#f9fafb",
   },
+  selectedTimePreference: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  timePreferenceInfo: { flex: 1 },
+  timePreferenceLabel: { fontSize: 14, fontWeight: "900", color: COLOR.text, marginBottom: 2 },
+  selectedTimePreferenceLabel: { color: COLOR.primary },
+  timePreferenceTime: { fontSize: 12, color: COLOR.textDim },
+  timePreferenceCheck: { fontSize: 16, color: COLOR.primary, fontWeight: "900" },
 
-  selectedTimePreference: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  timePreferenceInfo: {
-    flex: 1,
-  },
-
-  timePreferenceLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-
-  selectedTimePreferenceLabel: {
-    color: "#3b82f6",
-  },
-
-  timePreferenceTime: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
-
-  timePreferenceCheck: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "700",
-  },
-
-  distanceSelector: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 8,
-  },
-
+  distanceSelector: { flexDirection: "row", paddingHorizontal: SPACE.lg, gap: 8 },
   distanceButton: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 6,
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
     alignItems: "center",
+    backgroundColor: "#f9fafb",
   },
+  selectedDistance: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  distanceText: { fontSize: 14, color: COLOR.textDim, fontWeight: "800" },
+  selectedDistanceText: { color: COLOR.primary },
 
-  selectedDistance: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  distanceText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  selectedDistanceText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  priceRangeSelector: {
-    paddingHorizontal: 20,
-    gap: 10,
-  },
-
+  priceRangeSelector: { paddingHorizontal: SPACE.lg, gap: 10 },
   priceRangeOption: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
+    padding: SPACE.md,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderRadius: 8,
-    backgroundColor: "#f8fafc",
+    borderColor: COLOR.line,
+    borderRadius: RADIUS.md,
+    backgroundColor: "#f9fafb",
   },
+  selectedPriceRange: { borderColor: COLOR.primary, backgroundColor: COLOR.primarySoft },
+  priceRangeInfo: { flex: 1 },
+  priceRangeLabel: { fontSize: 14, fontWeight: "900", color: COLOR.text, marginBottom: 2 },
+  selectedPriceRangeLabel: { color: COLOR.primary },
+  priceRangeRange: { fontSize: 12, color: COLOR.textDim },
+  priceRangeCheck: { fontSize: 16, color: COLOR.primary, fontWeight: "900" },
 
-  selectedPriceRange: {
-    borderColor: "#3b82f6",
-    backgroundColor: "#eff6ff",
-  },
-
-  priceRangeInfo: {
-    flex: 1,
-  },
-
-  priceRangeLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-
-  selectedPriceRangeLabel: {
-    color: "#3b82f6",
-  },
-
-  priceRangeRange: {
-    fontSize: 12,
-    color: "#6b7280",
-  },
-
-  priceRangeCheck: {
-    fontSize: 16,
-    color: "#3b82f6",
-    fontWeight: "700",
-  },
-
-  // About Us Screen
+  /* About Us */
   aboutTabContainer: {
     flexDirection: "row",
-    backgroundColor: "#ffffff",
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    backgroundColor: COLOR.surface,
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLOR.line,
   },
+  aboutTab: { flex: 1, paddingVertical: SPACE.md, alignItems: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
+  activeAboutTab: { borderBottomColor: COLOR.primary },
+  aboutTabText: { fontSize: 14, color: COLOR.textDim, fontWeight: "800" },
+  activeAboutTabText: { color: COLOR.primary },
 
-  aboutTab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-  },
-
-  activeAboutTab: {
-    borderBottomColor: "#3b82f6",
-  },
-
-  aboutTabText: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-
-  activeAboutTabText: {
-    color: "#3b82f6",
-    fontWeight: "600",
-  },
-
-  aboutContent: {
-    flex: 1,
-    marginBottom: 80,
-  },
-
+  aboutContent: { flex: 1, marginBottom: 80 },
   aboutSection: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
-    marginVertical: 10,
-    borderRadius: 12,
-    padding: 20,
-  },
-
-  companyLogo: {
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-
-  logoIcon: {
-    fontSize: 60,
-    marginBottom: 15,
-  },
-
-  companyName: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1f2937",
-    marginBottom: 8,
-  },
-
-  companySlogan: {
-    fontSize: 16,
-    color: "#6b7280",
-    textAlign: "center",
-    fontStyle: "italic",
-  },
-
-  missionVisionContainer: {
-    gap: 15,
-  },
-
-  missionCard: {
-    backgroundColor: "#f0f9ff",
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: COLOR.surface,
+    marginHorizontal: SPACE.lg,
+    marginVertical: SPACE.sm,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
     borderWidth: 1,
-    borderColor: "#0ea5e9",
+    borderColor: COLOR.line,
   },
+  companyLogo: { alignItems: "center", paddingVertical: SPACE.lg },
+  logoIcon: { fontSize: 60, marginBottom: SPACE.sm, color: COLOR.text },
+  companyName: { fontSize: 28, fontWeight: "900", color: COLOR.text, marginBottom: 6 },
+  companySlogan: { fontSize: 16, color: COLOR.textDim, textAlign: "center", fontStyle: "italic" },
 
-  missionIcon: {
-    fontSize: 32,
-    marginBottom: 12,
+  missionVisionContainer: { gap: SPACE.md },
+  missionCard: {
+    backgroundColor: "#eff6ff",
+    padding: SPACE.lg,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: "#bfdbfe",
   },
-
-  missionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#0c4a6e",
-    marginBottom: 8,
-  },
-
-  missionText: {
-    fontSize: 14,
-    color: "#075985",
-    lineHeight: 20,
-  },
+  missionIcon: { fontSize: 32, marginBottom: SPACE.sm, color: COLOR.text },
+  missionTitle: { fontSize: 18, fontWeight: "900", color: "#1d4ed8", marginBottom: 6 },
+  missionText: { fontSize: 14, color: "#334155", lineHeight: 20 },
 
   visionCard: {
-    backgroundColor: "#f0fdf4",
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: "#ecfdf5",
+    padding: SPACE.lg,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
-    borderColor: "#10b981",
+    borderColor: "#bbf7d0",
   },
+  visionIcon: { fontSize: 32, marginBottom: SPACE.sm, color: COLOR.text },
+  visionTitle: { fontSize: 18, fontWeight: "900", color: "#047857", marginBottom: 6 },
+  visionText: { fontSize: 14, color: "#14532d", lineHeight: 20 },
 
-  visionIcon: {
-    fontSize: 32,
-    marginBottom: 12,
-  },
-
-  visionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#064e3b",
-    marginBottom: 8,
-  },
-
-  visionText: {
-    fontSize: 14,
-    color: "#047857",
-    lineHeight: 20,
-  },
-
-  coreValuesContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 15,
-  },
-
+  coreValuesContainer: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.md },
   valueItem: {
     width: "48%",
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: COLOR.surface,
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  valueIcon: { fontSize: 32, marginBottom: 8, color: COLOR.text },
+  valueTitle: { fontSize: 16, fontWeight: "900", color: COLOR.text, marginBottom: 4 },
+  valueDescription: { fontSize: 12, color: COLOR.textDim, textAlign: "center", lineHeight: 16 },
 
-  valueIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-
-  valueTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  valueDescription: {
-    fontSize: 12,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 16,
-  },
-
-  achievementsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 15,
-  },
-
+  achievementsGrid: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.md },
   achievementCard: {
     width: "48%",
-    backgroundColor: "#fef3c7",
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: "#fff7ed",
+    padding: SPACE.lg,
+    borderRadius: RADIUS.lg,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#f59e0b",
+    borderColor: "#fed7aa",
   },
+  achievementNumber: { fontSize: 24, fontWeight: "900", color: "#b45309", marginBottom: 4 },
+  achievementLabel: { fontSize: 14, color: "#b45309", textAlign: "center" },
 
-  achievementNumber: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#92400e",
-    marginBottom: 4,
-  },
-
-  achievementLabel: {
-    fontSize: 14,
-    color: "#b45309",
-    textAlign: "center",
-  },
-
-  timelineContainer: {
-    gap: 20,
-  },
-
-  timelineItem: {
-    flexDirection: "row",
-    gap: 15,
-  },
-
+  timelineContainer: { gap: SPACE.lg },
+  timelineItem: { flexDirection: "row", gap: SPACE.md },
   timelineYear: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: COLOR.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: RADIUS.full,
     alignSelf: "flex-start",
   },
+  timelineYearText: { fontSize: 12, color: "#ffffff", fontWeight: "900" },
+  timelineContent: { flex: 1 },
+  timelineTitle: { fontSize: 16, fontWeight: "900", color: COLOR.text, marginBottom: 4 },
+  timelineDescription: { fontSize: 14, color: COLOR.textDim, lineHeight: 20 },
 
-  timelineYearText: {
-    fontSize: 12,
-    color: "#ffffff",
-    fontWeight: "600",
-  },
-
-  timelineContent: {
-    flex: 1,
-  },
-
-  timelineTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  timelineDescription: {
-    fontSize: 14,
-    color: "#6b7280",
-    lineHeight: 20,
-  },
-
-  teamIntroText: {
-    fontSize: 14,
-    color: "#6b7280",
-    lineHeight: 20,
-    textAlign: "center",
-  },
-
-  teamMembersContainer: {
-    gap: 15,
-  },
-
+  teamIntroText: { fontSize: 14, color: COLOR.textDim, lineHeight: 20, textAlign: "center" },
+  teamMembersContainer: { gap: SPACE.md },
   teamMemberCard: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 20,
+    backgroundColor: COLOR.surface,
+    marginHorizontal: SPACE.lg,
     marginVertical: 5,
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: RADIUS.lg,
+    padding: SPACE.lg,
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-
-  teamMemberAvatar: {
-    fontSize: 48,
-  },
-
-  teamMemberInfo: {
-    flex: 1,
-  },
-
-  teamMemberName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  teamMemberPosition: {
-    fontSize: 14,
-    color: "#3b82f6",
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-
-  teamMemberDescription: {
-    fontSize: 12,
-    color: "#6b7280",
-    lineHeight: 16,
-  },
-
-  cultureContainer: {
-    gap: 15,
-  },
-
-  cultureItem: {
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    gap: SPACE.md,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
+    ...SHADOW,
   },
+  teamMemberAvatar: { fontSize: 48, color: COLOR.text },
+  teamMemberInfo: { flex: 1 },
+  teamMemberName: { fontSize: 18, fontWeight: "900", color: COLOR.text, marginBottom: 4 },
+  teamMemberPosition: { fontSize: 14, color: COLOR.primary, fontWeight: "800", marginBottom: 8 },
+  teamMemberDescription: { fontSize: 12, color: COLOR.textDim, lineHeight: 16 },
 
-  cultureIcon: {
-    fontSize: 24,
-    marginBottom: 8,
+  cultureContainer: { gap: SPACE.md },
+  cultureItem: {
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLOR.line,
   },
+  cultureIcon: { fontSize: 24, marginBottom: 8, color: COLOR.text },
+  cultureTitle: { fontSize: 16, fontWeight: "900", color: COLOR.text, marginBottom: 6 },
+  cultureText: { fontSize: 14, color: COLOR.textDim, lineHeight: 18 },
 
-  cultureTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: 6,
-  },
+  contactInfoContainer: { gap: SPACE.md },
+  contactInfoItem: { flexDirection: "row", alignItems: "center", gap: SPACE.md, paddingVertical: 10 },
+  contactInfoIcon: { fontSize: 24, width: 30, textAlign: "center", color: COLOR.text },
+  contactInfoContent: { flex: 1 },
+  contactInfoTitle: { fontSize: 14, fontWeight: "900", color: COLOR.text, marginBottom: 2 },
+  contactInfoText: { fontSize: 14, color: COLOR.textDim },
 
-  cultureText: {
-    fontSize: 14,
-    color: "#6b7280",
-    lineHeight: 18,
-  },
-
-  contactInfoContainer: {
-    gap: 15,
-  },
-
-  contactInfoItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 15,
-    paddingVertical: 10,
-  },
-
-  contactInfoIcon: {
-    fontSize: 24,
-    width: 30,
-    textAlign: "center",
-  },
-
-  contactInfoContent: {
-    flex: 1,
-  },
-
-  contactInfoTitle: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-    marginBottom: 2,
-  },
-
-  contactInfoText: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
-
-  socialMediaContainer: {
-    flexDirection: "row",
-    gap: 15,
-  },
-
+  socialMediaContainer: { flexDirection: "row", gap: SPACE.md },
   socialMediaButton: {
     flex: 1,
-    backgroundColor: "#f8fafc",
-    padding: 15,
-    borderRadius: 10,
+    backgroundColor: "#f9fafb",
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: COLOR.line,
   },
+  socialMediaIcon: { fontSize: 24, marginBottom: 8, color: COLOR.text },
+  socialMediaText: { fontSize: 14, fontWeight: "800", color: COLOR.text },
 
-  socialMediaIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-
-  socialMediaText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#1f2937",
-  },
-
-  workingHoursContainer: {
-    gap: 10,
-  },
-
+  workingHoursContainer: { gap: SPACE.sm },
   workingHoursItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: SPACE.sm,
     borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
+    borderBottomColor: "#f2f4f7",
   },
-
-  workingHoursDay: {
-    fontSize: 14,
-    color: "#1f2937",
-    fontWeight: "500",
-  },
-
-  workingHoursTime: {
-    fontSize: 14,
-    color: "#6b7280",
-  },
+  workingHoursDay: { fontSize: 14, color: COLOR.text, fontWeight: "800" },
+  workingHoursTime: { fontSize: 14, color: COLOR.textDim },
 
   supportNote: {
     backgroundColor: "#ecfdf5",
-    padding: 15,
-    borderRadius: 10,
+    padding: SPACE.md,
+    borderRadius: RADIUS.md,
     borderWidth: 1,
-    borderColor: "#10b981",
+    borderColor: "#bbf7d0",
   },
-
-  supportNoteIcon: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-
-  supportNoteTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#064e3b",
-    marginBottom: 6,
-  },
-
-  supportNoteText: {
-    fontSize: 14,
-    color: "#047857",
-    lineHeight: 18,
-  },
-
-  // Tutor Info styles
-infoSection: {
-  backgroundColor: "white",
-  padding: 20,
-  marginHorizontal: 15,
-  marginVertical: 10,
-  borderRadius: 10,
-  borderWidth: 1,
-  borderColor: "#e5e7eb",
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.05,
-  shadowRadius: 2,
-  elevation: 1,
-},
-sectionTitle: {
-  fontSize: 16,
-  fontWeight: "bold",
-  color: "#1f2937",
-  marginBottom: 10,
-},
-infoLabel: {
-  fontSize: 14,
-  fontWeight: "600",
-  color: "#374151",
-  marginBottom: 2,
-},
-infoValue: {
-  fontSize: 14,
-  color: "#6b7280",
-},
-})
+  supportNoteIcon: { fontSize: 24, marginBottom: 8, color: COLOR.success },
+  supportNoteTitle: { fontSize: 16, fontWeight: "900", color: COLOR.success, marginBottom: 6 },
+  supportNoteText: { fontSize: 14, color: "#14532d", lineHeight: 18 },
+});
