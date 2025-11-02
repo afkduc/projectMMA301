@@ -729,8 +729,8 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Dashboard Styles
-  workerHeader: {
+  // Tutor Dashboard Styles
+  tutorHeader: {
     backgroundColor: 'white',
     padding: 20,
     flexDirection: 'row',
@@ -739,15 +739,15 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
-  workerAvatar: {
+  tutorAvatar: {
     fontSize: 50,
   },
-  workerSpecialty: {
+  tutorSpecialty: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 5,
   },
-  workerRating: {
+  tutorRating: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
@@ -875,7 +875,7 @@ export const styles = StyleSheet.create({
     color: '#2563eb',
   },
 
-  // Worker Orders Styles
+  // Tutor Orders Styles
   ordersList: {
     padding: 15,
     gap: 15,
@@ -1000,7 +1000,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Order Detail Styles
+  // Tutor Order Detail Styles
   orderDetailContent: {
     flex: 1,
     marginBottom: 160,
@@ -1138,8 +1138,8 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Profile Styles
-  workerProfileHeader: {
+  // Tutor Profile Styles
+  tutorProfileHeader: {
     backgroundColor: 'white',
     padding: 20,
     flexDirection: 'row',
@@ -1148,26 +1148,26 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e5e7eb',
   },
-  workerProfileInfo: {
+  tutorProfileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
   },
-  workerProfileAvatar: {
+  tutorProfileAvatar: {
     fontSize: 50,
   },
-  workerProfileName: {
+  tutorProfileName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1f2937',
     marginBottom: 2,
   },
-  workerProfilePhone: {
+  tutorProfilePhone: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
   },
-  workerProfileSpecialty: {
+  tutorProfileSpecialty: {
     fontSize: 14,
     color: '#2563eb',
   },
@@ -1192,23 +1192,23 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
   },
-  workerStatsContainer: {
+  tutorStatsContainer: {
     backgroundColor: 'white',
     flexDirection: 'row',
     paddingVertical: 20,
     marginTop: 10,
   },
-  workerStatItem: {
+  tutorStatItem: {
     flex: 1,
     alignItems: 'center',
   },
-  workerStatNumber: {
+  tutorStatNumber: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2563eb',
     marginBottom: 2,
   },
-  workerStatLabel: {
+  tutorStatLabel: {
     fontSize: 12,
     color: '#6b7280',
   },
@@ -1422,7 +1422,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#dbeafe',
     color: '#1e40af',
   },
-  workerRole: {
+  tutorRole: {
     backgroundColor: '#d1fae5',
     color: '#065f46',
   },
@@ -1623,7 +1623,7 @@ export const styles = StyleSheet.create({
     color: '#1f2937',
     marginBottom: 2,
   },
-  reviewWorker: {
+  reviewWTutor: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
@@ -1756,7 +1756,7 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 2,
   },
-  transactionWorker: {
+  transactionTutor: {
     fontSize: 14,
     color: '#6b7280',
     marginBottom: 2,
@@ -1788,7 +1788,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ef4444',
   },
-  transactionWorkerReceived: {
+  transactionTutorReceived: {
     fontSize: 14,
     fontWeight: '600',
     color: '#10b981',
@@ -1875,7 +1875,7 @@ export const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 5,
   },
-  areaWorkerCount: {
+  areaTutorCount: {
     fontSize: 14,
     color: '#2563eb',
     fontWeight: '600',
@@ -2530,7 +2530,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Schedule styles
+  // Tutor Schedule styles
   scheduleContent: {
     flex: 1,
     marginBottom: 80,
@@ -2911,12 +2911,12 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#10b981',
   },
-  // Worker Edit Profile styles
-  workerFormSection: {
+  // Tutor Edit Profile styles
+  tutorFormSection: {
     marginBottom: 25,
   },
 
-  workerFormSectionTitle: {
+  tutorFormSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1f2937',
@@ -2975,7 +2975,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // Worker Skills Screen styles
+  // Tutor Skills Screen styles
   skillsContent: {
     flex: 1,
   },
@@ -3871,4 +3871,276 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+
+  // ==== EDIT PROFILE — REFRESHED UI ====
+
+modalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.35)',
+  justifyContent: 'flex-end',
+},
+
+modalContent: {
+  backgroundColor: '#ffffff',
+  width: '96%',
+  alignSelf: 'center',
+  borderTopLeftRadius: 24,
+  borderTopRightRadius: 24,
+  maxHeight: '92%',
+  // Shadow iOS
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: -6 },
+  shadowOpacity: 0.12,
+  shadowRadius: 14,
+  // Shadow Android
+  elevation: 12,
+},
+
+modalHeader: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingHorizontal: 20,
+  paddingTop: 16,
+  paddingBottom: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: '#eef2f7',
+},
+
+modalTitle: {
+  fontSize: 18,
+  fontWeight: '700',
+  color: '#0f172a',
+},
+
+modalCloseButton: {
+  fontSize: 22,
+  color: '#94a3b8',
+},
+
+modalForm: {
+  paddingHorizontal: 18,
+  paddingVertical: 16,
+},
+
+// Avatar
+avatarSection: {
+  alignItems: 'center',
+  marginBottom: 22,
+},
+editProfileAvatar: {
+  fontSize: 64,
+  marginBottom: 12,
+  backgroundColor: '#f1f5f9',
+  width: 86,
+  height: 86,
+  borderRadius: 43,
+  textAlign: 'center',
+  textAlignVertical: 'center',
+},
+changeAvatarButton: {
+  paddingHorizontal: 16,
+  paddingVertical: 8,
+  backgroundColor: '#eef2ff',
+  borderRadius: 999,
+  borderWidth: 1,
+  borderColor: '#c7d2fe',
+},
+changeAvatarButtonText: {
+  fontSize: 13,
+  color: '#3730a3',
+  fontWeight: '600',
+},
+
+// Section
+tutorFormSection: {
+  marginBottom: 22,
+  backgroundColor: '#ffffff',
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: '#eef2f7',
+  padding: 14,
+  // subtle shadow
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.06,
+  shadowRadius: 8,
+  elevation: 2,
+},
+
+tutorFormSectionTitle: {
+  fontSize: 15,
+  fontWeight: '700',
+  color: '#0f172a',
+  marginBottom: 14,
+  paddingBottom: 6,
+  borderBottomWidth: 1,
+  borderBottomColor: '#f1f5f9',
+},
+
+// Form Controls
+formGroup: {
+  marginBottom: 16,
+},
+formLabel: {
+  fontSize: 13,
+  fontWeight: '600',
+  color: '#334155',
+  marginBottom: 8,
+},
+formInput: {
+  backgroundColor: '#f8fafc',
+  paddingVertical: 12,
+  paddingHorizontal: 14,
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: '#e2e8f0',
+  fontSize: 15,
+},
+textArea: {
+  height: 100,
+  textAlignVertical: 'top',
+},
+formInputError: {
+  borderColor: '#ef4444',
+},
+errorText: {
+  fontSize: 12,
+  color: '#ef4444',
+  marginTop: 6,
+},
+
+// Checkbox list (môn dạy)
+checkboxList: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 10,
+},
+checkboxItem: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 8,
+  paddingHorizontal: 10,
+  borderWidth: 1,
+  borderColor: '#e2e8f0',
+  backgroundColor: '#ffffff',
+  borderRadius: 10,
+},
+checkbox: {
+  width: 18,
+  height: 18,
+  borderWidth: 1.5,
+  borderColor: '#94a3b8',
+  borderRadius: 5,
+  marginRight: 8,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'white',
+},
+checkboxChecked: {
+  backgroundColor: '#2563eb',
+  borderColor: '#2563eb',
+},
+checkmark: {
+  color: 'white',
+  fontWeight: '700',
+  fontSize: 12,
+},
+checkboxLabel: {
+  fontSize: 13.5,
+  color: '#0f172a',
+},
+
+// Skills
+skillsContainer: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: 8,
+  marginBottom: 12,
+},
+skillChip: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#eef2ff',
+  paddingHorizontal: 12,
+  paddingVertical: 6,
+  borderRadius: 999,
+  borderWidth: 1,
+  borderColor: '#c7d2fe',
+},
+skillChipText: {
+  fontSize: 13,
+  color: '#3730a3',
+  marginRight: 6,
+  fontWeight: '600',
+},
+skillRemoveButton: {
+  fontSize: 16,
+  color: '#ef4444',
+  fontWeight: '700',
+},
+
+addSkillContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+},
+addSkillButton: {
+  backgroundColor: '#10b981',
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+  borderRadius: 10,
+  // shadow
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.12,
+  shadowRadius: 4,
+  elevation: 2,
+},
+addSkillButtonText: {
+  color: '#ffffff',
+  fontSize: 14,
+  fontWeight: '700',
+},
+
+// Actions
+modalActions: {
+  flexDirection: 'row',
+  gap: 12,
+  marginTop: 6,
+  paddingBottom: 8,
+},
+cancelButton: {
+  flex: 1,
+  backgroundColor: '#f1f5f9',
+  padding: 14,
+  borderRadius: 12,
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: '#e2e8f0',
+},
+cancelButtonText: {
+  color: '#0f172a',
+  fontSize: 15,
+  fontWeight: '700',
+},
+saveButton: {
+  flex: 1,
+  backgroundColor: '#2563eb',
+  padding: 14,
+  borderRadius: 12,
+  alignItems: 'center',
+  // shadow
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 3 },
+  shadowOpacity: 0.15,
+  shadowRadius: 6,
+  elevation: 3,
+},
+saveButtonText: {
+  color: 'white',
+  fontSize: 15,
+  fontWeight: '800',
+},
+
 });

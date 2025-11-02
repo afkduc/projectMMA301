@@ -2,7 +2,7 @@ import FirebaseService from "./firebaseService"
 
 class OrderService {
   constructor() {
-    this.basePath = "orders"
+    this.basePath = "tutorSessions"
   }
 
   async createOrder(orderData) {
@@ -115,6 +115,10 @@ class OrderService {
       const filtered = order.filter((item) => item.workerId === workerId);
       callback(filtered);
     });
+  }
+  // ✅ Thêm alias này để fix lỗi listenToTutorOrders undefined
+  listenToTutorOrders(tutorId, callback) {
+    return this.listenToWorkerOrders(tutorId, callback);
   }
 }
 

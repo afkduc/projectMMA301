@@ -10,6 +10,20 @@ import { seedUsers } from "@service/initUsers";
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
 
+// Tutor screens
+import TutorDashboardScreen from "./src/screens/tutor/TutorDashboardScreen";
+import TutorOrdersScreen from "./src/screens/tutor/TutorOrdersScreen";
+import TutorProfileScreen from "./src/screens/tutor/TutorProfileScreen";
+import TutorOrderDetailScreen from "./src/screens/tutor/TutorOrderDetailScreen";
+import TutorAreaScreen from "./src/screens/tutor/TutorAreaScreen";
+import TutorSkillsScreen from "./src/screens/tutor/TutorSkillsScreen";
+import TutorInfoScreen from "./src/screens/tutor/TutorInfoScreen";
+import TutorScheduleScreen from "./src/screens/tutor/TutorScheduleScreen";
+import TutorIncomeScreen from "./src/screens/tutor/TutorIncomeScreen";
+import TutorReviewsScreen from "./src/screens/tutor/TutorReviewsScreen";
+import TutorEditProfileScreen from "./src/screens/tutor/TutorEditProfileScreen";
+import TutorSupportScreen from "./src/screens/tutor/TutorSupportScreen";
+import TutorSettingsScreen from "./src/screens/tutor/TutorSettingsScreen";
 // Admin screens
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
@@ -29,6 +43,10 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [screenStack, setScreenStack] = useState(["login"]);
   const [selectedService, setSelectedService] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
+  // Cập nhật state để thêm currentUser
+  const [currentUser, setCurrentUser] = useState(null);
 
   // --- Init users ---
   useEffect(() => {
