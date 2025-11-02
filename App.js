@@ -21,6 +21,7 @@ import SessionsManagementScreen from "./src/screens/admin/SessionsManagementScre
 import ReviewManagementScreen from "./src/screens/admin/ReviewManagementScreen";
 import UserManagementScreen from "./src/screens/admin/UserManagementScreen";
 import AdminProfileScreen from "./src/screens/admin/AdminProfileScreen";
+import AiChatScreen from "./src/screens/admin/AiChatScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -81,8 +82,8 @@ export default function App() {
         setCurrentScreen("adminDashboard");
       } else if (tab === "userManagement") {
         setCurrentScreen("userManagement");
-      } else if (tab === "sessionManagement") {
-        setCurrentScreen("sessionManagement");
+      } else if (tab === "aichat") {
+        setCurrentScreen("aichat");
       } else if (tab === "adminProfile") {
         setCurrentScreen("adminProfile");
       }
@@ -245,6 +246,17 @@ export default function App() {
   if (currentScreen === "reviewManagement") {
     return (
       <ReviewManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "aichat") {
+    return (
+      <AiChatScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}

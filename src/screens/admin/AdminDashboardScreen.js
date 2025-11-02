@@ -35,7 +35,7 @@ const AdminDashboardScreen = ({ onTabPress, onMenuPress, currentUser }) => {
           unprocessedSessions: unprocessedSessions.length,
         });
       } catch (error) {
-        console.error("❌ Lỗi khi tải thống kê admin:", error);
+        console.error("Lỗi khi tải thống kê admin:", error);
       }
     };
 

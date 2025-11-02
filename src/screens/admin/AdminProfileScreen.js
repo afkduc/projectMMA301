@@ -17,8 +17,6 @@ const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
         totalUsers: 0,
         totalTutors: 0,
         totalBookings: 0,
-        completedBookings: 0,
-        pendingBookings: 0,
     });
 
     // Lấy thông tin admin
@@ -46,32 +44,8 @@ const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
                 const [users, tutors, bookings] = await Promise.all([
                     FirebaseService.readAll("users"),
                     FirebaseService.readAll("tutors"),
-                    FirebaseService.readAll("tutorSessions"), 
+                    FirebaseService.readAll("tutorSessions"),
                 ]);
-
-                const currentMonth = new Date().getMonth();
-                const completedBookings = bookings.filter(b => b.status === "completed");
-                const pendingBookings = bookings.filter(b => b.status !== "completed");
-
-                const parsePrice = (value) => {
-                    if (typeof value === "string") return parseInt(value.replace(/[^\d]/g, "")) || 0;
-                    return typeof value === "number" ? value : 0;
-                };
-
-                const extractMonth = (booking) => {
-                    if (booking.date) {
-                        const parts = booking.date.split("/"); // "dd/mm/yyyy"
-                        return parseInt(parts[1], 10) - 1;
-                    }
-                    if (booking.completedAt || booking.updatedAt) return new Date(booking.completedAt || booking.updatedAt).getMonth();
-                    return -1;
-                };
-
-                const totalRevenue = completedBookings.reduce((sum, b) => sum + parsePrice(b.price), 0);
-                const monthlyRevenue = completedBookings.reduce((sum, b) => {
-                    const bookingMonth = extractMonth(b);
-                    return bookingMonth === currentMonth ? sum + parsePrice(b.price) : sum;
-                }, 0);
 
                 setStats({
                     totalUsers: users.length,

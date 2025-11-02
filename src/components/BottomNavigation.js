@@ -46,9 +46,9 @@ export const AdminBottomNav = ({ onTabPress, activeTab }) => (
       <Text style={styles.navIcon}>👥</Text>
       <Text style={[styles.navText, activeTab === "userManagement" && styles.activeNavText]}>Người dùng</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("sessionManagement")}>
-      <Text style={styles.navIcon}>📋</Text>
-      <Text style={[styles.navText, activeTab === "sessionManagement" && styles.activeNavText]}>Dạy học</Text>
+    <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("aichat")}>
+      <Text style={styles.navIcon}>🤖</Text>
+      <Text style={[styles.navText, activeTab === "aichat" && styles.activeNavText]}>AI Chat</Text>
     </TouchableOpacity>
     <TouchableOpacity style={styles.navItem} onPress={() => onTabPress("adminProfile")}>
       <Text style={styles.navIcon}>👤</Text>
