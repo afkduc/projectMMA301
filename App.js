@@ -16,11 +16,11 @@ import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
 import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
 import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen";
-import SystemLogsScreen from "./src/screens/admin/SystemLogsScreen";
 import SubjectManagementScreen from "./src/screens/admin/SubjectManagementScreen";
 import SessionsManagementScreen from "./src/screens/admin/SessionsManagementScreen";
 import ReviewManagementScreen from "./src/screens/admin/ReviewManagementScreen";
-import SystemSettingsScreen from "./src/screens/admin/SystemSettingsScreen";
+import UserManagementScreen from "./src/screens/admin/UserManagementScreen";
+import AdminProfileScreen from "./src/screens/admin/AdminProfileScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -70,24 +70,25 @@ export default function App() {
   // --- Khi người dùng bấm tab trong HomeScreen ---
   const handleTabPress = (tab) => {
     console.log("Người dùng chọn tab:", tab);
+
     if (tab === "profile") {
       // sau này bạn có thể mở ProfileScreen
     } else if (tab === "home") {
       setCurrentScreen("home");
     }
-
-    if (user?.role === "admin") {
+    else if (user?.role === "admin") {
       if (tab === "adminDashboard") {
         setCurrentScreen("adminDashboard");
       } else if (tab === "userManagement") {
-        setCurrentScreen("adminDashboard");
+        setCurrentScreen("userManagement");
       } else if (tab === "orderManagement") {
         setCurrentScreen("adminDashboard");
       } else if (tab === "adminProfile") {
-        setCurrentScreen("adminDashboard");
+        setCurrentScreen("adminProfile");
       }
     }
   };
+
 
   // --- Khi đăng xuất ---
   const handleLogout = () => {
@@ -162,6 +163,30 @@ export default function App() {
     );
   }
 
+  if (currentScreen === "userManagement") {
+    return (
+      <UserManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        activeTab="userManagement"
+      />
+    );
+  }
+
+  if (currentScreen === "adminProfile") {
+    return (
+      <AdminProfileScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+        activeTab="adminProfile"
+      />
+    );
+  }
+
   if (currentScreen === "adminAccountManagement") {
     return (
       <AdminAccountManagementScreen
@@ -195,17 +220,6 @@ export default function App() {
     );
   }
 
-  if (currentScreen === "systemLogs") {
-    return (
-      <SystemLogsScreen
-        onBack={() => setCurrentScreen("adminDashboard")}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-      />
-    );
-  }
-
   if (currentScreen === "subjectManagement") {
     return (
       <SubjectManagementScreen
@@ -231,17 +245,6 @@ export default function App() {
   if (currentScreen === "reviewManagement") {
     return (
       <ReviewManagementScreen
-        onBack={() => setCurrentScreen("adminDashboard")}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-      />
-    );
-  }
-
-  if (currentScreen === "systemSettings") {
-    return (
-      <SystemSettingsScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}
