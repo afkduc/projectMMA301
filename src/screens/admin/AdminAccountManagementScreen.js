@@ -31,7 +31,7 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
                 <View style={styles.adminAccountInfo}>
                     <Text style={styles.adminAccountName}>{item.name}</Text>
                     <Text style={styles.adminAccountPhone}>
-                        <Text style={{ fontWeight: 'bold' }}>SDT:: </Text>
+                        <Text style={{ fontWeight: 'bold' }}>SDT: </Text>
                         {item.phone}
                     </Text>
                     <Text style={styles.adminAccountEmail}>

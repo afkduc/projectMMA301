@@ -4,7 +4,6 @@ import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
-// import AdminService from "./src/service/AdminService";
 
 // AI ask 
 import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
@@ -16,7 +15,9 @@ import HomeScreen from "./src/screens/customer/HomeScreen";
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
 import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
-import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen"
+import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen";
+import SystemLogsScreen from "./src/screens/admin/SystemLogsScreen";
+import SubjectManagementScreen from "./src/screens/admin/SubjectManagementScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -28,26 +29,6 @@ export default function App() {
   useEffect(() => {
     seedUsers(); // chạy 1 lần khi app start
   }, []);
-
-  // useEffect(() => {
-  //   const addSampleAdmins = async () => {
-  //     await AdminService.createAdmin({
-  //       name: "Quản trị viên Nguyễn",
-  //       phone: "0123456789",
-  //       email: "admin@example.com",
-  //       password: "123456",
-  //     });
-
-  //     await AdminService.createAdmin({
-  //       name: "Quản trị viên Trần",
-  //       phone: "0987654321",
-  //       email: "admin2@example.com",
-  //       password: "123456",
-  //     });
-  //   };
-
-  //   addSampleAdmins();
-  // }, []);
 
   // --- Xử lý login ---
   const handleLogin = (role, userData) => {
@@ -203,6 +184,28 @@ export default function App() {
   if (currentScreen === "tutorManagement") {
     return (
       <TutorsManagementScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "systemLogs") {
+    return (
+      <SystemLogsScreen
+        onBack={() => setCurrentScreen("adminDashboard")}
+        onTabPress={handleTabPress}
+        currentUser={user}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  if (currentScreen === "subjectManagement") {
+    return (
+      <SubjectManagementScreen
         onBack={() => setCurrentScreen("adminDashboard")}
         onTabPress={handleTabPress}
         currentUser={user}

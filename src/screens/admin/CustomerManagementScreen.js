@@ -20,7 +20,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
 
     useEffect(() => {
         const unsubscribe = UserService.listenToUsers((users) => {
-            const customers = users.filter((u) => u.role === "customer");
+            const customers = users.filter((u) => u.role === "student" || u.role === "customer");
             setCustomerList(customers);
         });
 
@@ -119,7 +119,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
 
                     <Text style={styles.userPhone}>
                         <Text style={{ fontWeight: 'bold' }}>Địa chỉ: </Text>
-                        {item.address || 'N/A'}
+                        {item.address || item.area || 'N/A'}
                     </Text>
 
                     <Text style={styles.userPhone}>

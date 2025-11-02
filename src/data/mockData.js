@@ -163,39 +163,40 @@ export const subjects = [
 
 export const tutors = [
   {
-    id: "1",
-    name: "Gia sư Minh",
+    id: "6",
+    name: "Gia sư Minh Tuấn",
     degree: "Cử nhân Sư phạm Toán – Đại học Sư phạm Hà Nội",
     rating: 4.8,
     price: "150,000đ/giờ",
     distance: "0.5km",
     avatar: "👨‍🏫",
     reviews: 127,
-    phone: "0901234567",
+    phone: "0444444444",
   },
   {
-    id: "2",
-    name: "Gia sư Tuấn",
+    id: "7",
+    name: "Gia sư Văn Nam",
     degree: "Cử nhân Sư phạm Ngữ văn – Đại học Quốc gia Hà Nội",
     rating: 4.6,
     price: "120,000đ/giờ",
     distance: "1.2km",
     avatar: "👨‍🏫",
     reviews: 89,
-    phone: "0907654321",
+    phone: "0555555555",
   },
   {
-    id: "3",
-    name: "Gia sư Hùng",
+    id: "8",
+    name: "Gia sư Hoàng Long",
     degree: "Cử nhân Ngôn ngữ Anh – Đại học Hà Nội",
     rating: 4.9,
     price: "180,000đ/giờ",
     distance: "2.1km",
     avatar: "👨‍🏫",
     reviews: 203,
-    phone: "0912345678",
+    phone: "0666666666",
   },
-]
+];
+
 // Danh sách lịch học của học viên
 export const studentBookings = [
   {
@@ -339,16 +340,14 @@ export const adminStats = {
 
 // Menu admin
 export const adminMenuItems = [
-  { id: "1", title: "Quản lý học viên", icon: "👥", action: "students", screen: "studentManagement" },
+  { id: "1", title: "Quản lý khách hàng", icon: "👥", action: "customer", screen: "customerManagement" },
   { id: "2", title: "Quản lý gia sư", icon: "👨‍🏫", action: "tutors", screen: "tutorManagement" },
   { id: "3", title: "Quản lý môn học", icon: "📘", action: "subjects", screen: "subjectManagement" },
   { id: "4", title: "Quản lý buổi học", icon: "📋", action: "sessions", screen: "sessionManagement" },
   { id: "5", title: "Đánh giá & phản hồi", icon: "⭐", action: "reviews", screen: "reviewManagement" },
-  { id: "6", title: "Thanh toán & hoa hồng", icon: "💰", action: "payments", screen: "paymentManagement" },
-  { id: "7", title: "Quản lý khu vực", icon: "📍", action: "areas", screen: "areaManagement" },
-  { id: "8", title: "Tài khoản admin", icon: "👨‍💼", action: "admins", screen: "adminAccountManagement" },
-  { id: "9", title: "Cài đặt hệ thống", icon: "⚙️", action: "settings", screen: "systemSettings" },
-  { id: "10", title: "Nhật ký hệ thống", icon: "📊", action: "logs", screen: "systemLogs" },
+  { id: "6", title: "Tài khoản admin", icon: "👨‍💼", action: "admins", screen: "adminAccountManagement" },
+  { id: "7", title: "Cài đặt hệ thống", icon: "⚙️", action: "settings", screen: "systemSettings" },
+  { id: "8", title: "Nhật ký hệ thống", icon: "📊", action: "logs", screen: "systemLogs" },
 ]
 
 // Đánh giá từ học viên
@@ -433,15 +432,15 @@ export const systemLogs = [
     id: "2",
     action: "Xóa người dùng",
     user: "Admin Trần",
-    details: "Xóa tài khoản học viên ID: 10",
+    details: "Khóa tài khoản học viên ID: 10",
     timestamp: "18/01/2024 10:15:22",
     ip: "192.168.1.101",
   },
   {
     id: "3",
-    action: "Cập nhật môn học",
+    action: "Duyện gia sư",
     user: "Admin Nguyễn",
-    details: "Cập nhật học phí môn Toán học",
+    details: "Duyệt gia sư ID: 7",
     timestamp: "18/01/2024 11:45:30",
     ip: "192.168.1.100",
   },
