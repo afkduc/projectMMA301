@@ -65,7 +65,6 @@ async createTutor(tutorData) {
   async getTutorByUserId(userId) {
     try {
       const allTutors = await FirebaseService.readAllWithKeys(this.basePath);
-  
       // 🔎 Tìm user tương ứng trong bảng users
       const users = await FirebaseService.readAllWithKeys("users");
       const currentUser = users.find((u) => String(u.id) === String(userId));
@@ -92,9 +91,7 @@ async createTutor(tutorData) {
       throw error;
     }
   }
-  
-
-  async getAllTutors() {
+async getAllTutors() {
     try {
       const allUsers = await FirebaseService.readAll(this.basePath);
       return allUsers;
@@ -197,7 +194,7 @@ async createTutor(tutorData) {
   
 
   listenToTutors(callback) {
-    return FirebaseService.listen(this.basePath, (snapshot) => {
+return FirebaseService.listen(this.basePath, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         const tutors = Object.entries(data).map(([id, val]) => ({ id, ...val }));
