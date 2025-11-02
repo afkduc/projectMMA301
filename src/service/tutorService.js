@@ -6,28 +6,51 @@ class TutorService {
     this.basePath = "tutors";
   }
 
-  // ✅ Tạo tutor mới — tự động mã hoá mật khẩu trước khi lưu
-  async createTutor(tutorData) {
-    try {
-      let finalData = { ...tutorData };
-
-      if (tutorData.password) {
-        const hashedPassword = await hashPassword(tutorData.password);
-        finalData.password = hashedPassword;
-      }
-
-      const tutorId = await FirebaseService.create(this.basePath, {
-        ...finalData,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-
-      return tutorId;
-    } catch (error) {
-      console.error("Error creating tutor:", error);
-      throw error;
+  //  Tạo tutor mới — tự động mã hoá mật khẩu trước khi lưu
+async createTutor(tutorData) {
+  try {
+    let finalData = { ...tutorData };
+    // Hash mật khẩu trước khi lưu
+    if (tutorData.password) {
+      const hashedPassword = await hashPassword(tutorData.password);
+      finalData.password = hashedPassword;
     }
+    // Đồng bộ dữ liệu với RegisterScreen: chuyển serviceId → subjects
+    if (Array.isArray(tutorData.serviceId)) {
+      finalData.subjects = tutorData.serviceId;
+      delete finalData.serviceId; // ⚠️ Xóa trường cũ để tránh trùng
+    }
+
+    //  Nếu có specialty thì cũng đồng bộ lại
+    if (tutorData.specialty && !finalData.subjects?.length) {
+      finalData.subjects = tutorData.specialty.split(",").map((s) => s.trim());
+    }
+
+    // Thêm metadata
+    finalData = {
+      ...finalData,
+      role: "tutor",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      status: finalData.status || "pending",
+      rating: finalData.rating || 0,
+      completedOrders: finalData.completedOrders || 0,
+      price: finalData.price || "Thỏa thuận",
+      avatar: finalData.avatar || "👨‍🏫",
+      reviews: finalData.reviews || 0,
+    };
+
+    //  Lưu lên Firebase
+    const tutorId = await FirebaseService.create(this.basePath, finalData);
+    console.log("🎉 Gia sư đã được tạo:", tutorId);
+
+    return tutorId;
+  } catch (error) {
+    console.error("❌ Error creating tutor:", error);
+    throw error;
   }
+}
+
 
   async getTutorById(tutorId) {
     try {
@@ -90,21 +113,27 @@ class TutorService {
       throw error;
     }
   }
-
-  async getTutorByService(serviceId) {
+//Tìm và sửa hàm lấy danh sách theo  subjects
+  async getTutorBySubject(subjectName) {
     try {
-      const allTutors = await this.getAllTutors();
-      return allTutors.filter(
-        (tutor) =>
-          tutor.status === "active" &&
-          Array.isArray(tutor.serviceId) &&
-          tutor.serviceId.includes(serviceId)
-      );
+      const snapshot = await get(query(ref(database, this.basePath)));
+      const data = snapshot.val() || {};
+      const tutors = Object.entries(data)
+        .map(([id, value]) => ({ id, ...value }))
+        .filter(
+          (tutor) =>
+            Array.isArray(tutor.subjects) &&
+            tutor.subjects.some(
+              (s) => s.toLowerCase() === subjectName.toLowerCase()
+            )
+        );
+      return tutors;
     } catch (error) {
-      console.error("Error getting tutors by service:", error);
-      throw error;
+      console.error("❌ Lỗi khi lấy danh sách tutor theo môn học:", error);
+      return [];
     }
   }
+  
 
   // ✅ Update — tự động hash lại nếu có thay đổi mật khẩu
   async updateTutor(innerId, tutorData) {
@@ -141,18 +170,16 @@ class TutorService {
     }
   }
 
-  async filterTutorsBy(serviceId, sortBy = "rating") {
+  async filterTutorsBy(subjectName, sortBy = "rating") {
     try {
-      let tutors = await this.getTutorByService(serviceId);
-
+      let tutors = await this.getTutorBySubject(subjectName);
+  
       switch (sortBy) {
         case "rating":
           tutors.sort((a, b) => (b.rating || 0) - (a.rating || 0));
           break;
         case "price":
-          tutors.sort(
-            (a, b) => extractPrice(a.price) - extractPrice(b.price)
-          );
+          tutors.sort((a, b) => extractPrice(a.price) - extractPrice(b.price));
           break;
         case "distance":
           tutors.sort(
@@ -160,13 +187,14 @@ class TutorService {
           );
           break;
       }
-
+  
       return tutors;
     } catch (error) {
       console.error("Error filtering tutors:", error);
       throw error;
     }
   }
+  
 
   listenToTutors(callback) {
     return FirebaseService.listen(this.basePath, (snapshot) => {
