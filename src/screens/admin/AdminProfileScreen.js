@@ -7,9 +7,8 @@ import FirebaseService from "../../service/firebaseService";
 import EditProfileScreen from "./EditProfileScreen";
 import userService from "../../service/UserService";
 import { getCurrentUserId } from "../../utils/auth";
-import TutorSessionsService from "../../service/TutorSessionsService";
 
-const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
+const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress, currentUser }) => {
     const [showEditProfile, setShowEditProfile] = useState(false);
     const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -56,13 +55,16 @@ const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
                 console.error("Error fetching admin stats:", error);
             }
         };
-
         fetchStats();
     }, []);
 
+    // Hàm xử lý nhấn menu item → chuyển màn
     const handleMenuPress = (screen) => {
-        if (screen && onMenuPress) onMenuPress(screen);
-        else Alert.alert("Thông báo", "Chức năng đang được phát triển");
+        if (screen && onMenuPress) {
+            onMenuPress(screen); // Cập nhật currentScreen từ parent
+        } else {
+            Alert.alert("Thông báo", "Chức năng đang được phát triển");
+        }
     };
 
     const handleLogout = () => {
@@ -146,6 +148,7 @@ const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
                 </TouchableOpacity>
             </ScrollView>
 
+            {/* Edit Profile Modal */}
             <EditProfileScreen
                 visible={showEditProfile}
                 onClose={() => setShowEditProfile(false)}
@@ -153,6 +156,7 @@ const AdminProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
                 userInfo={userInfo}
             />
 
+            {/* Bottom Navigation */}
             <AdminBottomNav onTabPress={onTabPress} activeTab="adminProfile" />
         </SafeAreaView>
     );
