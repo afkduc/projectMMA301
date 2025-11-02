@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     Text,
@@ -6,22 +6,42 @@ import {
     SafeAreaView,
     FlatList,
     TextInput,
+    ActivityIndicator,
+    Alert,
 } from "react-native";
 import { styles } from "../../style/styles";
-import { users } from "../../data/mockData";
 import { AdminBottomNav } from "../../components/BottomNavigation";
+import FirebaseService from "../../service/firebaseService"; // service đọc từ firebase
 
 const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
-    const [adminList, setAdminList] = useState(
-        users.filter((user) => user.role === "admin")
-    );
+    const [adminList, setAdminList] = useState([]);
     const [searchText, setSearchText] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchAdmins();
+    }, []);
+
+    const fetchAdmins = async () => {
+        try {
+            setLoading(true);
+            const users = await FirebaseService.readAll("users"); // đọc tất cả users
+            // Lọc chỉ lấy admin
+            const admins = users.filter((user) => user.role === "admin");
+            setAdminList(admins);
+        } catch (error) {
+            console.error("❌ Error fetching admins:", error);
+            Alert.alert("Lỗi", "Không thể tải danh sách admin.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const filteredAdmins = adminList.filter(
         (admin) =>
-            admin.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            admin.phone.includes(searchText) ||
-            admin.email.toLowerCase().includes(searchText.toLowerCase())
+            admin.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+            admin.phone?.includes(searchText) ||
+            admin.email?.toLowerCase().includes(searchText.toLowerCase())
     );
 
     const renderAdmin = ({ item }) => (
@@ -29,17 +49,19 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
             <View style={styles.adminAccountHeader}>
                 <Text style={styles.adminAccountAvatar}>👨‍💼</Text>
                 <View style={styles.adminAccountInfo}>
-                    <Text style={styles.adminAccountName}>{item.name}</Text>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text style={styles.adminAccountName}>{item.name}</Text>
+                    </View>
                     <Text style={styles.adminAccountPhone}>
-                        <Text style={{ fontWeight: 'bold' }}>SDT:: </Text>
+                        <Text style={{ fontWeight: "bold" }}>SDT: </Text>
                         {item.phone}
                     </Text>
                     <Text style={styles.adminAccountEmail}>
-                        <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+                        <Text style={{ fontWeight: "bold" }}>Email: </Text>
                         {item.email}
                     </Text>
                     <Text style={styles.adminAccountRole}>
-                        <Text style={{ fontWeight: 'bold' }}>Role: </Text>
+                        <Text style={{ fontWeight: "bold" }}>Role: </Text>
                         {item.role}
                     </Text>
                 </View>
@@ -79,13 +101,17 @@ const AdminAccountManagementScreen = ({ onTabPress, onBack }) => {
                 />
             </View>
 
-            <FlatList
-                data={filteredAdmins}
-                renderItem={renderAdmin}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                showsVerticalScrollIndicator={false}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="#3b82f6" style={{ marginTop: 20 }} />
+            ) : (
+                <FlatList
+                    data={filteredAdmins}
+                    renderItem={renderAdmin}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    showsVerticalScrollIndicator={false}
+                />
+            )}
 
             <AdminBottomNav
                 onTabPress={onTabPress}

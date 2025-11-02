@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, Text } from "react-native";
 
-// login - register - forgotPassword
+// Login - Register - ForgotPassword
 import LoginScreen from "@login/LoginScreen";
 import RegisterScreen from "@login/RegisterScreen";
 import ForgotPasswordScreen from "@login/ForgotPasswordScreen";
 import { seedUsers } from "@service/initUsers";
-// import AdminService from "./src/service/AdminService";
-
-// AI ask 
-import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
@@ -32,171 +28,92 @@ import TutorSettingsScreen from "./src/screens/tutor/TutorSettingsScreen";
 import AdminDashboardScreen from "./src/screens/admin/AdminDashboardScreen";
 import AdminAccountManagementScreen from "./src/screens/admin/AdminAccountManagementScreen";
 import CustomerManagementScreen from "./src/screens/admin/CustomerManagementScreen";
-import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen"
+import TutorsManagementScreen from "./src/screens/admin/TutorsManagementScreen";
+import SubjectManagementScreen from "./src/screens/admin/SubjectManagementScreen";
+import SessionsManagementScreen from "./src/screens/admin/SessionsManagementScreen";
+import ReviewManagementScreen from "./src/screens/admin/ReviewManagementScreen";
+import UserManagementScreen from "./src/screens/admin/UserManagementScreen";
+import AdminProfileScreen from "./src/screens/admin/AdminProfileScreen";
+import AiChatScreen from "./src/screens/admin/AiChatScreen";
+
+// AI
+import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [currentScreen, setCurrentScreen] = useState("login");
+  const [screenStack, setScreenStack] = useState(["login"]);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showAI, setShowAI] = useState(false); //  trạng thái mở AI
   // Cập nhật state để thêm currentUser
   const [currentUser, setCurrentUser] = useState(null);
 
-  // login initUser
+  // --- Init users ---
   useEffect(() => {
-    seedUsers(); // chạy 1 lần khi app start
+    seedUsers();
   }, []);
 
-  // useEffect(() => {
-  //   const addSampleAdmins = async () => {
-  //     await AdminService.createAdmin({
-  //       name: "Quản trị viên Nguyễn",
-  //       phone: "0123456789",
-  //       email: "admin@example.com",
-  //       password: "123456",
-  //     });
+  // --- Helpers ---
+  const currentScreen = screenStack[screenStack.length - 1];
 
-  //     await AdminService.createAdmin({
-  //       name: "Quản trị viên Trần",
-  //       phone: "0987654321",
-  //       email: "admin2@example.com",
-  //       password: "123456",
-  //     });
-  //   };
-
-  //   addSampleAdmins();
-  // }, []);
-
-  // --- Xử lý login ---
-  const handleLogin = (role, userData) => {
-    console.log("Đăng nhập thành công:", role, userData);
-    setUser(userData);
-    if (role === "customer") {
-      setCurrentScreen("home");
-    } else if (role === "tutor") {
-      setCurrentScreen("tutorDashboard"); // ✅ ADDED: vào dashboard tutor sau login
-    } else if (userType === 'admin') {
-      setCurrentScreen('adminDashboard');
-    }
-
-    if (role === "admin") {
-      setCurrentScreen("adminDashboard");
-    }
+  const pushScreen = (screen) => {
+    setScreenStack(prev => [...prev, screen]);
   };
 
-  // --- Chuyển sang register ---
-  const handleRegisterPress = () => {
-    setCurrentScreen("register");
-  };
-
-  // --- Quên mật khẩu ---
-  const handleForgotPasswordPress = () => {
-    setCurrentScreen("forgotPassword");
-  };
-
-  // --- Quay lại login ---
-  const handleBackToLogin = () => {
-    setCurrentScreen("login");
-  };
-
-  // --- Khi người dùng bấm chọn 1 dịch vụ ---
-  const handleServicePress = (service) => {
-    console.log("Người dùng chọn dịch vụ:", service);
-    setSelectedService(service);
-    // ở đây bạn có thể chuyển sang TutorListScreen hoặc hiển thị chi tiết service
-  };
-
-  // --- Khi người dùng bấm tab ---
-  const handleTabPress = (tab) => {
-    console.log("Người dùng chọn tab:", tab);
-    // Customer tabs
-    if (user?.role === "customer") {
-      if (tab === "profile") {
-        // sau này bạn có thể mở ProfileScreen
-      } else if (tab === "home") {
-        setCurrentScreen("home");
-      }
-    }
-
-    // Tutor tabs
-    if (user?.role === "tutor") {
-      if (tab === "dashboard") {
-        setCurrentScreen("tutorDashboard"); // ✅ ADDED
-      } else if (tab === "orders") {
-        setCurrentScreen("tutorOrders");    // ✅ ADDED
-      } else if (tab === "tutorProfile") {
-        setCurrentScreen("tutorProfile");   // ✅ ADDED
-      }
-    }
-  };
-
-
-  // --- Back navigation mapping ---
   const handleBack = () => {
-    const backNavigation = {
-      // Tutor 
-      tutorOrderDetail: 'tutorOrders',
-      tutorInfo: 'tutorProfile',
-      tutorArea: 'tutorProfile',
-      tutorSkills: 'tutorProfile',
-      tutorSchedule: 'tutorProfile',
-      tutorIncome: 'tutorProfile',
-      tutorReviews: 'tutorProfile',
-      tutorEditProfile: 'tutorProfile',
-      tutorSupport: 'tutorProfile',
-      tutorSettings: 'tutorProfile',
-    };
-
-    const backScreen = backNavigation[currentScreen];
-    if (backScreen) {
-      setCurrentScreen(backScreen);
-    } else {
-      // Fallback theo vai trò
-      if (user?.role === 'customer') {
-        setCurrentScreen('home');
-      } else if (user?.role === 'tutor') {
-        setCurrentScreen('tutorDashboard');
-      } else if (user?.role === 'admin') {
-        setCurrentScreen('adminDashboard');
-      } else {
-        setCurrentScreen('home');
+    setScreenStack(prev => {
+      if (prev.length > 1) {
+        const newStack = [...prev];
+        newStack.pop();
+        return newStack;
       }
-    }
+      return prev; // fallback nếu chỉ còn 1 màn
+    });
   };
 
-
-  // --- Khi tutor bấm vào order ---
-  const handleOrderPress = (order) => {
-    console.log("Tutor chọn đơn hàng:", order);
-    setSelectedOrder(order);
-    setCurrentScreen("tutorOrderDetail"); // ✅ ADDED
+  // --- Login ---
+  const handleLogin = (role, userData) => {
+    setUser(userData);
+    if (role === "customer") pushScreen("home");
+    if (role === "admin") pushScreen("adminDashboard");
   };
 
-  // --- Khi tutor bấm menu item trong profile ---
-  const handleMenuPress = (action) => {
-    console.log("Menu action:", action);
-    if (action) {
-      setCurrentScreen(action);
-    }
-
-    if (user?.role === "admin") {
-      if (tab === "adminDashboard") {
-        setCurrentScreen("adminDashboard");
-      } else if (tab === "userManagement") {
-        setCurrentScreen("adminDashboard");
-      } else if (tab === "orderManagement") {
-        setCurrentScreen("adminDashboard");
-      } else if (tab === "adminProfile") {
-        setCurrentScreen("adminDashboard");
-      }
-    }
-  };
-
-  // --- Khi đăng xuất ---
   const handleLogout = () => {
     setUser(null);
-    setCurrentScreen("login");
+    setScreenStack(["login"]);
+  };
+
+  const handleRegisterPress = () => pushScreen("register");
+  const handleForgotPasswordPress = () => pushScreen("forgotPassword");
+  const handleBackToLogin = () => setScreenStack(["login"]);
+
+  const handleServicePress = (service) => {
+    setSelectedService(service);
+  };
+
+  const handleTabPress = (tab) => {
+    if (tab === "home") pushScreen("home");
+    else if (tab === "profile") pushScreen("userProfile");
+    else if (user?.role === "admin") {
+      switch (tab) {
+        case "adminDashboard":
+          pushScreen("adminDashboard");
+          break;
+        case "userManagement":
+          pushScreen("userManagement");
+          break;
+        case "aichat":
+          pushScreen("aichat");
+          break;
+        case "adminProfile":
+          pushScreen("adminProfile");
+          break;
+      }
+    }
+  };
+
+  const handleMenuPress = (screen) => {
+    pushScreen(screen);
   };
 
   // =================== RENDER ===================
@@ -211,16 +128,9 @@ export default function App() {
           />
         );
       case "register":
-        return (
-          <RegisterScreen
-            onRegister={() => setCurrentScreen("login")}
-            onBackToLogin={handleBackToLogin}
-          />
-        );
+        return <RegisterScreen onRegister={() => setScreenStack(["login"])} onBackToLogin={handleBackToLogin} />;
       case "forgotPassword":
-        return (
-          <ForgotPasswordScreen onBackToLogin={handleBackToLogin} />
-        );
+        return <ForgotPasswordScreen onBackToLogin={handleBackToLogin} />;
       default:
         return (
           <LoginScreen
@@ -231,16 +141,8 @@ export default function App() {
         );
     }
   }
-  // 🧠 Hiển thị màn hình AI Advisor Chat (chuyên tư vấn về Gia sư)
-  if (currentScreen === "ai") {
-    return (
-      <AiAdvisorScreen
-        onBack={() => setCurrentScreen("home")} // 🔙 Quay về trang chủ
-        currentUser={user}
-      />
-    );
-  }
 
+  // --- Customer Screens ---
   if (currentScreen === "home") {
     return (
       <HomeScreen
@@ -248,188 +150,51 @@ export default function App() {
         onTabPress={handleTabPress}
         currentUser={user}
         onLogout={handleLogout}
-        onOpenAI={() => setCurrentScreen("ai")}
+        onOpenAI={() => pushScreen("ai")}
       />
     );
   }
 
-  // tutor screens
-  if (currentScreen === "tutorDashboard") {
-    return (
-      <TutorDashboardScreen
-        onServicePress={handleServicePress}
-        onTabPress={handleTabPress}
-        currentUser={user}           // ✅ ADDED: truyền currentUser nếu cần hiển thị tên/role
-      />
-    );
+  if (currentScreen === "ai") {
+    return <AiAdvisorScreen onBack={handleBack} currentUser={user} />;
   }
 
-  if (currentScreen === "tutorOrders") {
-    return (
-      <TutorOrdersScreen
-        onOrderPress={handleOrderPress} // ✅ ADDED: bấm 1 order → sang detail
-        onTabPress={handleTabPress}
-      />
-    );
+  // --- Admin Screens ---
+  switch (currentScreen) {
+    case "adminDashboard":
+      return (
+        <AdminDashboardScreen
+          onServicePress={handleServicePress}
+          onTabPress={handleTabPress}
+          currentUser={user}
+          onLogout={handleLogout}
+          onMenuPress={handleMenuPress}
+        />
+      );
+    case "userManagement":
+      return <UserManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} activeTab="userManagement" />;
+    case "adminProfile":
+      return <AdminProfileScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} activeTab="adminProfile" onMenuPress={handleMenuPress} />;
+    case "adminAccountManagement":
+      return <AdminAccountManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "customerManagement":
+      return <CustomerManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "tutorManagement":
+      return <TutorsManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "subjectManagement":
+      return <SubjectManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "sessionManagement":
+      return <SessionsManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "reviewManagement":
+      return <ReviewManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    case "aichat":
+      return <AiChatScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
+    default:
+      return (
+        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
+          <Text>Vai trò: {user.role}</Text>
+        </SafeAreaView>
+      );
   }
-
-  if (currentScreen === "tutorOrderDetail") {
-    // Nếu bạn đã có component thật, dùng nó thay cho Placeholder bên dưới
-    return (
-      <TutorOrderDetailScreen
-        order={selectedOrder}
-        onTabPress={handleTabPress}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorProfile") {
-    return (
-      <TutorProfileScreen
-        onTabPress={handleTabPress}
-        onLogout={handleLogout}
-        currentUser={currentUser}
-        onMenuPress={handleMenuPress}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorArea") {
-    return (
-      <TutorAreaScreen
-        onTabPress={handleTabPress}
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorSkills") {
-    return (
-      <TutorSkillsScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorInfo") {
-    return (
-      <TutorInfoScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-        currentUser={user}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorSchedule") {
-    return (
-      <TutorScheduleScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorIncome") {
-    return (
-      <TutorIncomeScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-        currentUser={user}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorReviews") {
-    return (
-      <TutorReviewsScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-        currentUser={user}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorEditProfile") {
-    return (
-      <TutorEditProfileScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorSupport") {
-    return (
-      <TutorSupportScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorSettings") {
-    return (
-      <TutorSettingsScreen
-        onTabPress={handleTabPress} // 🔙 Quay về trang chủ
-        onBack={handleBack}
-      />
-    );
-  }
-
-  if (currentScreen === "adminDashboard") {
-    return (
-      <AdminDashboardScreen
-        onServicePress={handleServicePress}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-        onMenuPress={(screen) => setCurrentScreen(screen)}
-      />
-    );
-  }
-
-  if (currentScreen === "adminAccountManagement") {
-    return (
-      <AdminAccountManagementScreen
-        onBack={() => setCurrentScreen("adminDashboard")}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-      />
-    );
-  }
-
-  if (currentScreen === "customerManagement") {
-    return (
-      <CustomerManagementScreen
-        onBack={() => setCurrentScreen("adminDashboard")}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-      />
-    );
-  }
-
-  if (currentScreen === "tutorManagement") {
-    return (
-      <TutorsManagementScreen
-        onBack={() => setCurrentScreen("adminDashboard")}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-      />
-    );
-  }
-
-  // Dự phòng (nếu cần)
-  return (
-    <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Xin chào, {user.name || "Người dùng"} 👋</Text>
-      <Text>Vai trò: {user.role}</Text>
-      <Text style={{ marginTop: 12 }}>Màn "{currentScreen}" chưa có UI tương ứng.</Text>
-    </SafeAreaView>
-  );
-};
+}
