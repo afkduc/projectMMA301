@@ -16,7 +16,7 @@ import { getCurrentUserId } from '../../utils/auth';
 import userService from '../../service/UserService';
 
 // SERVICES
-import OrderService from '../../service/orderService';
+import TutorSessionsService from '../../service/TutorSessionsService';
 import TutorService from '../../service/tutorService';
 
 const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
@@ -24,8 +24,9 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // --- Lấy & lắng nghe realtime các buổi học của tutor ---
   useEffect(() => {
-    const fetchAndListenOrders = async () => {
+    const fetchAndListenSessions = async () => {
       setLoading(true);
       try {
         const userId = await getCurrentUserId();
@@ -38,28 +39,23 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
           return;
         }
 
-        // Ưu tiên hàm mới listenToTutorOrders; fallback nếu bạn chưa refactor
-        const unsubscribe =
-          OrderService.listenToTutorOrders?.(tutor.id, (tutorOrders) => {
-            const sorted = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-            setOrders(sorted);
-            setLoading(false);
-          }) ||
-          OrderService.listenToTutorOrders?.(tutor.id, (tutorOrders) => {
-            const sorted = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-            setOrders(sorted);
-            setLoading(false);
-          });
+        // Lắng nghe realtime tất cả buổi học, sau đó lọc theo tutorId
+        const unsubscribe = TutorSessionsService.listenToSessions((sessions) => {
+          const tutorSessions = sessions.filter((s) => s.tutorId === tutor.id);
+          const sorted = tutorSessions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          setOrders(sorted);
+          setLoading(false);
+        });
 
         return unsubscribe;
       } catch (error) {
-        console.error('Lỗi khi fetch và listen orders:', error);
+        console.error('Lỗi khi fetch và listen sessions:', error);
         setLoading(false);
       }
     };
 
     let unsubscribeFn;
-    fetchAndListenOrders().then((unsub) => {
+    fetchAndListenSessions().then((unsub) => {
       if (typeof unsub === 'function') unsubscribeFn = unsub;
     });
 
@@ -68,13 +64,13 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
     };
   }, []);
 
+  // --- Lọc theo tab ---
   const filteredOrders = orders.filter((order) => {
     if (activeTab === 'all') return true;
     return order.status === activeTab;
-    // các status giữ nguyên: pending / accepted / completed
   });
 
-  // call
+  // --- Gọi điện ---
   const handleCall = (phoneNumber) => {
     if (!phoneNumber) {
       Alert.alert('Lỗi', 'Số điện thoại không hợp lệ.');
@@ -95,8 +91,8 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
       });
   };
 
-  // cập nhật trạng thái
-  const handleUpdateStatus = async (orderId, newStatus, confirmation) => {
+  // --- Cập nhật trạng thái ---
+  const handleUpdateStatus = async (sessionId, newStatus, confirmation) => {
     Alert.alert(confirmation.title, confirmation.message, [
       { text: 'Hủy', style: 'cancel' },
       {
@@ -104,9 +100,9 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
         style: newStatus === 'rejected' ? 'destructive' : 'default',
         onPress: async () => {
           try {
-            await OrderService.updateOrderStatus(orderId, newStatus);
+            await TutorSessionsService.updateSessionStatus(sessionId, newStatus);
 
-            // nếu hoàn thành thì tăng completedOrders của tutor
+            // Nếu hoàn thành thì cập nhật số buổi hoàn thành
             if (newStatus === 'completed') {
               const userId = await getCurrentUserId();
               const tutor = await TutorService.getTutorByUserId(userId);
@@ -122,9 +118,8 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
             }
 
             Alert.alert('Thành công', `Đã cập nhật trạng thái lớp thành công!`);
-            // listener tự cập nhật UI
           } catch (error) {
-            console.error('Failed to update order status:', error);
+            console.error('Failed to update session status:', error);
             Alert.alert('Lỗi', 'Không thể cập nhật trạng thái. Vui lòng thử lại.');
           }
         },
@@ -132,6 +127,7 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
     ]);
   };
 
+  // --- Render từng lớp ---
   const renderOrder = ({ item }) => {
     const status = statusConfig[item.status] || statusConfig.default;
 
@@ -141,14 +137,14 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
         <View style={styles.bookingHeader}>
           <View>
             <Text style={styles.bookingServiceName}>{item?.service}</Text>
-            <Text style={styles.bookingWorkerName}>Học viên: {item?.customer}</Text>
+            <Text style={styles.bookingWorkerName}>Học viên: {item?.student}</Text>
           </View>
           <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
             <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
           </View>
         </View>
 
-        {/* Chi tiết lớp */}
+        {/* Chi tiết buổi học */}
         <View style={styles.bookingDetails}>
           <View style={styles.detailRow}>
             <Text style={styles.detailIcon}>📅</Text>
@@ -176,7 +172,7 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
               style={styles.phoneButtonOrder}
               onPress={async () => {
                 try {
-                  const user = await userService.getUserById(item.customerId);
+                  const user = await userService.getUserById(item.studentId);
                   if (user?.phone) {
                     handleCall(user.phone);
                   } else {
@@ -261,15 +257,6 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
             Tất cả
           </Text>
         </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={[styles.tab, activeTab === 'pending' && styles.activeTab]}
-          onPress={() => setActiveTab('pending')}
-        >
-          <Text style={[styles.tabText, activeTab === 'pending' && styles.activeTabText]}>
-            Chờ xác nhận
-          </Text>
-        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={[styles.tab, activeTab === 'accepted' && styles.activeTab]}
