@@ -7,7 +7,7 @@ export async function seedUsers() {
 
     const usersToCreate = [
       {
-        name: "Admin Test",
+        name: "Admin 0",
         phone: "0909999999",
         password: "123456",
         role: "admin",

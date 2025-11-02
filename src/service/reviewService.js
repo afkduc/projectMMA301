@@ -1,111 +1,118 @@
-import FirebaseService from "./firebaseService"
+import FirebaseService from "./firebaseService";
 
 class ReviewService {
   constructor() {
-    this.basePath = "reviews"
+    this.basePath = "reviews";
   }
 
-  // Tạo đánh giá mới
+  // ✅ Tạo đánh giá mới
   async createReview(reviewData) {
     try {
-      const reviewId = await FirebaseService.create(this.basePath, reviewData)
-      return reviewId
+      const reviewId = await FirebaseService.create(this.basePath, {
+        ...reviewData,
+        status: "approved",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      return reviewId;
     } catch (error) {
-      console.error("❌ Error creating review:", error)
-      throw error
+      console.error("❌ Error creating review:", error);
+      throw error;
     }
   }
 
-  // Lấy đánh giá theo ID
-  async getReviewById(reviewId) {
-    try {
-      return await FirebaseService.read(`${this.basePath}/${reviewId}`)
-    } catch (error) {
-      console.error("❌ Error getting review:", error)
-      throw error
-    }
-  }
-
-  // Lấy tất cả đánh giá
+  // ✅ Lấy tất cả đánh giá
   async getAllReviews() {
     try {
-      return await FirebaseService.readAll(this.basePath)
+      return await FirebaseService.readAll(this.basePath);
     } catch (error) {
-      console.error("❌ Error getting all reviews:", error)
-      throw error
+      console.error("❌ Error getting all reviews:", error);
+      throw error;
     }
   }
 
-  // Lấy đánh giá theo workerId
-  async getReviewsByWorker(workerId) {
+  // ✅ Lấy đánh giá theo ID
+  async getReviewById(reviewId) {
     try {
-      return await FirebaseService.queryByField(this.basePath, "workerId", workerId)
+      return await FirebaseService.read(`${this.basePath}/${reviewId}`);
     } catch (error) {
-      console.error("❌ Error getting reviews by worker:", error)
-      throw error
+      console.error("❌ Error getting review:", error);
+      throw error;
     }
   }
 
-  // Lấy đánh giá theo customerId
-  async getReviewsByCustomer(customerId) {
+  // ✅ Lấy đánh giá theo tên gia sư
+  async getReviewsByTutor(tutorName) {
     try {
-      return await FirebaseService.queryByField(this.basePath, "customerId", customerId)
+      return await FirebaseService.queryByField(this.basePath, "tutor", tutorName);
     } catch (error) {
-      console.error("❌ Error getting reviews by customer:", error)
-      throw error
+      console.error("❌ Error getting reviews by tutor:", error);
+      throw error;
     }
   }
 
-  // Lấy đánh giá theo trạng thái
+  // ✅ Lấy đánh giá theo tên học viên
+  async getReviewsByStudent(studentName) {
+    try {
+      return await FirebaseService.queryByField(this.basePath, "student", studentName);
+    } catch (error) {
+      console.error("❌ Error getting reviews by student:", error);
+      throw error;
+    }
+  }
+
+  // ✅ Lấy đánh giá theo trạng thái
   async getReviewsByStatus(status) {
     try {
-      return await FirebaseService.queryByField(this.basePath, "status", status)
+      return await FirebaseService.queryByField(this.basePath, "status", status);
     } catch (error) {
-      console.error("❌ Error getting reviews by status:", error)
-      throw error
+      console.error("❌ Error getting reviews by status:", error);
+      throw error;
     }
   }
 
-  // Cập nhật đánh giá
+  // ✅ Cập nhật đánh giá
   async updateReview(reviewId, reviewData) {
     try {
-      await FirebaseService.update(`${this.basePath}/${reviewId}`, reviewData)
-      return true
+      await FirebaseService.update(`${this.basePath}/${reviewId}`, {
+        ...reviewData,
+        updatedAt: Date.now(),
+      });
+      return true;
     } catch (error) {
-      console.error("❌ Error updating review:", error)
-      throw error
+      console.error("❌ Error updating review:", error);
+      throw error;
     }
   }
 
-  // Cập nhật trạng thái đánh giá
+  // ✅ Cập nhật trạng thái đánh giá
   async updateReviewStatus(reviewId, status) {
     try {
-      await FirebaseService.update(`${this.basePath}/${reviewId}`, { status })
-      return true
+      await FirebaseService.update(`${this.basePath}/${reviewId}`, { status });
+      return true;
     } catch (error) {
-      console.error("❌ Error updating review status:", error)
-      throw error
+      console.error("❌ Error updating review status:", error);
+      throw error;
     }
   }
 
-  // Xóa đánh giá
+  // ✅ Xóa đánh giá
   async deleteReview(reviewId) {
     try {
-      await FirebaseService.delete(`${this.basePath}/${reviewId}`)
-      return true
+      await FirebaseService.delete(`${this.basePath}/${reviewId}`);
+      return true;
     } catch (error) {
-      console.error("❌ Error deleting review:", error)
-      throw error
+      console.error("❌ Error deleting review:", error);
+      throw error;
     }
   }
 
-  // Listener realtime - sửa lại snapshot để tránh lỗi .exists is not a function
+  // ✅ Lắng nghe realtime
   listenToReviews(callback) {
     return FirebaseService.listen(this.basePath, (dataArray) => {
-      const safeArray = Array.isArray(dataArray) ? dataArray : [];
-      callback(safeArray);
+      callback(Array.isArray(dataArray) ? dataArray : []);
     });
   }
 }
 
-export default new ReviewService()
+export default new ReviewService();

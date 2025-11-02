@@ -93,7 +93,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     const handleViewDetails = (tutor) => {
         Alert.alert(
             "Chi tiết gia sư",
-            `Tên: ${tutor.name}\nChuyên môn: ${tutor.specialty}\nĐánh giá: ${tutor.rating}/5\nĐơn hoàn thành: ${tutor.completedOrders}\nChứng chỉ: ${tutor.experience}`
+            `Tên: ${tutor.name}\nChuyên môn: ${tutor.specialty}\nĐánh giá: ${tutor.rating}/5\nBuổi học hoàn thành: ${tutor.reviews}\nChứng chỉ: ${tutor.experience || "N/A"}`
         );
     };
 
@@ -158,7 +158,7 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
                             <Text style={{ fontWeight: "bold" }}>Chuyên môn:</Text> {item.specialty || "N/A"}
                         </Text>
                         <Text style={styles.userPhone}>
-                            <Text style={{ fontWeight: "bold" }}>Đánh giá:</Text> {item.rating}/5 ({item.completedOrders} đơn)
+                            <Text style={{ fontWeight: "bold" }}>Đánh giá:</Text> {item.rating}/5 ({item.reviews} buổi học)
                         </Text>
                     </View>
                 </View>
