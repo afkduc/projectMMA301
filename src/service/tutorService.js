@@ -65,28 +65,6 @@ async createTutor(tutorData) {
   async getTutorByUserId(userId) {
     try {
       const allTutors = await FirebaseService.readAllWithKeys(this.basePath);
-  
-      // 🔎 Tìm user tương ứng trong bảng users
-      const users = await FirebaseService.readAllWithKeys("users");
-      const currentUser = users.find((u) => String(u.id) === String(userId));
-  
-      if (!currentUser) {
-        console.warn("Không tìm thấy user tương ứng với userId:", userId);
-        return null;
-      }
-  
-      // Ưu tiên tìm theo userId
-      let tutor = allTutors.find((w) => String(w.userId) === String(userId));
-  
-      // Nếu không có userId, fallback tìm theo số điện thoại hoặc tên
-      if (!tutor && currentUser.phone) {
-        tutor = allTutors.find((w) => w.phone === currentUser.phone);
-      }
-      if (!tutor && currentUser.name) {
-        tutor = allTutors.find((w) => w.name === currentUser.name);
-      }
-  
-  
       // 🔎 Tìm user tương ứng trong bảng users
       const users = await FirebaseService.readAllWithKeys("users");
       const currentUser = users.find((u) => String(u.id) === String(userId));
