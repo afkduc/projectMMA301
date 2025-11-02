@@ -37,7 +37,7 @@ import UserManagementScreen from "./src/screens/admin/UserManagementScreen";
 import AdminProfileScreen from "./src/screens/admin/AdminProfileScreen";
 import AiChatScreen from "./src/screens/admin/AiChatScreen";
 
-// AI
+// AI SERVICE
 import AiAdvisorScreen from "./src/screens/AiAdvisorScreen";
 
 export default function App() {
