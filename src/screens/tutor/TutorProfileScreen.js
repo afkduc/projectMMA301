@@ -34,12 +34,13 @@ const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) 
         ])
 
         if (tutor) {
-          const serviceNames = (tutor.serviceId || [])
-            .map(id => {
-              const svc = allServices.find(s => String(s.id) === String(id))
-              return svc ? svc.name : `#${id}`
-            })
-            .join(", ")
+          // Không dùng array → chỉ lấy chuỗi trong DB
+          let serviceNames = "N/A"
+          if (typeof tutor.serviceId === "string") {
+            serviceNames = tutor.serviceId
+          } else if (typeof tutor.specialty === "string") {
+            serviceNames = tutor.specialty
+          }
 
           setUserInfo({
             id: tutor.id,
@@ -57,7 +58,7 @@ const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) 
 
           setIsAvailable(tutor.status === "active" || tutor.status === true)
 
-          const allOrders = await OrderService.getOrdersByWorker(tutor.id)
+          const allOrders = await OrderService.getAllOrdersByTutorId(tutor.id) 
           const now = new Date()
           const monthlyOrders = allOrders.filter(o => {
             if (!o.date) return false

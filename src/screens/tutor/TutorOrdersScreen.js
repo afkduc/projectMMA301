@@ -40,12 +40,12 @@ const TutorOrdersScreen = ({ onTabPress, onOrderPress }) => {
 
         // Ưu tiên hàm mới listenToTutorOrders; fallback nếu bạn chưa refactor
         const unsubscribe =
-          OrderService.listenToWorkerOrders?.(tutor.id, (tutorOrders) => {
+          OrderService.listenToTutorOrders?.(tutor.id, (tutorOrders) => {
             const sorted = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             setOrders(sorted);
             setLoading(false);
           }) ||
-          OrderService.listenToWorkerOrders?.(tutor.id, (tutorOrders) => {
+          OrderService.listenToTutorOrders?.(tutor.id, (tutorOrders) => {
             const sorted = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             setOrders(sorted);
             setLoading(false);
