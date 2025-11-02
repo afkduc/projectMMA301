@@ -32,6 +32,26 @@ class TutorSessionsService {
     }
   }
 
+  // Lấy danh sách tất cả "services" từ tutorSessions
+async getAllServices() {
+  try {
+    const sessions = await this.getAllSessions();
+    // Lấy tất cả service/subject từ session
+    const services = sessions
+      .map(s => s.service || s.subject)
+      .filter(Boolean); // loại bỏ undefined/null
+
+    // Loại bỏ trùng
+    const uniqueServices = [...new Set(services)];
+
+    return uniqueServices;
+  } catch (error) {
+    console.error("Error getting all services from sessions:", error);
+    throw error;
+  }
+}
+
+
   // ✅ Lấy buổi học theo ID
   async getSessionById(sessionId) {
     try {

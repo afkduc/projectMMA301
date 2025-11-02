@@ -3,18 +3,18 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   FlatList,
   ActivityIndicator,
   TextInput,
   Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from '../../style/styles';
 import ServiceService from '@service/serviceService';
-import { initialServices } from '@utils/DataInitializer';
+import { subjects } from '@data/mockData';
 import { CustomerBottomNav } from '../../components/BottomNavigation';
 
 const HomeScreen = ({ onServicePress, onTabPress, onOpenAI }) => {
@@ -78,15 +78,17 @@ const HomeScreen = ({ onServicePress, onTabPress, onOpenAI }) => {
       if (activeServices.length > 0) {
         setServices(activeServices);
       } else {
-        setServices(initialServices.filter((s) => s.status === 'active'));
+        // Thay initialServices bằng subjects từ mockData
+        setServices(subjects.filter((s) => s.status === 'active'));
       }
     } catch (error) {
       console.error('Error loading services:', error);
-      setServices(initialServices.filter((s) => s.status === 'active'));
+      setServices(subjects.filter((s) => s.status === 'active'));
     } finally {
       setLoading(false);
     }
   };
+
 
   const renderService = ({ item }) => (
     <TouchableOpacity

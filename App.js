@@ -9,6 +9,18 @@ import { seedUsers } from "@service/initUsers";
 
 // Customer screens
 import HomeScreen from "./src/screens/customer/HomeScreen";
+import ProfileScreen from "./src/screens/customer/ProfileScreen";
+import EditProfileScreen from "./src/screens/customer/EditProfileScreen";
+import PersonalInfoScreen from "./src/screens/customer/PersonalInfoScreen";
+import TutorListScreen from "./src/screens/customer/TutorListScreen";
+import TutorDetailScreen from "./src/screens/customer/TutorDetailScreen";
+import BookingHistoryScreen from "./src/screens/customer/BookingHistoryScreen";
+import AboutUsScreen from "./src/screens/customer/AboutUsScreen";
+import AddressManagementScreen from "./src/screens/customer/AddressManagementScreen";
+import PaymentMethodScreen from "./src/screens/customer/PaymentMethodScreen";
+import OffersScreen from "./src/screens/customer/OffersScreen";
+import CustomerSettingsScreen from "./src/screens/customer/CustomerSettingsScreen";
+import HelpSupportScreen from "./src/screens/customer/HelpSupportScreen";
 
 // Tutor screens
 import TutorDashboardScreen from "./src/screens/tutor/TutorDashboardScreen";
@@ -45,7 +57,7 @@ export default function App() {
   const [screenStack, setScreenStack] = useState(["login"]);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [showAI, setShowAI] = useState(false);
+  const [selectedTutor, setSelectedTutor] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   // --- Init users ---
@@ -55,22 +67,10 @@ export default function App() {
 
   const currentScreen = screenStack[screenStack.length - 1];
 
-  const pushScreen = (screen) => {
-    setScreenStack((prev) => [...prev, screen]);
-  };
+  const pushScreen = (screen) => setScreenStack((prev) => [...prev, screen]);
+  const handleBack = () => setScreenStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : prev));
 
-  const handleBack = () => {
-    setScreenStack((prev) => {
-      if (prev.length > 1) {
-        const newStack = [...prev];
-        newStack.pop();
-        return newStack;
-      }
-      return prev;
-    });
-  };
-
-  // --- Login ---
+  // --- Login / Logout ---
   const handleLogin = (role, userData) => {
     setUser(userData);
     setCurrentUser(userData);
@@ -88,140 +88,114 @@ export default function App() {
   const handleForgotPasswordPress = () => pushScreen("forgotPassword");
   const handleBackToLogin = () => setScreenStack(["login"]);
 
+  // --- Customer specific ---
   const handleServicePress = (service) => {
     setSelectedService(service);
+    pushScreen("tutorList");
   };
 
+  const handleRebook = (tutor, service) => {
+    setSelectedTutor(tutor);
+    setSelectedService(service);
+    pushScreen("tutorDetail");
+  };
+
+  // --- Tutor specific ---
   const handleOrderPress = (order) => {
     setSelectedOrder(order);
     pushScreen("tutorOrderDetail");
   };
 
   const handleTabPress = (tab) => {
-    console.log("Người dùng chọn tab:", tab);
-    if (user?.role === "customer") {
+    if (!user) return;
+    if (user.role === "customer") {
       if (tab === "home") pushScreen("home");
       else if (tab === "profile") pushScreen("userProfile");
-    }
-
-    if (user?.role === "tutor") {
+      else if (tab === "history") pushScreen("history");
+    } else if (user.role === "tutor") {
       switch (tab) {
         case "dashboard":
-          pushScreen("tutorDashboard");
-          break;
+          pushScreen("tutorDashboard"); break;
         case "orders":
-          pushScreen("tutorOrders");
-          break;
+          pushScreen("tutorOrders"); break;
         case "tutorProfile":
-          pushScreen("tutorProfile");
-          break;
+          pushScreen("tutorProfile"); break;
       }
-    }
-
-    if (user?.role === "admin") {
+    } else if (user.role === "admin") {
       switch (tab) {
         case "adminDashboard":
-          pushScreen("adminDashboard");
-          break;
+          pushScreen("adminDashboard"); break;
         case "userManagement":
-          pushScreen("userManagement");
-          break;
+          pushScreen("userManagement"); break;
         case "aichat":
-          pushScreen("aichat");
-          break;
+          pushScreen("aichat"); break;
         case "adminProfile":
-          pushScreen("adminProfile");
-          break;
+          pushScreen("adminProfile"); break;
       }
     }
   };
 
-  const handleMenuPress = (screen) => {
-    pushScreen(screen);
-  };
+  const handleMenuPress = (screen) => pushScreen(screen);
 
   // =================== RENDER ===================
   if (!user) {
     switch (currentScreen) {
       case "login":
-        return (
-          <LoginScreen
-            onLogin={handleLogin}
-            onRegister={handleRegisterPress}
-            onForgotPassword={handleForgotPasswordPress}
-          />
-        );
+        return <LoginScreen onLogin={handleLogin} onRegister={handleRegisterPress} onForgotPassword={handleForgotPasswordPress} />;
       case "register":
-        return (
-          <RegisterScreen
-            onRegister={() => setScreenStack(["login"])}
-            onBackToLogin={handleBackToLogin}
-          />
-        );
+        return <RegisterScreen onRegister={() => setScreenStack(["login"])} onBackToLogin={handleBackToLogin} />;
       case "forgotPassword":
         return <ForgotPasswordScreen onBackToLogin={handleBackToLogin} />;
       default:
-        return (
-          <LoginScreen
-            onLogin={handleLogin}
-            onRegister={handleRegisterPress}
-            onForgotPassword={handleForgotPasswordPress}
-          />
-        );
+        return <LoginScreen onLogin={handleLogin} onRegister={handleRegisterPress} onForgotPassword={handleForgotPasswordPress} />;
     }
   }
 
-  // --- Customer Screens ---
-  if (currentScreen === "home") {
-    return (
-      <HomeScreen
-        onServicePress={handleServicePress}
-        onTabPress={handleTabPress}
-        currentUser={user}
-        onLogout={handleLogout}
-        onOpenAI={() => pushScreen("ai")}
-      />
-    );
+  // =================== CUSTOMER SCREENS ===================
+  switch (currentScreen) {
+    case "home":
+      return <HomeScreen onServicePress={handleServicePress} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} onOpenAI={() => pushScreen("ai")} />;
+    case "tutorList":
+      return <TutorListScreen service={selectedService} onTutorPress={(tutor, service) => { setSelectedTutor(tutor); setSelectedService(service); pushScreen("tutorDetail"); }} onBack={handleBack} onTabPress={handleTabPress} />;
+    case "tutorDetail":
+      return <TutorDetailScreen tutor={selectedTutor} service={selectedService} onBack={handleBack} onTabPress={handleTabPress} />;
+    case "history":
+      return <BookingHistoryScreen onRebook={handleRebook} onTabPress={handleTabPress} />;
+    case "userProfile":
+    case "profile":
+      return <ProfileScreen currentUser={user} onEditProfile={() => pushScreen("editProfile")} onLogout={handleLogout} onTabPress={handleTabPress} onBack={handleBack} onMenuPress={handleMenuPress} />;
+    case "editProfile":
+      return <EditProfileScreen currentUser={user} onBack={handleBack} onSave={(updatedUser) => { setUser(updatedUser); pushScreen("profile"); }} />;
+    case "personalInfo":
+      return <PersonalInfoScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "aboutUs":
+      return <AboutUsScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "addressManagement":
+      return <AddressManagementScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "paymentMethod":
+      return <PaymentMethodScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "offers":
+      return <OffersScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "customerSettings":
+      return <CustomerSettingsScreen onBack={handleBack} onTabPress={handleTabPress} />;
+    case "helpSupport":
+      return <HelpSupportScreen onBack={handleBack} onTabPress={handleTabPress} />;
+
+    // =================== AI ===================
+    case "ai":
+      return <AiAdvisorScreen onBack={handleBack} currentUser={user} />;
   }
 
-  if (currentScreen === "ai") {
-    return <AiAdvisorScreen onBack={handleBack} currentUser={user} />;
-  }
-
-  // --- Tutor Screens ---
+  // =================== TUTOR SCREENS ===================
   switch (currentScreen) {
     case "tutorDashboard":
-      return (
-        <TutorDashboardScreen
-          onServicePress={handleServicePress}
-          onTabPress={handleTabPress}
-          currentUser={user}
-        />
-      );
+      return <TutorDashboardScreen onServicePress={handleServicePress} onTabPress={handleTabPress} currentUser={user} />;
     case "tutorOrders":
-      return (
-        <TutorOrdersScreen
-          onOrderPress={handleOrderPress}
-          onTabPress={handleTabPress}
-        />
-      );
+      return <TutorOrdersScreen onOrderPress={handleOrderPress} onTabPress={handleTabPress} />;
     case "tutorOrderDetail":
-      return (
-        <TutorOrderDetailScreen
-          order={selectedOrder}
-          onTabPress={handleTabPress}
-          onBack={handleBack}
-        />
-      );
+      return <TutorOrderDetailScreen order={selectedOrder} onTabPress={handleTabPress} onBack={handleBack} />;
     case "tutorProfile":
-      return (
-        <TutorProfileScreen
-          onTabPress={handleTabPress}
-          onLogout={handleLogout}
-          currentUser={currentUser}
-          onMenuPress={handleMenuPress}
-        />
-      );
+      return <TutorProfileScreen onTabPress={handleTabPress} onLogout={handleLogout} currentUser={currentUser} onMenuPress={handleMenuPress} />;
     case "tutorArea":
       return <TutorAreaScreen onTabPress={handleTabPress} onBack={handleBack} />;
     case "tutorSkills":
@@ -242,39 +216,14 @@ export default function App() {
       return <TutorSettingsScreen onTabPress={handleTabPress} onBack={handleBack} />;
   }
 
-  // --- Admin Screens ---
+  // =================== ADMIN SCREENS ===================
   switch (currentScreen) {
     case "adminDashboard":
-      return (
-        <AdminDashboardScreen
-          onServicePress={handleServicePress}
-          onTabPress={handleTabPress}
-          currentUser={user}
-          onLogout={handleLogout}
-          onMenuPress={handleMenuPress}
-        />
-      );
+      return <AdminDashboardScreen onServicePress={handleServicePress} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} onMenuPress={handleMenuPress} />;
     case "userManagement":
-      return (
-        <UserManagementScreen
-          onBack={handleBack}
-          onTabPress={handleTabPress}
-          currentUser={user}
-          onLogout={handleLogout}
-          activeTab="userManagement"
-        />
-      );
+      return <UserManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} activeTab="userManagement" />;
     case "adminProfile":
-      return (
-        <AdminProfileScreen
-          onBack={handleBack}
-          onTabPress={handleTabPress}
-          currentUser={user}
-          onLogout={handleLogout}
-          activeTab="adminProfile"
-          onMenuPress={handleMenuPress}
-        />
-      );
+      return <AdminProfileScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} activeTab="adminProfile" onMenuPress={handleMenuPress} />;
     case "adminAccountManagement":
       return <AdminAccountManagementScreen onBack={handleBack} onTabPress={handleTabPress} currentUser={user} onLogout={handleLogout} />;
     case "customerManagement":

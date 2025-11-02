@@ -191,6 +191,43 @@ async getAllTutors() {
       throw error;
     }
   }
+
+  async getTutorByService(serviceIds) {
+  try {
+    const allTutors = await this.getAllTutors();
+    const serviceIdArray = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
+
+    // -------------------------
+    // Hàm normalize & splitWords nằm trong scope của hàm
+    const normalize = (str) => {
+      if (!str) return "";
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    };
+
+    const splitWords = (str) => normalize(str).split(/\s+/);
+    // -------------------------
+
+    // Chia query thành từng từ
+    const queryWords = serviceIdArray.flatMap(splitWords);
+
+    return allTutors.filter((tutor) => {
+      if (tutor.status !== "active" || !Array.isArray(tutor.serviceId)) return false;
+
+      // Tất cả từ trong tutor
+      const tutorWords = tutor.serviceId.flatMap(splitWords);
+
+      // Nếu có ít nhất 1 từ trùng → match
+      return tutorWords.some(word => queryWords.includes(word));
+    });
+  } catch (error) {
+    console.error("Error getting tutors by service:", error);
+    throw error;
+  }
+}
   
 
   listenToTutors(callback) {
