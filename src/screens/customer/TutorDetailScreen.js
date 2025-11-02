@@ -98,6 +98,7 @@ const TutorDetailScreen = ({
     '18:00',
   ];
 
+  // Trong handleBooking
   const handleBooking = async () => {
     if (!selectedDate || !selectedTime || !address) {
       Alert.alert('Thông báo', 'Vui lòng chọn ngày, giờ và địa chỉ');
@@ -112,34 +113,31 @@ const TutorDetailScreen = ({
     // 🧠 Xử lý khớp serviceId (vì tutor.serviceId là mảng tên dịch vụ)
     let matchedServiceName = null;
 
-    if (Array.isArray(tutor?.serviceId)) {
-      // Loại bỏ dấu và so sánh không phân biệt hoa thường
+    if (Array.isArray(tutor?.serviceId) && service) {
       const normalize = (str) =>
-        str
-          ?.toLowerCase()
-          ?.normalize('NFD')
-          ?.replace(/[\u0300-\u036f]/g, ''); // bỏ dấu tiếng Việt
+        str?.toLowerCase()?.normalize('NFD')?.replace(/[\u0300-\u036f]/g, '')?.trim();
 
-      const serviceNameNorm = normalize(service?.name || '');
+      const serviceNameNorm = normalize(service.name || '');
 
       matchedServiceName = tutor.serviceId.find((item) =>
-        serviceNameNorm.includes(normalize(item))
+        normalize(item)?.includes(serviceNameNorm)
       );
     }
 
     // 🔒 Nếu không tìm được khớp thì vẫn lưu service?.id hoặc 'unknown'
     const serviceKey = matchedServiceName || service?.id || 'unknown';
+    const serviceNameDisplay = service?.name || 'Môn học';
 
     const orderData = {
       address,
       date: selectedDate,
       time: selectedTime,
-      customer: customer?.name,
-      service: service?.name,
+      customer: customer?.name || 'Khách hàng',
+      service: serviceNameDisplay,
       serviceId: serviceKey, // ✅ đã chuẩn hóa
       avatar: tutor?.avatar,
-      tutor: tutor?.name,
-      price: tutor?.price,
+      tutor: tutor?.name || 'Gia sư',
+      price: tutor?.price || 'Thỏa thuận',
       estimatedHours: '1',
       description: 'Gia sư tại nhà',
       status: 'pending',
@@ -149,7 +147,7 @@ const TutorDetailScreen = ({
 
     Alert.alert(
       'Xác nhận đặt lịch',
-      `Đặt lịch với ${tutor?.name}\nDịch vụ: ${service?.name}\nNgày: ${selectedDate}\nGiờ: ${selectedTime}\nĐịa chỉ: ${address}`,
+      `Đặt lịch với ${tutor?.name || 'gia sư'}\nDịch vụ: ${serviceNameDisplay}\nNgày: ${selectedDate}\nGiờ: ${selectedTime}\nĐịa chỉ: ${address}`,
       [
         { text: 'Hủy', style: 'cancel' },
         {
@@ -168,6 +166,7 @@ const TutorDetailScreen = ({
       ]
     );
   };
+
 
 
   const handleCall = () => {
@@ -263,9 +262,11 @@ const TutorDetailScreen = ({
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Giới thiệu</Text>
             <Text style={styles.description}>
-              Tôi là gia sư {service.name.toLowerCase()} với kinh nghiệm {tutor.experience}.
-              Cam kết giảng dạy tận tâm, dễ hiểu và hỗ trợ học viên tiến bộ nhanh chóng.
+              {`Tôi là gia sư ${service?.name ? String(service.name).toLowerCase() : 'Môn học'} 
+  với kinh nghiệm ${String(tutor?.experience || 'chưa có thông tin')}.
+  Cam kết giảng dạy tận tâm, dễ hiểu và hỗ trợ học viên tiến bộ nhanh chóng.`}
             </Text>
+
           </View>
 
           <View style={styles.section}>
