@@ -8,6 +8,7 @@ import ServiceService from "../../service/serviceService"
 import OrderService from "../../service/orderService"
 import { getCurrentUserId } from "../../utils/auth"
 import userService from "../../service/UserService"
+import TutorEditProfileScreen from "./TutorEditProfileScreen"
 
 const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) => {
   const [isAvailable, setIsAvailable] = useState(true)
@@ -60,31 +61,37 @@ const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) 
 
           const allOrders = await OrderService.getAllOrdersByTutorId(tutor.id) 
           const now = new Date()
-          const monthlyOrders = allOrders.filter(o => {
-            if (!o.date) return false
-            let orderDate = new Date()
-            if (o.date.includes("/")) {
-              const [day, month, year] = o.date.split("/").map(x => parseInt(x))
-              orderDate = new Date(year, month - 1, day)
-            } else if (o.date.includes("-")) {
-              orderDate = new Date(o.date)
-            }
-            return (
-              orderDate.getFullYear() === now.getFullYear() &&
-              orderDate.getMonth() === now.getMonth() &&
-              (o.status || "").toLowerCase() === "completed"
-            )
-          })
+          let gross = 0
+for (let i = 0; i < (allOrders ? allOrders.length : 0); i++) {
+  const o = allOrders[i]
+  if (!o || !o.date) continue
 
-          const parsePrice = (priceStr) => {
-            if (!priceStr) return 0
-            const numeric = priceStr.replace(/[^\d]/g, "")
-            return parseInt(numeric || "0")
-          }
+  let orderDate = new Date()
+  if (typeof o.date === "string") {
+    if (o.date.indexOf("/") !== -1) {
+      const parts = o.date.split("/")
+      const day = parseInt(parts[0] || "0", 10)
+      const month = parseInt(parts[1] || "0", 10)
+      const year = parseInt(parts[2] || "0", 10)
+      orderDate = new Date(year, month - 1, day)
+    } else if (o.date.indexOf("-") !== -1) {
+      orderDate = new Date(o.date)
+    }
+  }
 
-          const gross = monthlyOrders.reduce((sum, o) => sum + parsePrice(o.price), 0)
-          const income = gross - gross * 0.1
-          setMonthlyIncome(income)
+  const status = (o.status || "").toLowerCase()
+  if (orderDate.getFullYear() === now.getFullYear()
+      && orderDate.getMonth() === now.getMonth()
+      && status === "completed") {
+    const priceStr = o.price || "0"
+    const numeric = priceStr.replace(/[^\d]/g, "")
+    const price = parseInt(numeric || "0", 10)
+    if (!isNaN(price)) gross += price
+  }
+}
+const income = gross - Math.floor(gross * 0.1)
+setMonthlyIncome(income)
+
         }
       } catch (err) {
       } finally {
@@ -184,22 +191,55 @@ const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) 
           </View>
           <View style={styles.statDivider} />
           <View style={styles.tutorStatItem}>
-            <Text style={styles.tutorStatNumber}>{userInfo.experience ?? "-"}</Text>
+            <Text style={styles.tutorStatNumber}>{userInfo.experience ? `${userInfo.experience} năm` : "-"}</Text>
             <Text style={styles.tutorStatLabel}>Kinh nghiệm</Text>
           </View>
         </View>
 
         <View style={styles.menuContainer}>
-          {tutorMenuItems.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handleMenuPress(item.action)}>
+  {(() => {
+    const out = []
+    const list = tutorMenuItems
+
+    if (list && typeof list === "object") {
+      if (Array.isArray(list)) {
+        // lặp thuần for, không dùng .map
+        for (let i = 0; i < list.length; i++) {
+          const item = list[i]
+          if (!item) continue
+          out.push(
+            <TouchableOpacity key={item.id || i} style={styles.menuItem} onPress={() => handleMenuPress(item.action)}>
               <View style={styles.menuLeft}>
                 <Text style={styles.menuIcon}>{item.icon}</Text>
                 <Text style={styles.menuTitle}>{item.title}</Text>
               </View>
               <Text style={styles.menuArrow}>›</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          )
+        }
+      } else {
+        // trường hợp là object: {id1: {...}, id2: {...}}
+        for (const k in list) {
+          if (!Object.prototype.hasOwnProperty.call(list, k)) continue
+          const item = list[k]
+          if (!item) continue
+          out.push(
+            <TouchableOpacity key={item.id || k} style={styles.menuItem} onPress={() => handleMenuPress(item.action)}>
+              <View style={styles.menuLeft}>
+                <Text style={styles.menuIcon}>{item.icon}</Text>
+                <Text style={styles.menuTitle}>{item.title}</Text>
+              </View>
+              <Text style={styles.menuArrow}>›</Text>
+            </TouchableOpacity>
+          )
+        }
+      }
+    }
+
+    return out.length ? out : <Text style={{ padding: 12, color: "#6b7280" }}>Menu trống</Text>
+  })()}
+</View>
+
 
         <View style={styles.earningsContainer}>
           <View style={styles.earningsCard}>
