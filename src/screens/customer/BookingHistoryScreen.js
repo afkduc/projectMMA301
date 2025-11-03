@@ -84,64 +84,52 @@ const BookingHistoryScreen = ({ onTabPress, onRebook }) => {
   });
 
   const handleRebookSession = async (session) => {
-  try {
-    console.log('➡️ Rebooking session:', session);
+    try {
+      console.log('➡️ Rebooking session:', session);
 
-    const tutor = await tutorService.getTutorById(session.tutorId);
-    console.log('🔹 Fetched tutor:', tutor);
+      const tutor = await tutorService.getTutorById(session.tutorId);
+      console.log('🔹 Fetched tutor:', tutor);
 
-    let service = null;
-    const allServices = await TutorSessionsService.getAllServices();
-console.log('🔹 All services from sessions:', allServices);
+      let service = null;
+      const allServices = await TutorSessionsService.getAllServices();
+      console.log('🔹 All services from sessions:', allServices);
 
 
-    if (session.service) {
-      const targetName = normalizeText(session.service);
-      console.log('🔹 Normalized session service name:', targetName);
+      if (session.service) {
+        const targetName = normalizeText(session.service);
+        console.log('🔹 Normalized session service name:', targetName);
 
-      const targetWords = targetName.split(' ');
-      console.log('🔹 Target words:', targetWords);
+        const targetWords = targetName.split(' ');
+        console.log('🔹 Target words:', targetWords);
 
-      service = allServices.find((s) => {
-        let candidates = [];
-        if (typeof s.name === 'string') candidates.push(s.name);
-        if (Array.isArray(s.name)) candidates = candidates.concat(s.name);
-        if (Array.isArray(s.serviceId)) candidates = candidates.concat(s.serviceId);
-        candidates = candidates.map(normalizeText);
+        // ✅ Sửa tại đây
+        service = allServices.find((srvName) => {
+          const normalized = normalizeText(srvName);
+          console.log('🔸 Checking service:', normalized);
+          return targetWords.some((word) => normalized.includes(word));
+        });
 
-        console.log('🔸 Checking service candidates:', candidates);
+        console.log('🔹 Found service:', service);
 
-        return candidates.some((srv) =>
-          targetWords.some((word) => {
-            const result = srv.includes(word);
-            if (result) {
-              console.log(`✅ Match found: session word "${word}" in service "${srv}"`);
-            }
-            return result;
-          })
-        );
-      });
+        if (!service) {
+          Alert.alert('Thông báo', 'Không tìm thấy dịch vụ phù hợp để đặt lại');
+          return;
+        }
+      }
 
-      console.log('🔹 Found service:', service);
 
-      if (!service) {
-        Alert.alert('Thông báo', 'Không tìm thấy dịch vụ phù hợp để đặt lại');
+      if (!tutor || !service) {
+        console.log('❌ Tutor or service missing:', { tutor, service });
+        Alert.alert('Thông báo', 'Không tìm thấy thông tin gia sư hoặc dịch vụ');
         return;
       }
-    }
 
-    if (!tutor || !service) {
-      console.log('❌ Tutor or service missing:', { tutor, service });
-      Alert.alert('Thông báo', 'Không tìm thấy thông tin gia sư hoặc dịch vụ');
-      return;
+      onRebook(tutor, service, session);
+    } catch (error) {
+      console.error('❌ [BookingHistory] Lỗi khi lấy tutor/service:', error);
+      Alert.alert('Lỗi', 'Không thể đặt lại buổi học.');
     }
-
-    onRebook(tutor, service, session);
-  } catch (error) {
-    console.error('❌ [BookingHistory] Lỗi khi lấy tutor/service:', error);
-    Alert.alert('Lỗi', 'Không thể đặt lại buổi học.');
-  }
-};
+  };
 
 
   const renderSession = ({ item }) => {

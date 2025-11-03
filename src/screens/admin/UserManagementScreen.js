@@ -216,6 +216,7 @@ const UserManagementScreen = ({ onTabPress, onBack }) => {
                 user={editingUser}
                 onClose={() => setEditModalVisible(false)}
                 onSave={handleSaveUser}
+                disablePhoneEdit={true}
             />
 
             {/* Bottom Nav */}

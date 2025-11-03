@@ -6,10 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native"
-import { styles as globalStyles } from "@style/styles"
 
-const EditUserModal = ({ visible, user, onClose, onSave }) => {
+const EditUserModal = ({ visible, user, onClose, onSave, disablePhoneEdit = false }) => {
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
@@ -29,47 +31,69 @@ const EditUserModal = ({ visible, user, onClose, onSave }) => {
       alert("Vui lòng điền đầy đủ thông tin")
       return
     }
-    onSave({ ...user, name, phone, email, role })
+
+    const updatedUser = { ...user, name, email, role }
+    updatedUser.phone = disablePhoneEdit ? user.phone : phone
+    onSave(updatedUser)
   }
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={modalStyles.overlay}>
-        <View style={modalStyles.modal}>
-          <Text style={modalStyles.title}>Chỉnh sửa người dùng</Text>
-          <TextInput
-            style={modalStyles.input}
-            placeholder="Tên"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={modalStyles.input}
-            placeholder="Số điện thoại"
-            value={phone}
-            onChangeText={setPhone}
-          />
-          <TextInput
-            style={modalStyles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <View style={modalStyles.buttonContainer}>
-            <TouchableOpacity onPress={onClose} style={modalStyles.cancelButton}>
-              <Text style={modalStyles.cancelText}>Hủy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} style={modalStyles.saveButton}>
-              <Text style={modalStyles.saveText}>Lưu</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+      <View style={styles.overlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1, width: "100%" }}
+        >
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.modal}>
+              <Text style={styles.title}>Chỉnh sửa người dùng</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Tên"
+                value={name}
+                onChangeText={setName}
+              />
+
+              <TextInput
+                style={[
+                  styles.input,
+                  disablePhoneEdit && { backgroundColor: "#f3f4f6", color: "#555" },
+                ]}
+                placeholder="Số điện thoại"
+                value={phone}
+                onChangeText={setPhone}
+                editable={!disablePhoneEdit}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+              />
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+                  <Text style={styles.cancelText}>Hủy</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+                  <Text style={styles.saveText}>Lưu</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     </Modal>
   )
 }
 
-const modalStyles = StyleSheet.create({
+const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "#00000099",
@@ -86,6 +110,7 @@ const modalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 16,
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
