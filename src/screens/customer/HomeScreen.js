@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from '../../style/styles';
-import ServiceService from '@service/serviceService';
+import SubjectService from '@service/subjectService';
 import { subjects } from '@data/mockData';
 import { CustomerBottomNav } from '../../components/BottomNavigation';
 
@@ -71,18 +71,36 @@ const HomeScreen = ({ onServicePress, onTabPress, onOpenAI }) => {
     }
   }, [searchQuery, services]);
 
+  useEffect(() => {
+    setLoading(true);
+    const unsubscribe = SubjectService.listenToSubjects((subjectsArray) => {
+      const activeSubjects = subjectsArray.filter(s => s.status === 'active');
+      setServices(activeSubjects);
+      setLoading(false);
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+
   const loadServices = async () => {
     try {
       setLoading(true);
-      const activeServices = await ServiceService.getActiveServices();
-      if (activeServices.length > 0) {
-        setServices(activeServices);
+
+      // Lấy dữ liệu từ Firebase
+      const allSubjects = await SubjectService.getAllSubjects();
+      const activeSubjects = allSubjects.filter(s => s.status === 'active');
+
+      if (activeSubjects.length > 0) {
+        setServices(activeSubjects);
       } else {
-        // Thay initialServices bằng subjects từ mockData
+        // fallback nếu không có subject active
         setServices(subjects.filter((s) => s.status === 'active'));
       }
     } catch (error) {
-      console.error('Error loading services:', error);
+      console.error('Error loading subjects:', error);
       setServices(subjects.filter((s) => s.status === 'active'));
     } finally {
       setLoading(false);
