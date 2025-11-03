@@ -17,8 +17,15 @@ import serviceService from '../../service/serviceService';
 import ReviewScreen from './ReviewScreen';
 import Modal from 'react-native-modal';
 
-const normalizeText = (text) =>
-  text?.toLowerCase()?.normalize('NFD')?.replace(/[\u0300-\u036f]/g, '')?.trim() || '';
+const normalizeText = (text) => {
+  if (!text) return '';
+  return String(text)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+};
+
 
 const BookingHistoryScreen = ({ onTabPress, onRebook }) => {
   const [activeTab, setActiveTab] = useState('all');
@@ -90,46 +97,40 @@ const BookingHistoryScreen = ({ onTabPress, onRebook }) => {
       const tutor = await tutorService.getTutorById(session.tutorId);
       console.log('🔹 Fetched tutor:', tutor);
 
-      let service = null;
-      const allServices = await TutorSessionsService.getAllServices();
-      console.log('🔹 All services from sessions:', allServices);
-
-
-      if (session.service) {
-        const targetName = normalizeText(session.service);
-        console.log('🔹 Normalized session service name:', targetName);
-
-        const targetWords = targetName.split(' ');
-        console.log('🔹 Target words:', targetWords);
-
-        // ✅ Sửa tại đây
-        service = allServices.find((srvName) => {
-          const normalized = normalizeText(srvName);
-          console.log('🔸 Checking service:', normalized);
-          return targetWords.some((word) => normalized.includes(word));
-        });
-
-        console.log('🔹 Found service:', service);
-
-        if (!service) {
-          Alert.alert('Thông báo', 'Không tìm thấy dịch vụ phù hợp để đặt lại');
-          return;
-        }
-      }
-
-
-      if (!tutor || !service) {
-        console.log('❌ Tutor or service missing:', { tutor, service });
-        Alert.alert('Thông báo', 'Không tìm thấy thông tin gia sư hoặc dịch vụ');
-        return;
-      }
-
-      onRebook(tutor, service, session);
-    } catch (error) {
-      console.error('❌ [BookingHistory] Lỗi khi lấy tutor/service:', error);
-      Alert.alert('Lỗi', 'Không thể đặt lại buổi học.');
+    if (!tutor) {
+      Alert.alert('Thông báo', 'Không tìm thấy gia sư');
+      return;
     }
-  };
+
+    // Chuẩn hóa môn học session
+    const sessionSubject = normalizeText(session.subject || session.service || '');
+    const targetWords = sessionSubject.split(' ');
+    console.log('🔹 Normalized session subject:', sessionSubject);
+    console.log('🔹 Target words:', targetWords);
+
+    // Chuẩn hóa danh sách môn học của tutor
+    const tutorSubjects = (tutor.serviceId || []).map(normalizeText);
+    console.log('🔹 Tutor subjects:', tutorSubjects);
+
+    // Tìm môn học phù hợp
+    const matchedSubject = tutorSubjects.find(subj =>
+      targetWords.some(word => subj.includes(word))
+    );
+
+    console.log('🔹 Matched subject:', matchedSubject);
+
+    if (!matchedSubject) {
+      Alert.alert('Thông báo', 'Gia sư không có môn học phù hợp để đặt lại');
+      return;
+    }
+
+    onRebook(tutor, matchedSubject, session);
+  } catch (error) {
+    console.error('❌ [BookingHistory] Lỗi khi đặt lại buổi học:', error);
+    Alert.alert('Lỗi', 'Không thể đặt lại buổi học.');
+  }
+};
+
 
 
   const renderSession = ({ item }) => {
