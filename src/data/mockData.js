@@ -1,8 +1,4 @@
 export const users = [
-  // Admin users
-  { id: "1", phone: "0123456789", password: "123456", role: "admin", name: "Admin Nguyễn", email: "admin@example.com" },
-  { id: "2", phone: "0987654321", password: "123456", role: "admin", name: "Admin Trần", email: "admin2@example.com" },
-
   // Student users
   {
     id: "3",
