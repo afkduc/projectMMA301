@@ -174,14 +174,14 @@ const BookingHistoryScreen = ({ onTabPress, onRebook }) => {
         </View>
 
         <View style={styles.bookingActions}>
-          {item.status === 'completed' && (
+          {/* {item.status === 'completed' && (
             <TouchableOpacity
               style={styles.reviewButton}
               onPress={() => openReviewModal(item)}
             >
               <Text style={styles.reviewButtonText}>Đánh giá</Text>
             </TouchableOpacity>
-          )}
+          )} */}
 
           {(item.status === 'accepted' || (item.status === 'pending' && activeTab === 'all')) && (
             <TouchableOpacity

@@ -14,43 +14,67 @@ import { CustomerBottomNav } from "../../components/BottomNavigation"
 import userService from "../../service/UserService"
 import EditProfileScreen from "./EditProfileScreen"
 import { getCurrentUserId } from "../../utils/auth"
+import TutorSessionsService from "../../service/TutorSessionsService"
 
 const ProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchUserInfo = async () => {
-    const userId = await getCurrentUserId()
-    const userData = await userService.getUserById(userId)
-    if (userData) {
+  useEffect(() => {
+  let unsubscribe
+
+  const initProfile = async () => {
+    try {
+      const userId = await getCurrentUserId()
+      const userData = await userService.getUserById(userId)
+      if (!userData) return setLoading(false)
+
       setUserInfo({ ...userData, id: userId })
+      setLoading(false)
+
+      // Lắng nghe session realtime
+      unsubscribe = TutorSessionsService.listenToSessions(sessions => {
+        // Lọc theo customerId
+        const userSessions = sessions.filter(s => s.customerId === userId)
+        const completedOrders = userSessions.filter(s => s.status === "completed").length
+        const ratings = userSessions
+          .map(s => s.rating)
+          .filter(r => typeof r === "number")
+        const averageRating = ratings.length
+          ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1)
+          : null
+
+        setUserInfo(prev => ({
+          ...prev,
+          completedOrders,
+          rating: averageRating
+        }))
+      })
+    } catch (error) {
+      console.error(error)
+      setLoading(false)
     }
-    setLoading(false)
   }
 
-  useEffect(() => {
-    fetchUserInfo()
-  }, [])
+  initProfile()
+  return () => unsubscribe && unsubscribe()
+}, [])
+
 
   const handleMenuPress = (action) => {
-    if (action === "profile" && onMenuPress) {
-      onMenuPress("personalInfo")
-    } else if (action === "address" && onMenuPress) {
-      onMenuPress("addressManagement")
-    } else if (action === "payment" && onMenuPress) {
-      onMenuPress("paymentMethod")
-    } else if (action === "offers" && onMenuPress) {
-      onMenuPress("offers")
-    } else if (action === "support" && onMenuPress) {
-      onMenuPress("helpSupport")
-    } else if (action === "settings" && onMenuPress) {
-      onMenuPress("customerSettings")
-    } else if (action === "about" && onMenuPress) {
-      onMenuPress("aboutUs")
-    } else {
-      Alert.alert("Thông báo", `Chức năng ${action} đang được phát triển`)
+    if (!onMenuPress) return
+    const mapping = {
+      profile: "personalInfo",
+      address: "addressManagement",
+      payment: "paymentMethod",
+      offers: "offers",
+      support: "helpSupport",
+      settings: "customerSettings",
+      about: "aboutUs"
     }
+    if (mapping[action]) onMenuPress(mapping[action])
+    else Alert.alert("Thông báo", `Chức năng ${action} đang được phát triển`)
   }
 
   const handleLogout = () => {
@@ -62,7 +86,7 @@ const ProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
 
   const handleSaveProfile = async (newUserInfo) => {
     await userService.updateUser(userInfo.id, newUserInfo)
-    setUserInfo(newUserInfo)
+    setUserInfo(prev => ({ ...prev, ...newUserInfo }))
     setShowEditProfile(false)
     Alert.alert("Thành công", "Đã lưu thông tin cá nhân.")
   }
@@ -98,7 +122,7 @@ const ProfileScreen = ({ onTabPress, onLogout, onMenuPress }) => {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{userInfo.rating || "Chưa có"}</Text>
+            <Text style={styles.statNumber}>{userInfo.rating ?? "Chưa có"}</Text>
             <Text style={styles.statLabel}>Đánh giá</Text>
           </View>
           <View style={styles.statDivider} />
