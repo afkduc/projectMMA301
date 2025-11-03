@@ -196,7 +196,7 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
               onPress={handleVerifyOTP}
               disabled={loading}
             >
-              <Text style={styles.buttonText}>Xác minh</Text>
+              <Text style={styles.buttonText}>Validate</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleResendOTP}
@@ -211,7 +211,8 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
 
         case 3:
           return (
-            <View key="step3">     {/* ✅ Thêm key cho cả block */}
+            <View key="step3">
+              {/* Nhãn mật khẩu mới */}
               <Text style={styles.label}>Mật khẩu mới</Text>
               <TextInput
                 key="newPasswordInput"
@@ -221,6 +222,8 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
                 onChangeText={setNewPassword}
                 placeholder="Nhập mật khẩu mới"
               />
+        
+              {/* Nhãn xác nhận mật khẩu */}
               <Text style={styles.label}>Xác nhận mật khẩu</Text>
               <TextInput
                 style={styles.input}
@@ -229,16 +232,24 @@ const ForgotPasswordScreen = ({ onBackToLogin }) => {
                 onChangeText={setConfirmPassword}
                 placeholder="Xác nhận lại mật khẩu"
               />
+        
+              {/* Hiển thị lỗi nếu có */}
               {error ? <Text style={styles.error}>{error}</Text> : null}
+        
+              {/* Nút đặt lại mật khẩu */}
               <TouchableOpacity
-                style={styles.button}
+                style={[styles.button, loading && { opacity: 0.6 }]}
                 onPress={handleResetPassword}
                 disabled={loading}
               >
-                <Text style={styles.buttonText}>Đặt lại mật khẩu</Text>
+                <Text style={styles.buttonText}>
+                  {loading ? "Đang xử lý..." : "Đặt lại mật khẩu"}
+                </Text>
               </TouchableOpacity>
             </View>
           );
+        
+
         
       default:
         return null;
