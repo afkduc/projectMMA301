@@ -22,7 +22,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [studentBookings, setStudentBookings] = useState([]);
 
-    // ✅ Lấy danh sách học viên từ node "users"
+    // ✅ Load danh sách học viên từ node "users"
     useEffect(() => {
         const unsubscribe = UserService.listenToUsers((users) => {
             const customers = users.filter(
@@ -30,16 +30,16 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
             );
             setCustomerList(customers);
         });
-
         return () => unsubscribe();
     }, []);
 
     // ✅ Lọc danh sách học viên
     const filteredCustomers = customerList.filter((customer) => {
         const matchesSearch =
-            customer.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-            customer.phone?.includes(searchText) ||
-            customer.address?.toLowerCase().includes(searchText.toLowerCase());
+            (customer.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+                customer.phone?.includes(searchText) ||
+                customer.address?.toLowerCase().includes(searchText.toLowerCase())) ??
+            false;
 
         const matchesStatus =
             filterStatus === "all" || customer.status === filterStatus;
@@ -57,30 +57,75 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
             .catch(() => alert("Không thể cập nhật trạng thái người dùng."));
     };
 
-    // ✅ Xem lịch sử học (từ studentBookings)
+    // ✅ Xem lịch sử học (ghép thông tin từ tutorSessions + users)
     const handleViewHistory = async (customer) => {
         try {
-            const bookings = await FirebaseService.readAll("studentBookings");
-            if (!bookings || bookings.length === 0) {
+            const [sessions, users] = await Promise.all([
+                FirebaseService.readAll("tutorSessions"),
+                FirebaseService.readAll("users"),
+            ]);
+
+            if (!sessions || Object.keys(sessions).length === 0) {
                 alert("Không có dữ liệu buổi học nào.");
                 return;
             }
 
-            const studentSessions = bookings.filter(
-                (b) =>
-                    b.studentId === customer.id ||
-                    b.student?.toLowerCase() === customer.name?.toLowerCase()
+            const allSessions = Object.values(sessions);
+            const allUsers = Object.values(users || {});
+
+            // 🔍 Lọc buổi học theo khách hàng
+            const customerSessions = allSessions.filter(
+                (s) =>
+                    s.customerId === customer.id ||
+                    s.customer?.toLowerCase() === customer.name?.toLowerCase()
             );
 
-            if (!studentSessions || studentSessions.length === 0) {
+            if (customerSessions.length === 0) {
                 alert(`${customer.name} chưa có buổi học nào.`);
-            } else {
-                setSelectedCustomer(customer);
-                setStudentBookings(studentSessions);
-                setHistoryModalVisible(true);
+                return;
             }
+
+            // 🔄 Dịch trạng thái sang tiếng Việt
+            const translateStatus = (status) => {
+                switch ((status || "").toLowerCase()) {
+                    case "pending":
+                        return "Đang chờ xác nhận";
+                    case "accepted":
+                        return "Đã chấp nhận";
+                    case "rejected":
+                        return "Từ chối";
+                    case "completed":
+                        return "Hoàn thành";
+                    case "cancelled":
+                        return "Đã hủy";
+                    default:
+                        return "Không xác định";
+                }
+            };
+
+            // 🔗 Ghép thông tin tutor + customer
+            const sessionsWithDetails = customerSessions.map((s) => {
+                const tutorInfo = allUsers.find((u) => u.id === s.tutorId) || {};
+                const customerInfo = allUsers.find((u) => u.id === s.customerId) || {};
+
+                return {
+                    ...s,
+                    tutorName: tutorInfo.name || s.tutor || "Chưa rõ",
+                    tutorSubject:
+                        tutorInfo.subject ||
+                        (Array.isArray(tutorInfo.serviceId)
+                            ? tutorInfo.serviceId.join(", ")
+                            : s.service || s.subject || "Không rõ"),
+                    customerName: customerInfo.name || s.customer || "Không rõ",
+                    statusVi: translateStatus(s.status),
+                };
+            });
+
+            setSelectedCustomer(customer);
+            setStudentBookings(sessionsWithDetails);
+            setHistoryModalVisible(true);
         } catch (err) {
-            console.error("Lỗi khi tải lịch sử học:", err);
+            console.error("❌ Lỗi khi tải lịch sử học:", err);
             alert("Không thể tải lịch sử buổi học.");
         }
     };
@@ -220,7 +265,8 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
                         >
                             {status === "all"
                                 ? `Tất cả (${customerList.length})`
-                                : `${status === "active" ? "Hoạt động" : "Đã khóa"} (${customerList.filter((c) => c.status === status).length
+                                : `${status === "active" ? "Hoạt động" : "Đã khóa"
+                                } (${customerList.filter((c) => c.status === status).length
                                 })`}
                         </Text>
                     </TouchableOpacity>
@@ -231,9 +277,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
             <FlatList
                 data={filteredCustomers}
                 renderItem={renderCustomer}
-                keyExtractor={(item, index) =>
-                    item.id?.toString() || index.toString()
-                }
+                keyExtractor={(item, index) => item.id?.toString() || index.toString()}
                 contentContainerStyle={{ paddingBottom: 100 }}
                 showsVerticalScrollIndicator={false}
             />
@@ -279,27 +323,25 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
                                 <View
                                     key={i}
                                     style={{
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: "#eee",
-                                        paddingVertical: 10,
+                                        backgroundColor: "#f9fafb",
+                                        borderRadius: 12,
+                                        padding: 12,
+                                        marginVertical: 6,
+                                        shadowColor: "#000",
+                                        shadowOpacity: 0.1,
+                                        shadowRadius: 3,
                                     }}
                                 >
-                                    <Text>
-                                        <Text style={{ fontWeight: "bold" }}>Gia sư: </Text>
-                                        {s.tutor || "N/A"}
+                                    <Text style={{ fontWeight: "bold", fontSize: 16 }}
+                                    >
+                                        Gia sư: {s.tutorName}
                                     </Text>
-                                    <Text>
-                                        <Text style={{ fontWeight: "bold" }}>Môn học: </Text>
-                                        {s.subject || "N/A"}
-                                    </Text>
-                                    <Text>
-                                        <Text style={{ fontWeight: "bold" }}>Địa điểm: </Text>
-                                        {s.address || "N/A"}
-                                    </Text>
-                                    <Text>
-                                        <Text style={{ fontWeight: "bold" }}>Trạng thái: </Text>
-                                        {s.status || "N/A"}
-                                    </Text>
+
+                                    <View style={{ marginTop: 6 }}>
+                                        <Text>Môn học: {s.tutorSubject}</Text>
+                                        <Text>Thời gian: {s.date} {s.time}</Text>
+                                        <Text>Trạng thái: {s.statusVi}</Text>
+                                    </View>
                                 </View>
                             ))}
                         </ScrollView>

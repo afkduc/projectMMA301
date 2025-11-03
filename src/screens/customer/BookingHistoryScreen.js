@@ -91,11 +91,11 @@ const BookingHistoryScreen = ({ onTabPress, onRebook }) => {
   });
 
   const handleRebookSession = async (session) => {
-  try {
-    console.log('➡️ Rebooking session:', session);
+    try {
+      console.log('➡️ Rebooking session:', session);
 
-    const tutor = await tutorService.getTutorById(session.tutorId);
-    console.log('🔹 Fetched tutor:', tutor);
+      const tutor = await tutorService.getTutorById(session.tutorId);
+      console.log('🔹 Fetched tutor:', tutor);
 
     if (!tutor) {
       Alert.alert('Thông báo', 'Không tìm thấy gia sư');
