@@ -7,6 +7,10 @@ import {
     FlatList,
     Alert,
     TextInput,
+    Modal,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
 } from "react-native";
 import { styles } from "../../style/styles";
 import { AdminBottomNav } from "../../components/BottomNavigation";
@@ -17,11 +21,19 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
     const [searchText, setSearchText] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
 
+    // Popup thêm / sửa
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [newSubjectName, setNewSubjectName] = useState("");
+    const [newSubjectDescription, setNewSubjectDescription] = useState("");
+    const [editingSubject, setEditingSubject] = useState(null);
+
     useEffect(() => {
         const unsubscribe = SubjectService.listenToSubjects(setSubjectList);
         return unsubscribe;
     }, []);
 
+    // --- Bộ lọc tìm kiếm ---
     const filteredSubjects = subjectList.filter((subject) => {
         const name = typeof subject.name === "string" ? subject.name : "";
         const description =
@@ -38,6 +50,7 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
         return matchesSearch && matchesStatus;
     });
 
+    // --- Bật / tắt trạng thái ---
     const handleToggleStatus = async (subjectId, currentStatus) => {
         const newStatus = currentStatus === "active" ? "inactive" : "active";
         const action = newStatus === "inactive" ? "tắt" : "bật";
@@ -59,86 +72,61 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
         ]);
     };
 
+    // --- Mở popup chỉnh sửa ---
     const handleEditSubject = (subject) => {
-        Alert.alert("Chỉnh sửa môn học", `Chỉnh sửa: ${subject.name}`, [
-            { text: "Hủy", style: "cancel" },
-            { text: "Sửa mô tả", onPress: () => handleEditDescription(subject) },
-        ]);
+        setEditingSubject(subject);
+        setNewSubjectName(subject.name);
+        setNewSubjectDescription(subject.description);
+        setShowEditModal(true);
     };
 
-    const handleEditDescription = (subject) => {
-        Alert.prompt(
-            "Cập nhật mô tả",
-            `Mô tả hiện tại: ${subject.description}`,
-            [
-                { text: "Hủy", style: "cancel" },
-                {
-                    text: "Cập nhật",
-                    onPress: async (newDescription) => {
-                        if (newDescription) {
-                            try {
-                                await SubjectService.updateSubject(subject.id, {
-                                    description: newDescription,
-                                });
-                                Alert.alert("Thành công", "Đã cập nhật mô tả môn học");
-                            } catch (error) {
-                                console.error(error);
-                                Alert.alert("Lỗi", "Không thể cập nhật mô tả môn học");
-                            }
-                        }
-                    },
-                },
-            ],
-            "plain-text",
-            subject.description
-        );
+    const handleSaveEditedSubject = async () => {
+        if (!editingSubject) return;
+        try {
+            await SubjectService.updateSubject(editingSubject.id, {
+                name: newSubjectName.trim(),
+                description: newSubjectDescription.trim(),
+            });
+            Alert.alert("Thành công", "Đã cập nhật môn học");
+            setShowEditModal(false);
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Lỗi", "Không thể cập nhật môn học");
+        }
     };
 
-    const handleAddSubject = () => {
-        Alert.prompt(
-            "Thêm môn học mới",
-            "Nhập tên môn học",
-            [
-                { text: "Hủy", style: "cancel" },
-                {
-                    text: "Tiếp tục",
-                    onPress: (name) => {
-                        if (!name) return;
-
-                        Alert.prompt(
-                            "Nhập mô tả",
-                            "Mô tả môn học",
-                            [
-                                { text: "Hủy", style: "cancel" },
-                                {
-                                    text: "Thêm",
-                                    onPress: async (description) => {
-                                        try {
-                                            const newSubject = {
-                                                name,
-                                                description: description || "",
-                                                icon: "📘",
-                                                color: "#fbbf24",
-                                                status: "active",
-                                            };
-                                            await SubjectService.createSubject(newSubject);
-                                            Alert.alert("Thành công", "Đã thêm môn học mới");
-                                        } catch (error) {
-                                            console.error(error);
-                                            Alert.alert("Lỗi", "Không thể thêm môn học mới");
-                                        }
-                                    },
-                                },
-                            ],
-                            "plain-text"
-                        );
-                    },
-                },
-            ],
-            "plain-text"
-        );
+    // --- Thêm mới môn học ---
+    const handleOpenAddModal = () => {
+        setNewSubjectName("");
+        setNewSubjectDescription("");
+        setShowAddModal(true);
     };
 
+    const handleSaveNewSubject = async () => {
+        if (!newSubjectName.trim()) {
+            Alert.alert("Lỗi", "Vui lòng nhập tên môn học");
+            return;
+        }
+
+        try {
+            const newSubject = {
+                name: newSubjectName.trim(),
+                description: newSubjectDescription.trim() || "",
+                icon: "📘",
+                color: "#fbbf24",
+                status: "active",
+            };
+
+            await SubjectService.createSubject(newSubject);
+            Alert.alert("Thành công", "Đã thêm môn học mới");
+            setShowAddModal(false);
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Lỗi", "Không thể thêm môn học mới");
+        }
+    };
+
+    // --- Giao diện từng môn học ---
     const renderSubject = ({ item }) => (
         <View style={styles.serviceManagementCard}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -235,7 +223,7 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
                 >
                     Quản lý môn học
                 </Text>
-                <TouchableOpacity onPress={handleAddSubject}>
+                <TouchableOpacity onPress={handleOpenAddModal}>
                     <Text style={styles.filterButton}>➕</Text>
                 </TouchableOpacity>
             </View>
@@ -269,13 +257,14 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
                         >
                             {status === "all"
                                 ? `Tất cả (${subjectList.length})`
-                                : `${status === "active" ? "Hoạt động" : "Tạm dừng"} (${subjectList.filter((s) => s.status === status).length
-                                })`}
+                                : `${status === "active" ? "Hoạt động" : "Tạm dừng"
+                                } (${subjectList.filter((s) => s.status === status).length})`}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
+            {/* Danh sách môn học */}
             <FlatList
                 data={filteredSubjects}
                 renderItem={renderSubject}
@@ -284,9 +273,171 @@ const SubjectManagementScreen = ({ onTabPress, onBack }) => {
                 showsVerticalScrollIndicator={false}
             />
 
+            {/* ✅ Modal thêm môn học */}
+            <Modal
+                animationType="slide"
+                transparent
+                visible={showAddModal}
+                onRequestClose={() => setShowAddModal(false)}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={modalStyles.overlay}
+                >
+                    <View style={modalStyles.container}>
+                        <ScrollView
+                            contentContainerStyle={{ paddingBottom: 10 }}
+                            keyboardShouldPersistTaps="handled"
+                        >
+                            <Text style={modalStyles.title}>Thêm môn học mới</Text>
+
+                            <Text style={modalStyles.label}>Tên môn học</Text>
+                            <TextInput
+                                value={newSubjectName}
+                                onChangeText={setNewSubjectName}
+                                placeholder="Nhập tên môn học"
+                                style={modalStyles.input}
+                            />
+
+                            <Text style={modalStyles.label}>Mô tả</Text>
+                            <TextInput
+                                value={newSubjectDescription}
+                                onChangeText={setNewSubjectDescription}
+                                placeholder="Nhập mô tả môn học"
+                                multiline
+                                style={[modalStyles.input, { height: 80, textAlignVertical: "top" }]}
+                            />
+
+                            <View style={modalStyles.actions}>
+                                <TouchableOpacity onPress={() => setShowAddModal(false)}>
+                                    <Text style={modalStyles.cancel}>Hủy</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={modalStyles.saveButton}
+                                    onPress={handleSaveNewSubject}
+                                >
+                                    <Text style={modalStyles.saveText}>Thêm</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    </View>
+                </KeyboardAvoidingView>
+            </Modal>
+
+            {/* ✅ Modal chỉnh sửa môn học */}
+            <Modal
+                animationType="slide"
+                transparent
+                visible={showEditModal}
+                onRequestClose={() => setShowEditModal(false)}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={modalStyles.overlay}
+                >
+                    <View style={modalStyles.container}>
+                        <ScrollView
+                            contentContainerStyle={{ paddingBottom: 10 }}
+                            keyboardShouldPersistTaps="handled"
+                        >
+                            <Text style={modalStyles.title}>Chỉnh sửa môn học</Text>
+
+                            <Text style={modalStyles.label}>Tên môn học</Text>
+                            <TextInput
+                                value={newSubjectName}
+                                onChangeText={setNewSubjectName}
+                                style={modalStyles.input}
+                            />
+
+                            <Text style={modalStyles.label}>Mô tả</Text>
+                            <TextInput
+                                value={newSubjectDescription}
+                                onChangeText={setNewSubjectDescription}
+                                multiline
+                                style={[modalStyles.input, { height: 80, textAlignVertical: "top" }]}
+                            />
+
+                            <View style={modalStyles.actions}>
+                                <TouchableOpacity onPress={() => setShowEditModal(false)}>
+                                    <Text style={modalStyles.cancel}>Hủy</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={modalStyles.saveButton}
+                                    onPress={handleSaveEditedSubject}
+                                >
+                                    <Text style={modalStyles.saveText}>Lưu</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </ScrollView>
+                    </View>
+                </KeyboardAvoidingView>
+            </Modal>
+
             <AdminBottomNav onTabPress={onTabPress} activeTab="subjectManagement" />
         </SafeAreaView>
     );
 };
 
 export default SubjectManagementScreen;
+
+const modalStyles = {
+    overlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "transparent", // bỏ nền xám mờ
+        paddingHorizontal: 20,
+    },
+    container: {
+        width: "100%",
+        maxWidth: 380,
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        padding: 20,
+        shadowColor: "#000",
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 6,
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 12,
+        textAlign: "center",
+    },
+    label: {
+        fontWeight: "bold",
+        marginBottom: 4,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 12,
+    },
+    actions: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    cancel: {
+        color: "#555",
+        marginRight: 15,
+        fontSize: 16,
+    },
+    saveButton: {
+        backgroundColor: "#10b981",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },
+    saveText: {
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+};
+
+

@@ -21,6 +21,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
     const [historyModalVisible, setHistoryModalVisible] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [studentBookings, setStudentBookings] = useState([]);
+    const [infoModal, setInfoModal] = useState({ visible: false, message: "" });
 
     // ✅ Load danh sách học viên từ node "users"
     useEffect(() => {
@@ -81,7 +82,7 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
             );
 
             if (customerSessions.length === 0) {
-                alert(`${customer.name} chưa có buổi học nào.`);
+                setInfoModal({ visible: true, message: `${customer.name} chưa có buổi học nào.` });
                 return;
             }
 
@@ -337,10 +338,19 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
                                         Gia sư: {s.tutorName}
                                     </Text>
 
-                                    <View style={{ marginTop: 6 }}>
-                                        <Text>Môn học: {s.tutorSubject}</Text>
-                                        <Text>Thời gian: {s.date} {s.time}</Text>
-                                        <Text>Trạng thái: {s.statusVi}</Text>
+                                    <View style={{ marginTop: 6, gap: 4 }}>
+                                        <Text>
+                                            <Text style={{ fontWeight: "bold" }}>Môn học: </Text>
+                                            {s.tutorSubject}
+                                        </Text>
+                                        <Text>
+                                            <Text style={{ fontWeight: "bold" }}>Thời gian: </Text>
+                                            {s.date} | {s.time}
+                                        </Text>
+                                        <Text>
+                                            <Text style={{ fontWeight: "bold" }}>Trạng thái: </Text>
+                                            {s.statusVi}
+                                        </Text>
                                     </View>
                                 </View>
                             ))}
@@ -363,6 +373,63 @@ const CustomerManagementScreen = ({ onTabPress, onBack }) => {
                                 }}
                             >
                                 Đóng
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Modal thông báo */}
+            <Modal
+                visible={infoModal.visible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setInfoModal({ visible: false, message: "" })}
+            >
+                <View
+                    style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "rgba(0,0,0,0.4)",
+                    }}
+                >
+                    <View
+                        style={{
+                            backgroundColor: "#fff",
+                            borderRadius: 10,
+                            padding: 20,
+                            width: "80%",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 16,
+                                textAlign: "center",
+                                marginBottom: 20,
+                            }}
+                        >
+                            {infoModal.message}
+                        </Text>
+
+                        <TouchableOpacity
+                            onPress={() => setInfoModal({ visible: false, message: "" })}
+                            style={{
+                                backgroundColor: "#2563eb",
+                                paddingVertical: 10,
+                                paddingHorizontal: 30,
+                                borderRadius: 8,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    color: "#fff",
+                                    fontWeight: "bold",
+                                    textAlign: "center",
+                                }}
+                            >
+                                OK
                             </Text>
                         </TouchableOpacity>
                     </View>

@@ -43,12 +43,12 @@ const SessionsManagementScreen = ({ onTabPress, onBack }) => {
                     <View style={styles.customerInfo}>
                         <Text style={styles.customerAvatar}>{item.avatar || '👤'}</Text>
                         <View>
-                            <Text style={styles.customerName}>{item.student || 'Không rõ'}</Text>
+                            <Text style={styles.customerName}>{item.customer || 'Không rõ'}</Text>
                             <Text style={styles.orderService}>
-                                {item.subject || 'Không rõ môn học'}
+                                {item.service || 'Không rõ môn học'}
                             </Text>
                             <Text style={styles.orderTime}>
-                                📅 {item.date || 'N/A'} - {item.time || 'N/A'}
+                                📅 {item.date || 'N/A'} | {item.time || 'N/A'}
                             </Text>
                         </View>
                     </View>
@@ -78,10 +78,8 @@ const SessionsManagementScreen = ({ onTabPress, onBack }) => {
     const allTabs = [
         { key: 'all', label: 'Tất cả' },
         { key: 'pending', label: 'Chờ xác nhận' },
-        { key: 'confirmed', label: 'Đã xác nhận' },
         { key: 'accepted', label: 'Đã nhận' },
         { key: 'completed', label: 'Hoàn thành' },
-        { key: 'cancelled', label: 'Đã hủy' },
         { key: 'rejected', label: 'Đã từ chối' },
     ];
 

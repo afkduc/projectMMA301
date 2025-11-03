@@ -8,6 +8,7 @@ import {
     Alert,
     TextInput,
     ActivityIndicator,
+    Modal,
 } from "react-native";
 import { styles } from "../../style/styles";
 import { AdminBottomNav } from "../../components/BottomNavigation";
@@ -18,6 +19,8 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     const [searchText, setSearchText] = useState("");
     const [filterStatus, setFilterStatus] = useState("all");
     const [loading, setLoading] = useState(true);
+    const [selectedTutor, setSelectedTutor] = useState(null);
+    const [detailModalVisible, setDetailModalVisible] = useState(false);
 
     useEffect(() => {
         fetchTutors();
@@ -91,10 +94,8 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
     };
 
     const handleViewDetails = (tutor) => {
-        Alert.alert(
-            "Chi tiết gia sư",
-            `Tên: ${tutor.name}\nChuyên môn: ${tutor.specialty}\nĐánh giá: ${tutor.rating}/5\nBuổi học hoàn thành: ${tutor.reviews}\nChứng chỉ: ${tutor.experience || "N/A"}`
-        );
+        setSelectedTutor(tutor);
+        setDetailModalVisible(true);
     };
 
     const getStatusStyle = (status) => {
@@ -265,6 +266,98 @@ const TutorsManagementScreen = ({ onTabPress, onBack }) => {
                     contentContainerStyle={{ paddingBottom: 100 }}
                     showsVerticalScrollIndicator={false}
                 />
+            )}
+
+            {/* Modal chi tiết gia sư */}
+            {selectedTutor && (
+                <Modal
+                    visible={detailModalVisible}
+                    transparent
+                    animationType="slide"
+                    onRequestClose={() => setDetailModalVisible(false)}
+                >
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: "rgba(0,0,0,0.4)",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            padding: 20,
+                        }}
+                    >
+                        <View
+                            style={{
+                                backgroundColor: "#fff",
+                                borderRadius: 12,
+                                width: "100%",
+                                maxWidth: 400,
+                                padding: 20,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: "bold",
+                                    textAlign: "center",
+                                    marginBottom: 15,
+                                }}
+                            >
+                                Thông tin gia sư
+                            </Text>
+
+                            <View style={{ gap: 8 }}>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Tên: </Text>
+                                    {selectedTutor.name}
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>SĐT: </Text>
+                                    {selectedTutor.phone || "N/A"}
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Email: </Text>
+                                    {selectedTutor.email || "N/A"}
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Chuyên môn: </Text>
+                                    {selectedTutor.specialty || "N/A"}
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Đánh giá: </Text>
+                                    {selectedTutor.rating || 0}/5
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Buổi dạy: </Text>
+                                    {selectedTutor.reviews || 0}
+                                </Text>
+                                <Text>
+                                    <Text style={{ fontWeight: "bold" }}>Kinh nghiệm / Chứng chỉ: </Text>
+                                    {selectedTutor.experience || "Chưa cập nhật"}
+                                </Text>
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => setDetailModalVisible(false)}
+                                style={{
+                                    marginTop: 20,
+                                    backgroundColor: "#2563eb",
+                                    paddingVertical: 10,
+                                    borderRadius: 8,
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        color: "#fff",
+                                        fontWeight: "bold",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    Đóng
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             )}
 
             <AdminBottomNav onTabPress={onTabPress} activeTab="tutorManagement" />
