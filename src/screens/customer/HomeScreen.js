@@ -150,8 +150,11 @@ const HomeScreen = ({ onServicePress, onTabPress, onOpenAI }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingTop: 10, paddingBottom: 100 }}
+    >
         <View style={styles.homeHeader}>
           <Text style={styles.greeting}>Xin chào! 👋</Text>
           <Text style={styles.question}>Bạn cần gia sư nào hôm nay?</Text>

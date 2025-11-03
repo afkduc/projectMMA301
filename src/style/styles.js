@@ -4142,5 +4142,57 @@ saveButtonText: {
   fontSize: 15,
   fontWeight: '800',
 },
+tutorProfileHeader: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center", // giữ nút "Sửa" ở trên cùng
+  marginBottom: 16,
+  paddingHorizontal: 16,
+},
+
+tutorProfileInfo: {
+  flex: 1,
+  flexShrink: 1, // ✅ Cho phép text co lại khi quá dài
+  flexWrap: "wrap", // ✅ Cho phép xuống dòng nếu dài
+},
+
+tutorProfileAvatar: {
+  fontSize: 48,
+  marginRight: 12,
+},
+
+tutorProfileName: {
+  fontSize: 20,
+  fontWeight: "bold",
+  color: "#111827",
+},
+
+tutorProfilePhone: {
+  color: "#6b7280",
+  marginTop: 2,
+},
+
+tutorProfileSpecialty: {
+  color: "#6b7280",
+  marginTop: 4,
+  flexShrink: 1,
+  flexWrap: "wrap",
+  maxWidth: "100%", // ✅ tránh tràn
+},
+
+editButton: {
+  backgroundColor: "#10b981",
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 8,
+  alignSelf: "flex-start", // ✅ giữ nút ở góc trên bên phải
+},
+
+editButtonText: {
+  color: "#fff",
+  fontWeight: "600",
+  fontSize: 14,
+},
+
 
 });

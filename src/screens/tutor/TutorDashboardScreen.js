@@ -35,12 +35,15 @@ const TutorDashboardScreen = ({ onTabPress, onOrderPress }) => {
           })
           .join(", ")
 
-        setTutorInfo({
-          ...tutor,
-          specialty: serviceNames,
-          rating: tutor.rating || "4.8",
-          totalReviews: tutor.reviews || 0,
-        })
+          setTutorInfo({
+            ...tutor,
+            specialty: Array.isArray(tutor.specialty)
+              ? tutor.specialty.join(", ")
+              : tutor.specialty || "Chưa có môn học",
+            rating: tutor.rating || "4.8",
+            totalReviews: tutor.reviews || 0,
+          })
+          
 
         const unsubscribe = OrderService.listenToTutorOrders(tutor.id, (tutorOrders) => {
           const sortedOrders = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
@@ -114,12 +117,6 @@ const TutorDashboardScreen = ({ onTabPress, onOrderPress }) => {
               </View>
             </View>
           </View>
-          <TouchableOpacity style={styles.notificationButton}>
-            <Text style={styles.notificationIcon}>🔔</Text>
-            <View style={styles.notificationBadge}>
-              <Text style={styles.notificationCount}>3</Text>
-            </View>
-          </TouchableOpacity>
         </View>
 
         {/* Stats Cards */}
