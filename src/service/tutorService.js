@@ -16,10 +16,12 @@ async createTutor(tutorData) {
       finalData.password = hashedPassword;
     }
     // Đồng bộ dữ liệu với RegisterScreen: chuyển serviceId → subjects
-    if (Array.isArray(tutorData.serviceId)) {
-      finalData.subjects = tutorData.serviceId;
-      delete finalData.serviceId; // ⚠️ Xóa trường cũ để tránh trùng
-    }
+    // Đồng bộ dữ liệu với RegisterScreen: giữ nguyên serviceId và tạo thêm subjects (nếu cần)
+if (Array.isArray(tutorData.serviceId)) {
+  finalData.serviceId = tutorData.serviceId.map((item) => String(item).trim()); // Đảm bảo là tên môn học
+  finalData.subjects = finalData.serviceId; // Giữ song song 2 trường nếu cần
+}
+
 
     //  Nếu có specialty thì cũng đồng bộ lại
     if (tutorData.specialty && !finalData.subjects?.length) {
