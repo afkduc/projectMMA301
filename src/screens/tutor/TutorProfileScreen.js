@@ -7,9 +7,7 @@ import TutorService from "../../service/tutorService"
 import ServiceService from "../../service/serviceService"
 import OrderService from "../../service/orderService"
 import { getCurrentUserId } from "../../utils/auth"
-import userService from "../../service/UserService"
 import FirebaseService from "../../service/firebaseService"
-
 import TutorEditProfileScreen from "./TutorEditProfileScreen"
 
 const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) => {
