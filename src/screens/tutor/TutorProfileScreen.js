@@ -7,7 +7,7 @@ import TutorService from "../../service/tutorService"
 import ServiceService from "../../service/serviceService"
 import OrderService from "../../service/orderService"
 import { getCurrentUserId } from "../../utils/auth"
-import userService from "../../service/UserService"
+import FirebaseService from "../../service/firebaseService"
 import TutorEditProfileScreen from "./TutorEditProfileScreen"
 
 const TutorProfileScreen = ({ currentUser, onTabPress, onLogout, onMenuPress }) => {
@@ -110,20 +110,44 @@ setMonthlyIncome(income)
     } catch (err) {}
   }
 
-  const handleSaveProfile = async (newUserInfo) => {
-    if (!userInfo) return
+  const handleSaveProfile = async (updatedData) => {
     try {
-      await TutorService.updateTutor(userInfo.id, newUserInfo)
-      const updateUserInfo = {
-        avatar: newUserInfo.avatar,
-        name: newUserInfo.name,
-        phone: newUserInfo.phone,
-        specialty: newUserInfo.specialty,
-        area: newUserInfo.address
+      const mappedServiceIds = {};
+  
+      if (Array.isArray(updatedData.serviceId)) {
+        // 🧩 Trường hợp serviceId là mảng [ "1", "2" ]
+        updatedData.serviceId.forEach((id, index) => {
+          const svc = allServices.find(s => String(s.id) === String(id));
+          mappedServiceIds[index] = svc ? svc.name : id;
+        });
+      } else if (updatedData.serviceId && typeof updatedData.serviceId === "object") {
+        // 🧩 Trường hợp serviceId đã là object {0: "Vật lý", 1: "Toán"}
+        Object.entries(updatedData.serviceId).forEach(([index, name]) => {
+          mappedServiceIds[index] = name;
+        });
       }
-      await userService.updateUser(userId, updateUserInfo)
-    } catch (err) {}
-  }
+  
+      await FirebaseService.update(`tutors/${userInfo.id}`, {
+        ...updatedData,
+        serviceId: mappedServiceIds,
+        specialty: Object.values(mappedServiceIds).join(", "),
+      });
+  
+      setUserInfo(prev => ({
+        ...prev,
+        ...updatedData,
+        serviceId: mappedServiceIds,
+        specialty: Object.values(mappedServiceIds).join(", "),
+      }));
+  
+      Alert.alert("Thành công", "Đã lưu thay đổi.");
+    } catch (e) {
+      Alert.alert("Lỗi", "Không thể cập nhật thông tin gia sư.");
+      console.error("Update failed:", e);
+    }
+  };
+  
+  
 
   const handleMenuPress = (action) => {
     if (onMenuPress) {

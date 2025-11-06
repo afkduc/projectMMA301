@@ -120,6 +120,9 @@ export default function App() {
           pushScreen("tutorOrders"); break;
         case "tutorProfile":
           pushScreen("tutorProfile"); break;
+          case "tutorSchedule":
+            pushScreen("tutorSchedule");
+            break; // 👈 THÊM DÒNG NÀY
       }
     } else if (user.role === "admin") {
       switch (tab) {

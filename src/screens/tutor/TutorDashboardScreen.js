@@ -35,15 +35,15 @@ const TutorDashboardScreen = ({ onTabPress, onOrderPress }) => {
           })
           .join(", ")
 
-          setTutorInfo({
-            ...tutor,
-            specialty: Array.isArray(tutor.specialty)
-              ? tutor.specialty.join(", ")
-              : tutor.specialty || "Chưa có môn học",
-            rating: tutor.rating || "4.8",
-            totalReviews: tutor.reviews || 0,
-          })
-          
+        setTutorInfo({
+          ...tutor,
+          specialty: Array.isArray(tutor.specialty)
+            ? tutor.specialty.join(", ")
+            : tutor.specialty || "Chưa có môn học",
+          rating: tutor.rating || "4.8",
+          totalReviews: tutor.reviews || 0,
+        })
+
 
         const unsubscribe = OrderService.listenToTutorOrders(tutor.id, (tutorOrders) => {
           const sortedOrders = tutorOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
@@ -72,15 +72,15 @@ const TutorDashboardScreen = ({ onTabPress, onOrderPress }) => {
   const acceptedOrders = orders.filter((o) => o.status === "accepted").length
   const completedOrders = orders.filter((o) => o.status === "completed").length
   const totalEarnings = orders
-  .filter((o) => o.status === "completed")
-  .reduce((sum, o) => {
-    const rawPrice = o.price?.toLowerCase?.().trim()
-    const price =
-      rawPrice === "thỏa thuận"
-        ? 0
-        : Number.parseInt(rawPrice.replace(/[^\d]/g, ""), 10) || 0
-    return sum + price
-  }, 0)
+    .filter((o) => o.status === "completed")
+    .reduce((sum, o) => {
+      const rawPrice = o.price?.toLowerCase?.().trim()
+      const price =
+        rawPrice === "thỏa thuận"
+          ? 0
+          : Number.parseInt(rawPrice.replace(/[^\d]/g, ""), 10) || 0
+      return sum + price
+    }, 0)
 
   const recentOrders = orders.slice(0, 3)
 
@@ -151,10 +151,15 @@ const TutorDashboardScreen = ({ onTabPress, onOrderPress }) => {
               <Text style={styles.actionIcon}>📋</Text>
               <Text style={styles.actionText}>Đơn hàng</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => onTabPress("tutorSchedule")}
+            >
               <Text style={styles.actionIcon}>📅</Text>
-              <Text style={styles.actionText}>Lịch làm việc</Text>
+              <Text style={styles.actionText}>Lịch dạy học</Text>
             </TouchableOpacity>
+
+
             <TouchableOpacity style={styles.actionButton}>
               <Text style={styles.actionIcon}>💰</Text>
               <Text style={styles.actionText}>Thu nhập</Text>
