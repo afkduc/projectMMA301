@@ -166,12 +166,26 @@ const TutorEditProfileScreen = ({ visible, onClose, onSave, userInfo }) => {
   };
 
   const handleSave = () => {
-    if (validateForm()) {
-      onSave(formData);
-      Alert.alert('Thành công', 'Đã cập nhật thông tin gia sư');
-      onClose();
-    }
+    if (!validateForm()) return;
+  
+    // 🧠 Chuyển serviceId (dạng id) thành object {0: "Vật lý", 1: "Toán", ...}
+    const mappedServiceIds = {};
+    formData.serviceId.forEach((id, index) => {
+      const svc = allServices.find(s => String(s.id) === String(id));
+      mappedServiceIds[index] = svc ? svc.name : id;
+    });
+  
+    const updatedData = {
+      ...formData,
+      serviceId: mappedServiceIds,
+      specialty: Object.values(mappedServiceIds).join(', '),
+    };
+  
+    onSave(updatedData);
+    Alert.alert('Thành công', 'Đã cập nhật thông tin gia sư');
+    onClose();
   };
+  
 
   const handleAddSkill = () => {
     if (newSkill.trim() && !formData.skills.includes(newSkill.trim())) {
